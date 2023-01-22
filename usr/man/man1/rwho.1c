@@ -1,0 +1,41 @@
+.TH rwho 1c
+.SH NAME
+rwho \- who's logged in on local machines
+.SH SYNTAX
+.B rwho
+[
+.B \-ah
+] 
+.SH DESCRIPTION
+The
+.B rwho
+command produces output similar to
+who(1),
+but for all machines on the local network.
+If no report has been
+received from a machine for 5 minutes, then
+.B rwho
+assumes that the machine is down, and does not report users last known
+to be logged into that machine.
+.PP
+If a user hasn't typed to the system for an hour or more, then
+the user will be omitted from the output of
+.B rwho.
+.SH OPTIONS
+.IP \fB\-a\fR 0.5i
+Normally,
+.B rwho
+omits users who have not typed to the system for an hour or
+more.  If the
+.B \-a
+flag is specified, these users will be listed.
+.IP \fB\-h\fR 0.5i
+Normally,
+.B rwho
+prints its output sorted by user name.  If the
+.B \-h
+flag is specified, than the results will be sorted by host name.
+.SH FILES
+/usr/spool/rwho/whod.*	Information about other machines
+.SH SEE ALSO
+ruptime(1c), rwhod(8c)

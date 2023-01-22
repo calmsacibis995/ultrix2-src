@@ -1,0 +1,112 @@
+#! /bin/sh
+#	@(#)maketape	1.8  (Ultrix) 4/21/84
+#
+#	@(#)maketape	4.14  4.2BSD 8/14/83
+#
+# This shell file builds a bootable, master distribution
+# tape from a master pack.  The tape is multi-file.  See
+# the code to determine exactly what type.
+#
+# ######################### NOTICE #######################################
+# TO BE RUN ON LIMBO;
+#	The RM05 drive 0 must be a valid 4.2 system (a devo system is fine).
+#	The RM05 drive 1 must have the Ultrix master pack loaded.
+#	The RK07 drive 0 must be loaded with the pack containing the
+#		the image file of the miniroot.  The mini-root is copied
+#		from the b partition (swap) of the RM05 Ultrix master,
+#		to a file named mini.image in the c partition of the RK07,
+#		which is mounted as /mini.  Use the dd comand:
+#		  dd if=/dev/rhp1b of=/mini/mini.image bs=20b count=300
+#	The tape drive must have a tape loaded with a write ring in it.
+#
+#	THIS IS NOT DONE RIGHT.  THERE SHOULD BE ONE MASTER.  Fix raw I/O.
+#							aps.
+# ########################################################################
+#
+miniroot=hp1b
+#
+trap "rm -f /tmp/tape.$$; exit" 0 1 2 3 13 15
+#
+echo "Ultrix System Master Distribution Tape build procedure."
+echo
+echo "Type a return if the a 2400 foot tape with write ring installed"
+echo -n "is loaded on the tape drive and the drive is on-line: "
+read x
+mt rew
+echo -n "Starting procedure at "
+date
+echo "."
+#
+# Be safe and unmount the master filesystems and
+# remount, read-only.
+echo "Remounting master Ultrix filesystems, read-only."
+# umount /dev/r${miniroot} 2> /dev/null
+umount /dev/hp1g /dev/hp1h 2> /dev/null
+umount /dev/hp1a 2> /dev/null
+mount -r /dev/hp1a /Ultrix
+mount -r /dev/hp1g /Ultrix/usr
+sync
+#
+echo "Collecting tape resident standalone programs into a tp image."
+cd /Ultrix/tp
+tp cmf /tmp/tape.$$ boot copy format
+cd /Ultrix/usr/mdec
+echo "Placing tape boots and standalone program tp image onto tape."
+cat tsboot htboot tmboot mtboot utboot noboot noboot /tmp/tape.$$ | \
+	dd of=/dev/rmt12 bs=512 conv=sync
+cd /Ultrix
+sync
+#
+echo "Adding dd image of mini-root file system"
+dd if=/dev/r${miniroot} of=/dev/rmt12 bs=20b count=300 conv=sync
+#
+echo "Adding full dump of root file system"
+/etc/dump 0f /dev/rmt12 /dev/rhp1a
+#
+echo "Adding tar image of the kernel objects"
+cd /Ultrix/usr/sys; tar cfk /dev/rmt12 .
+#
+echo "Add tar image of /Ultrix/usr"
+cd /Ultrix/usr; tar cfk /dev/rmt12 adm bin dict \
+	guest hosts include lib local mdec msgs \
+	preserve pub skel spool tmp ucb
+#
+echo "Done, rewinding first tape"
+mt offl
+echo -n "Mount second tape and hit return when ready"; read x
+#
+echo "Adding on-line manuals."
+cd /Ultrix/usr ; tar cfk /dev/rmt12 man
+#
+echo "Adding games."
+cd /Ultrix/usr ; tar cfk /dev/rmt12 games
+#
+echo "Adding documentation."
+cd /Ultrix/usr ; tar cfk /dev/rmt12 doc
+#
+cd /Ultrix/usr ; tar ckf /dev/rmt12 new
+#
+# Note that the vfont is usually in /usr/lib but it is moved
+# out so as not to be picked up on first tape's tar of /usr/lib.
+echo "Adding varian fonts"
+cd /Ultrix/usr; tar ckf /dev/rmt12 vfont
+# #
+# Note that the learn scripts are usually in /usr/lib/learn but it is moved 
+#out so as not to be picked up on the first tape's tar of /usr/lib.
+echo "Adding learn scripts."
+cd /Ultrix/usr ; tar ckf /dev/rmt12 learn
+##
+#Note that the lisp manual is usually in /usr/lib but it is moved
+#out so as not to be picked up on the first tape's tar of /usr/lib.
+echo "adding the lisp manual"
+cd /Ultrix/usr; tar ckf /dev/rmt12 lisp
+cd /
+echo "Unmounting filesystems."
+sync
+# umount /dev/hp1g
+# umount /dev/hp1a
+#
+echo  -n "Done, rewinding second tape "
+date
+echo "."
+mt offl

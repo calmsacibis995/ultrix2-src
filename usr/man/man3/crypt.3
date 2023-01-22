@@ -1,0 +1,47 @@
+.\" Last modified by MJT on 26-Aug-85  23
+.\"  Repaired beginning matter to work right in whatis database
+.TH crypt 3 
+.SH NAME
+crypt, encrypt \- password encryption routine
+.SH SYNTAX
+.nf
+.B char *crypt(key, salt)
+.B char *key, *salt;
+.PP
+.B encrypt(block)
+.B char *block;
+.fi
+.SH DESCRIPTION
+The
+.PN crypt
+routine is the password encryption routine.
+.PP
+The first argument to
+.PN crypt
+is normally a user's typed password.
+The second is a 2-character string chosen from the
+set [a-zA-Z0-9./].
+The
+.I salt
+string is used to perturb the hashing algorithm in one of 4096
+different ways, after which the password
+is used as the key to encrypt repeatedly a constant string.
+The returned value points to the encrypted password,
+in the same alphabet as the salt.
+The first two characters are the salt itself.
+.PP
+The
+.PN encrypt
+entry is a character array of length 64
+containing 0's and 1's.
+The argument array is modified in place
+to a similar array
+representing the bits of the argument after having been
+subjected to the hashing algorithm using the key set by
+.PN crypt.
+.SH RESTRICTIONS
+The return value
+points to static data whose content is overwritten
+by each call.
+.SH "SEE ALSO"
+login(1), passwd(1), yppasswd(1yp), getpass(3), passwd(5), passwd(5yp) 

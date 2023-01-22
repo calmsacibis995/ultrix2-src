@@ -1,0 +1,370 @@
+.TH ypclnt 3yp
+.SH NAME
+ypclnt \- yp_get_default_domain, yp_bind, yp_unbind, yp_match, yp_first,
+yp_next, yp_all, yp_order, yp_master, yperr_string, ypprot_err 
+\- Yellow Pages client package
+.SH SYNTAX
+.ft B
+.nf
+#include <rpcsvc/ypclnt.h>
+.sp .5
+yp_get_default_domain(outdomain);
+char **outdomain;
+.sp .5
+yp_bind(indomain);
+char *indomain;
+.sp .5
+void yp_unbind(indomain)
+char *indomain;
+.sp .5
+yp_match(indomain, inmap, inkey, inkeylen, outval, outvallen)
+char *indomain;
+char *inmap;
+char *inkey;
+int inkeylen;
+char **outval;
+int *outvallen;
+.sp .5
+yp_first(indomain, inmap, outkey, outkeylen, outval, outvallen)
+char *indomain;
+char *inmap;
+char **outkey;
+int *outkeylen;
+char **outval;
+int *outvallen;
+.sp .5
+yp_next(indomain, inmap, inkey, inkeylen, outkey, outkeylen, outval, outvallen);
+char *indomain;
+char *inmap;
+char *inkey;
+int inkeylen;
+char **outkey;
+int *outkeylen;
+char **outval;
+int *outvallen;
+.sp .5
+yp_all(indomain, inmap, incallback);
+char *indomain;
+char *inmap;
+struct ypall_callback incallback;
+.sp .5
+yp_order(indomain, inmap, outorder);
+char *indomain;
+char *inmap;
+int *outorder;
+.sp .5
+yp_master(indomain, inmap, outname);
+char *indomain;
+char *inmap;
+char **outname;
+.sp .5
+char *yperr_string(incode)
+int incode;
+.sp .5
+ypprot_err(incode)
+unsigned int incode;
+.fi
+.IX  "yp_bind function"  ""  "\fLyp_bind\fP \(em yellow pages client interface"
+.IX  "yp_get_default_domain function"  ""  "\fLyp_get_default_domain\fP \(em yellow pages client interface"
+.IX  "yp_unbind function"  ""  "\fLyp_unbind\fP \(em yellow pages client interface"
+.IX  "yp_match function"  ""  "\fLyp_match\fP \(em yellow pages client interface"
+.IX  "yp_first function"  ""  "\fLyp_first\fP \(em yellow pages client interface"
+.IX  "yp_all function"  ""  "\fLyp_all\fP \(em yellow pages client interface"
+.IX  "yp_next function"  ""  "\fLyp_next\fP \(em yellow pages client interface"
+.IX  "yp_order function"  ""  "\fLyp_order\fP \(em yellow pages client interface"
+.IX  "yp_master function"  ""  "\fLyp_master\fP \(em yellow pages client interface"
+.IX  "yp_next function"  ""  "\fLyp_next\fP \(em yellow pages client interface"
+.IX  "yperr_string function"  ""  "\fLyperr_string\fP \(em yellow pages client interface"
+.IX  "ypprot_err function"  ""  "\fLypprot_err\fP \(em yellow pages client interface"
+.IX  "yellow pages client interface"
+.SH DESCRIPTION
+This package of functions provides an interface to the 
+yellow pages (YP) network lookup service.  The package can be loaded 
+from the standard library, /lib/libc.a.
+Refer to ypfiles(5yp) and ypserv(8yp) for an overview of the yellow
+pages, including
+the definitions of 
+.B map
+and 
+.B domain,
+and for a description of the servers, databases, 
+and commands that constitute the YP application.
+.LP
+All input parameters names begin with 
+.B in.
+Output parameters begin with 
+.B out.  
+Output parameters of type
+.B "char **"
+should be addresses of uninitialized character pointers.
+The YP client package allocates memory using
+malloc(3),
+This memory can be freed if the user code has no continuing need for it.  
+For each
+.B outkey 
+and
+.B outval,
+two extra bytes of memory are allocated at the end that contain
+NEWLINE and NULL, respectively,
+but these two bytes are not reflected in
+.B outkeylen 
+or
+.B outvallen.
+The
+.B indomain
+and 
+.B inmap
+strings must be non-null and null-terminated.  String
+parameters that are accompanied by a count parameter cannot be null, but
+can point to null strings, with the count parameter indicating this.
+Counted strings need not be null-terminated.
+.LP
+All functions of type \fBint\fP
+return 0 if they succeed, or a failure code (YPERR_ xxxx )
+if they do not succeed.  Failure codes are described under
+.SH DIAGNOSTICS.
+The YP lookup calls require a map name and a domain name.
+It is assumed that the client process knows the name of the map of 
+interest.  Client processes 
+fetch the node's default domain by calling 
+.B yp_get_default_domain(),
+and use the returned
+.B outdomain 
+as the
+.B indomain 
+parameter to successive YP calls.
+.LP
+To use the YP services, the client process must be bound to a YP 
+server that serves the appropriate domain. The binding is accomplished
+via 
+.B yp_bind.
+Binding need not be done explicitly by user code; it 
+is done automatically whenever a YP lookup function is called.
+The 
+.B yp_bind
+function can be called directly for processes 
+that make use of a backup strategy in cases when
+YP services are not available.
+.LP
+Each binding allocates one client process socket descriptor;
+each bound domain requires one socket descriptor.  Multiple 
+requests to the same domain use that same descriptor.
+The
+.B yp_unbind()
+function is available at the client interface for processes that 
+explicitly manage their socket descriptors while accessing 
+multiple domains.  The call to 
+.B yp_unbind()
+makes the domain unbound, 
+and frees all per-process and per-node resources used to bind it.
+.LP
+If an RPC failure results upon use of a binding, that domain will be
+unbound automatically.  At that point, the ypclnt layer will retry 
+forever or until the operation succeeds, provided that 
+.B ypbind
+is running, and either
+.IP \(bu
+The client process can not bind a server for the proper domain, or
+.IP \(bu
+RPC requests to the server fail.  
+.LP
+The ypclnt layer will return control to the user code, either with an
+error code, or with a success code and any results if:
+.IP \(bu
+An error is not RPC-related
+.IP \(bu
+The ypbind function is not running
+.IP \(bu
+A bound ypserv process returns any answer (success or failure)
+.LP
+The
+.B yp_match
+function returns the value associated with a passed key.  This key 
+must be exact; no pattern matching is available.
+.LP
+The
+.B yp_first
+function returns the first key-value pair from the named map in the
+named domain.
+.LP
+The
+.B yp_next()
+function returns the next key-value pair in a named map.  The 
+.B inkey 
+parameter should be the
+.B outkey
+returned from an initial call to 
+.B yp_first()
+(to get the second key-value pair) or the one returned from the nth call to 
+.B yp_next()
+(to get the nth + second key-value pair).
+.LP
+The concept of first and of next is particular 
+to the
+structure of the YP map being processed; there is no relation in
+retrieval order to either the lexical order within any original (non-YP)
+data base, or to any obvious numerical sorting order on the keys, 
+values, or key-value pairs.  The only ordering guarantee made is 
+that if the 
+.B yp_first()
+function is called on a particular map, and then the
+.B yp_next()
+function is repeatedly called on the same map at the same server 
+until the call fails with a reason of 
+YPERR_NOMORE, 
+every entry in the data base will be seen exactly once.  
+Further, if the same sequence of operations is performed on the same 
+map at the same server, the entries will be seen in the same order.  
+.LP
+Under conditions of heavy server load or server failure, it
+is possible for the domain to become unbound, then bound
+once again (perhaps to a different server) while a client is running.  
+This can cause a break in one of the enumeration rules;
+specific entries may be seen twice by the client, or not at all.
+This approach protects the client from error messages that would
+otherwise be returned in the midst of the enumeration.
+Enumerating all 
+entries in a map is accomplished with the
+.B yp_all
+function.
+.LP
+The
+.B yp_all
+function provides a way to transfer an entire map
+from server to client in a single request using TCP 
+(rather than UDP as with other functions in this package).
+The entire transaction take place as a single RPC request and
+response.
+The 
+.B yp_all
+function can be used like any other YP procedure, to 
+identify the map in the normal manner, and to supply the name of a
+function that will be called to process each key-value pair 
+within the map.  Returns from the call to
+.B yp_all
+occur only when the transaction is completed 
+(successfully or unsuccessfully), or when the
+.I ``foreach''
+function decides that it doesn't want to see any more key-value pairs.
+.LP
+The third parameter to
+.B yp_all
+is 
+.br
+.nf
+	struct ypall_callback *incallback {
+		int (*foreach)();
+		char *data;
+	};
+.fi
+.LP
+The function
+.I foreach
+is called 
+.br
+.sp
+.nf
+	\fBforeach(instatus, inkey, inkeylen, inval, invallen, indata);
+	int instatus;
+	char *inkey;
+	int inkeylen;
+	char *inval;
+	int invallen;
+	char *indata;\fP
+.fi
+.br
+.LP
+The
+.B instatus
+parameter will hold one of the return status values defined in 
+\fL<rpcsvc/yp_prot.h>\fP \(em either \fLYP_TRUE\fP or an error code.  (See 
+.B ypprot_err,
+below, for a function that converts a YP protocol error code to a ypclnt 
+layer error code.)
+.LP
+The key and value parameters are somewhat different than defined in the 
+syntax section above.  First, the memory pointed to by the 
+.B inkey
+and 
+.B inval
+parameters is private to the 
+.B yp_all
+function, and is overwritten with the arrival of each new key-value pair.
+It is the responsibility of the 
+.B foreach 
+function to do something useful with the contents of that memory, but it
+does not own the memory itself.  Key and value objects 
+presented to the
+.B foreach 
+function look exactly as they do in the server's map \(em if they
+were not newline-terminated or null-terminated in the map, they won't be
+here either.
+.LP
+The
+.B indata
+parameter is the contents of the 
+.B incallback->data
+element passed to
+.B yp_all.
+The
+.B data
+element of the callback structure may be used to share state information
+between the 
+.B foreach
+function and the mainline code.  Its use is optional, 
+and no part of the YP client package inspects its contents.
+.LP
+The 
+.B foreach
+function returns a Boolean value.  It should return zero to indicate that it
+wants to be called again for further received key-value pairs, or
+non-zero to stop the flow of key-value pairs.  If
+.B foreach
+returns a non-zero value, it is not called again; the functional
+value of
+.B yp_all
+is then 0.
+.LP
+The
+.B yp_order
+function returns the order number for a map.
+.LP
+The
+.B yp_master
+function returns the machine name of the master YP server for a map.
+.LP
+The
+.B yperr_string
+function returns a pointer to an error message string that is
+null-terminated but contains no period or newline.
+.LP
+The
+.B ypprot_err
+function takes a YP protocol error code as input, and returns a ypclnt
+layer error code, which may be used in turn as an input to 
+.B yperr_string .
+.SH DIAGNOSTICS
+All integer functions return 0 if the requested operation is successful,
+or one of the following errors if the operation fails.
+.IP
+.ta \w'#define\0'u +\w'YPERR_BADARGS\0\0'u +\w'1\0\0'u
+.nf
+#define YPERR_BADARGS	1	/* args to function are bad */
+#define YPERR_RPC	2	/* RPC failure - domain has been unbound */
+#define YPERR_DOMAIN	3	/* can't bind to server on this domain */
+#define YPERR_MAP	4	/* no such map in server's domain */
+#define YPERR_KEY	5	/* no such key in map */
+#define YPERR_YPERR	6	/* internal yp server or client error */
+#define YPERR_RESRC	7	/* resource allocation failure */
+#define YPERR_NOMORE	8	/* no more records in map database */
+#define YPERR_PMAP	9	/* can't communicate with portmapper */
+#define YPERR_YPBIND	10	/* can't communicate with ypbind */
+#define YPERR_YPSERV	11	/* can't communicate with ypserv */
+#define YPERR_NODOM	12	/* local domain name not set */
+.fi
+.SH FILES
+/usr/include/rpcsvc/ypclnt.h
+.br
+/usr/include/rpcsvc/yp_prot.h
+.SH SEE ALSO
+ypfiles(5yp), ypserv(8yp)

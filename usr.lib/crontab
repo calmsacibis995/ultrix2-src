@@ -1,0 +1,26 @@
+# @(#)crontab	1.6 (ULTRIX) 5/8/86
+#
+#BIGVAX crontab starts here
+
+# periodic things
+0,15,30,45 * * * * (echo '	' `date`; echo '') >/dev/console
+0,15,30,45 * * * * /usr/lib/atrun
+
+# daily stuff
+30 4 * * * /etc/sa -s > /dev/null
+0 4 * * * calendar -
+15 4 * * * find /usr/preserve -mtime +7 -a -exec rm -f {} \;
+20 4 * * * find /usr/msgs -mtime +21 -a ! -perm 444 -a ! -name bounds -a -exec rm -f {} \;
+5 4 * * * sh /usr/adm/newsyslog
+
+#END BIGVAX
+
+#MICROVAX CRONTAB STARTS HERE
+
+#0,15,30,45 * * * * /usr/lib/atrun
+#15 4 * * * find /usr/preserve -mtime +7 -a -exec rm -f {} \;
+#5 4 * * * sh /usr/adm/newsyslog
+##Turn on the "find /usr/man/cat" if /usr/man directory exists and man(1) is used
+#12 2 1 * * find /usr/man/cat[0-9] -atime +28 -a -exec rm {} \;
+
+#END MICROVAX

@@ -1,0 +1,167 @@
+#! /bin/sh
+#	11/3/84	(Ultrix)	@(#)makerk07	1.1
+#	@(#)maketape	1.7  (Ultrix) 3/2/84
+#
+#	@(#)maketape	4.14  4.2BSD 8/14/83
+#
+# This shell file builds a bootable, master distribution
+# rk07 distrabution
+#
+# ######################### NOTICE #######################################
+#	The RM05 drive 0 must be a valid Ultrix system (a devo system is fine).
+#	The RM05 drive 1 must have the Ultrix tape master pack loaded.
+#
+#	The mktapeandrk07master script will convert a Master to this
+#		form
+#
+# ########################################################################
+#
+MASTER=/Ultrix
+DEST=/mnt
+START=`pwd`
+trap "rm -f /tmp/tape.$$; exit" 0 1 2 3 13 15
+#
+echo "Ultrix System Master Distribution rk07 build procedure."
+echo
+echo -n "Starting procedure at "
+date
+echo "."
+echo "Remounting master Ultrix filesystems, read-only."
+umount /dev/hp1g 2> /dev/null
+umount /dev/hp1a 2> /dev/null
+mount -r /dev/hp1a ${MASTER}
+mount -r /dev/hp1g ${MASTER}/usr || exit 1
+sync
+if test -d $MASTER/usr/lib/learn
+then
+	echo "This pack has not been converted for making tapes and rk07s"
+	echo -n "Shall I do the conversion? "
+	read x
+	if test $x = "y"
+	then
+		umount /dev/hp1g 2> /dev/null
+		umount /dev/hp1a 2> /dev/null
+		mount /dev/hp1a ${MASTER}
+		mount /dev/hp1g ${MASTER}/usr
+		mv ${MASTER}/usr/lib/learn ${MASTER}/usr/learn
+		mv ${MASTER}/usr/lib/vfont ${MASTER}/usr/vfont
+		mv ${MASTER}/usr/lib/lisp ${MASTER}/usr/lisp
+		umount /dev/hp1g 2> /dev/null
+		umount /dev/hp1a 2> /dev/null
+		mount -r /dev/hp1a ${MASTER}
+		mount -r /dev/hp1g ${MASTER}/usr || exit 1
+		echo "Done with the conversion"
+	else
+		exit 1
+	fi
+fi
+
+# done with generic now do the work in the list
+cd ${MASTER}
+if test $DOPACK
+then
+echo -n
+else
+PACK1=pack1
+PACK2=pack2
+PACK3=pack3
+fi
+for i in $PACK1 $PACK2 $PACK3
+do
+case $i in
+	pack1|root)
+echo "spin up a blank rk07.  Hit return when it"
+echo -n "is loaded on the drive and the drive is on-line: "
+read x
+sync
+#
+echo "building root file system"
+newfs rhk0a rk07
+echo "Adding full dump of root file system"
+mount /dev/hk0a ${DEST}
+/etc/dump 0f - /dev/rhp1a | ( cd ${DEST};/etc/restore rf - )
+#
+# create a usr/mdec in the root so the backup procedure will work.
+#
+mkdir ${DEST}/usr/mdec
+cp ${MASTER}/usr/mdec/*hk* ${DEST}/usr/mdec
+#
+# Build the /usr filesystem
+#
+newfs rhk0g rk07
+#
+mount /dev/hk0g ${DEST}/usr
+#
+echo "Add tar image of ${MASTER}/usr"
+cd ${MASTER}/usr; tar ckf - adm bin dict \
+	guest hosts include lib local mdec msgs \
+	 preserve pub skel spool tmp ucb | ( cd ${DEST}/usr;tar xpf -)
+#  Make the sys dir for the symbolic link
+mkdir ${DEST}/usr/sys
+#
+cd /
+# umount the pack
+umount /dev/hk0g
+umount /dev/hk0a
+#
+sync
+#
+fsck /dev/rhk0a /dev/rhk0g
+df /dev/rhk0a /dev/rhk0g
+#
+echo "Done, remove the first pack and label it root 1/3 "
+	echo -n;;
+	pack2|sys)
+echo -n "Spin up the second pack and hit return when ready"
+read x
+#
+export DEST MASTER
+if sh ${START}/rk07root
+then
+	echo done with miniroot.
+else
+	echo rk07root
+	exit -1
+fi
+#
+echo "Adding tar image of the kernel objects"
+mount /dev/hk0a ${DEST}
+cd ${MASTER}/usr; tar cfk - sys | (cd ${DEST};tar xpf - )
+#
+sync
+cd /
+umount /dev/hk0a
+fsck /dev/rhk0a
+df /dev/rhk0a
+#
+echo "Done with User pack.  Label system images"
+	echo -n;;
+	add|pack3|contrib)
+echo -n "Spin up the third pack and hit return when ready"
+read x
+#
+export DEST MASTER
+if sh ${START}/rk07root
+then
+	echo done with miniroot.
+else
+	echo rk07root
+	exit -1
+fi
+#
+# build a g file system for the additional software to live in.
+#
+#
+echo "Adding additional software"
+cd ${MASTER}/usr 
+tar ckf /dev/rhk0g man games documentation new vfont learn lisp
+cd /
+sync
+fsck /dev/rhk0a
+echo  "Done, spin down the third pack and label it ????? "
+	echo -n;;
+esac
+done
+echo	"That's all folks!"
+date
+echo "."

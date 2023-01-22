@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+#	ULTBASE020.scp
+#		subset control program for the ULTRIX BASE subset.
+#
+case ${ACT} in
+POST_[AL])
+	cat ./usr/lib/fortrtl1 ./usr/lib/fortrtl2 > ./usr/lib/fortrtl.a
+	ranlib ./usr/lib/fortrtl.a
+	rm -f ./usr/lib/fortrtl[12]
+	;;
+esac

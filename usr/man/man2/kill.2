@@ -1,0 +1,69 @@
+.TH kill 2
+.\" Last modified by BAM on 2-Aug-85  1000  
+.\"
+.SH NAME
+kill \- send signal to a process
+.SH SYNTAX
+.ft B
+kill(pid, sig)
+.br
+int pid, sig;
+.SH DESCRIPTION
+The
+.PN kill
+system call sends the signal \fIsig\fP
+to a process, specified by the process number
+.IR pid .
+The
+.I sig
+may be one of the signals specified in sigvec(2),
+or it may be 0, in which case
+error checking is performed but no
+signal is actually sent. 
+This can be used to check the validity of
+.IR pid .
+.PP
+The sending and receiving processes must
+have the same effective user ID, otherwise
+this call is restricted to the super-user.
+A single exception is the signal SIGCONT which may always be sent
+to any child or grandchild of the current process.
+.PP
+If the process number is 0,
+the signal is sent to all other processes in the
+sender's process group; this is a variant of killpg(2).
+.PP
+If the process number is \-1, and the user is the super-user,
+the signal is broadcast universally
+except to system processes
+and the process sending the signal.
+.PP
+Processes may send signals to themselves.
+.PP
+Upon successful completion, a value of 0 is returned.
+Otherwise, a value of \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ENVIRONMENT
+Differs from the System V version when pid = -1
+and the effective user ID of the sender is not the superuser.
+In this case sig should be, but is not, sent to all processes,
+excluding special system process, whose real user ID is 
+equal to the effective user ID of the sender.
+.SH DIAGNOSTICS
+The
+.PN kill
+system call will fail and no signal will be sent if any of the following
+occur:
+.TP 15
+[EINVAL]
+\fISig\fP is not a valid signal number.
+.TP 15
+[ESRCH]
+No process can be found corresponding to that specified by \fIpid\fP.
+.TP 15
+[EPERM]
+The sending process is not the super-user and its effective
+user id does not match the effective user-id of the receiving process.
+.SH "SEE ALSO"
+getpgrp(2), getpid(2), killpg(2), sigvec(2)

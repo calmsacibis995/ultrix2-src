@@ -1,0 +1,59 @@
+    A new release of the UCI version of the Rand Message Handling (MH)
+    system is available for distribution.  This release of MH is called 
+
+				  MH 6.5
+
+    There are a lot of changes between MH.6 and MH 6.5; a lot of
+    performance enhancements were made, there's also a lot of support
+    for distributed mail (personal mail and bulletin bboards).
+
+    Here are the details:  
+
+	- MH is in the public-domain
+	- MH runs on a number of versions of UNIX (4.[123]BSD, V7, SYS5, and
+	  related variants, e.g., HPUX) [sorry, no support for SYS3.]
+	- MH runs on top of a number of mail transport systems
+	  (MMDF-{I,II}, SendMail, stand-alone (with UUCP support))
+
+    Although MH is not "supported" per se, it does have a bug-reporting
+    address, Bug-MH@ICS.UCI.EDU.  Bug reports (and fixes) are welcome, by
+    the way.  There are also two ARPA Internet discussion groups:
+    MH-Users@ICS.UCI.EDU and MH-Workers@ICS.UCI.EDU (somewhat analogous in
+    charter to Info-UNIX and UNIX-Wizards).  
+
+    There are two ways to get a distribution:
+
+    1.  If you can FTP to the ARPA Internet, use anonymous FTP to
+    louie.udel.edu [10.0.0.96] and retrieve the file portal/mh-6.tar.
+    This is a tar image (approx 4MB).  The file portal/mh-6.tar.C is
+    the tar image after being run through the compact program (approx
+    2.3MB).  The file portal/mh-6.tar.Z is the tar image after being run
+    through the compress program (approx 1.5MB).
+
+    2.  You can send $75 to the address below.  This covers the cost of
+    a magtape, handling, and shipping.  In addition, you'll get a
+    laser-printed hard-copy of the entire MH documentation set.  Be sure
+    to include your USPS address with your check.  Checks should be made
+    payable to 
+
+		Regents of the University of California
+
+    and must be drawn on U.S.  funds.  It's also a good idea (though not
+    mandatory) to send a computer mail message to "Bug-MH@ICS.UCI.EDU" when
+    you send your check via USPS to ensure minimal turn-around time.
+    The distribution address is:  
+
+	Support Group 
+	Attn: MH distribution
+	Department of Information and Computer Science
+	University of California, Irvine
+	Irvine, CA  92717
+
+	714/856-7553
+
+    Sadly, if you just want the hard-copies of the documentation, you
+    still have to pay the $75.00.  The tar image has the documentation
+    source (the manual is in roff format, but the rest are in TeX
+    format).  
+
+/mtr

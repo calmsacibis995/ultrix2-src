@@ -1,0 +1,106 @@
+#! /bin/sh
+#	11/3/84 (Ultrix) @(#)getrl	1.4	1.2
+#
+#	From: get	1.5  (Ultrix)  1/25/84
+#	@(#)get	4.13  4.2BSD 7/19/83
+#
+# Shell script to build a mini-root file system for the RL02
+# distribution.  This mini-root is booted, then copied onto the
+# destination device (using the cproot script), then rebooted
+# on the destination device.  Once there, the script xrl is
+# executed to extract the rest of the distribution from the
+# remaining RL02's.
+#
+#
+# DISTROOT is the root of the distribution master root.
+DISTROOT=/Ultrix
+DISTROOTDEV=rhk0a
+#
+# The shell file that calls this shell file (buildmini)
+# changes directory to the destination of the miniroot.
+if [ `pwd` = '/' ]
+then
+	echo You just '(almost)' destroyed the root
+	exit
+fi
+echo "Starting the build of the miniroot."
+#
+dump 0f - /dev/${DISTROOTDEV} | restore xf -
+cat > cproot <<'EOF'
+#! /bin/sh
+# cproot is a shell file that will copy the RL02 distribution mini-root
+# to the specified device.  It is run from the mini-root.
+# It is run by "dest=nnnn devtype=dddd source=tt cproot"
+#	dest=UNIX device node name of destination device
+#		rb0, ra0, etc.
+#	devtype=device type of the destination type
+#		ra80, rb80, etc.
+#	source=UNIX device node name of the drive containing the
+#	       distribution packs.
+#		rb0, rl0, etc.
+# make root file system and mount
+newfs ${dest} ${devtype}
+sync
+mount /dev/${dest} /mnt
+cd /
+# dump to the root from the mini-root
+dump 0f - /dev/r${source}a | (cd /mnt ; restore xf -)
+sync; sync
+umount /mnt
+sync
+echo "Type sync; halt and then reboot new root."
+EOF
+chmod +x cproot
+#
+cat >xrl <<'EOF'
+#! /bin/sh
+# This file is run from the main root once it is created and
+# rebooted.  It will creat a g partition, mount it as /usr,
+# and extract the rest of the RL's, in place (filling in
+# the real root and getting the usr stuff).
+# This will be a shell file that can extract all the RL's.
+# It is run by "dest=nnnn devtype=dddd source=tt xlr"
+#	dest=UNIX device node name of destination device
+#		rb0, ra0, etc.
+#	devtype=device type of the destination type
+#		ra80, rb80, etc.
+#	source=UNIX device node name of the drive containing the
+#	       distribution packs.
+#		rb0, rl0, etc.
+newfs ${dest} ${devtype}
+sync
+mount /dev/${dest} /usr
+cd /
+sync
+echo "Mount RL02 Distribution Pack number 1."
+echo -n "Hit carriage return when pack is spinning and ready light comes on.   "
+read x
+dd if=/dev/r${source}c of=/dev/null bs=1b count=1 >/dev/null 2>/dev/null
+tar xpf /dev/r${source}c
+sync
+echo "Done with pack number 1."
+echo ""
+echo "Mount RL02 Distribution Pack number 2."
+echo -n "Hit carriage return when pack is spinning and ready light comes on.   "
+read x
+dd if=/dev/r${source}c of=/dev/null bs=1b count=1 >/dev/null 2>/dev/null
+tar xpf /dev/r${source}c
+sync
+echo "Done with pack number 2."
+echo ""
+echo "Mount RL02 Distribution Pack number 3."
+echo -n "Hit carriage return when pack is spinning and ready light comes on.   "
+read x
+dd if=/dev/r${source}c of=/dev/null bs=1b count=1 >/dev/null 2>/dev/null
+tar xpf /dev/r${source}c
+sync
+echo "Done with pack number 3."
+echo ""
+echo ""
+echo "All data has been extracted from the Distribution Packs."
+sync
+EOF
+chmod +x xrl
+cd /
+sync
+echo "Miniroot build is complete."

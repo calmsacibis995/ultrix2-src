@@ -1,0 +1,37 @@
+.TH biod 8nfs
+.SH NAME
+biod \- Start NFS asynchronous block I/O daemons
+.SH SYNTAX
+.nf
+.ft B
+.B /etc/biod [ndaemons]
+.fi
+.SH DESCRIPTION
+.IX  "network file system"  "biod daemon"  ""  "\fLbiod\fP daemon"
+.IX  "biod daemon"  ""  "\fLbiod\fP daemon"
+.IX  "daemons"  "biod daemon"  ""  "\fLbiod\fP daemon"
+The 
+.B biod
+daemon starts the specified number of asynchronous block I/O daemons.
+The
+.B ndaemons
+argument tells
+.B biod
+how many asynchronous block I/O daemons to start.
+The 
+.B biod
+daemon is only useful to NFS clients.  This command is used by NFS
+clients to perform read-ahead and write-behind of remote file system
+blocks.  Like the 
+nfsd(8nfs) 
+daemon,
+.B biod
+is normally invoked at boot time via the
+/etc/rc.local
+file.
+.SH EXAMPLE
+.EX
+ /etc/biod 2    /* start two biod daemons */     
+.EE
+.SH SEE ALSO
+exports(5nfs), mountd(8nfs), nfsd(8nfs)

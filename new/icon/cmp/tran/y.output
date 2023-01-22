@@ -1,0 +1,5877 @@
+
+state 0
+	$accept : _program $end 
+	decls : _    (2)
+
+	error  shift 3
+	.  reduce 2
+
+	program  goto 1
+	decls  goto 2
+
+state 1
+	$accept :  program_$end 
+
+	$end  accept
+	.  error
+
+
+state 2
+	program :  decls_EOFX 
+	decls :  decls_decl 
+
+	EOFX  shift 4
+	EXTERNAL  shift 12
+	GLOBAL  shift 11
+	PROCEDURE  shift 13
+	RECORD  shift 9
+	.  error
+
+	decl  goto 5
+	record  goto 6
+	proc  goto 7
+	global  goto 8
+	prochead  goto 10
+
+state 3
+	program :  error_decls EOFX 
+	decls : _    (2)
+
+	.  reduce 2
+
+	decls  goto 14
+
+state 4
+	program :  decls EOFX_    (1)
+
+	.  reduce 1
+
+
+state 5
+	decls :  decls decl_    (3)
+
+	.  reduce 3
+
+
+state 6
+	decl :  record_    (4)
+
+	.  reduce 4
+
+
+state 7
+	decl :  proc_    (5)
+
+	.  reduce 5
+
+
+state 8
+	decl :  global_    (6)
+
+	.  reduce 6
+
+
+state 9
+	record :  RECORD_$$11 IDENT LPAREN arglist RPAREN 
+	$$11 : _    (11)
+
+	.  reduce 11
+
+	$$11  goto 15
+
+state 10
+	proc :  prochead_SEMICOL locals initial procbody END 
+	proc :  prochead_error procbody END 
+
+	error  shift 17
+	SEMICOL  shift 16
+	.  error
+
+
+state 11
+	global :  GLOBAL_$$7 idlist 
+	$$7 : _    (7)
+
+	.  reduce 7
+
+	$$7  goto 18
+
+state 12
+	global :  EXTERNAL_$$9 idlist 
+	$$9 : _    (9)
+
+	.  reduce 9
+
+	$$9  goto 19
+
+state 13
+	prochead :  PROCEDURE_$$14 IDENT LPAREN arglist RPAREN 
+	$$14 : _    (14)
+
+	.  reduce 14
+
+	$$14  goto 20
+
+state 14
+	decls :  decls_decl 
+	program :  error decls_EOFX 
+
+	EOFX  shift 21
+	EXTERNAL  shift 12
+	GLOBAL  shift 11
+	PROCEDURE  shift 13
+	RECORD  shift 9
+	.  error
+
+	decl  goto 5
+	record  goto 6
+	proc  goto 7
+	global  goto 8
+	prochead  goto 10
+
+state 15
+	record :  RECORD $$11_IDENT LPAREN arglist RPAREN 
+
+	IDENT  shift 22
+	.  error
+
+
+state 16
+	proc :  prochead SEMICOL_locals initial procbody END 
+	locals : _    (20)
+
+	.  reduce 20
+
+	locals  goto 23
+
+state 17
+	proc :  prochead error_procbody END 
+	procbody : _    (27)
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SEMICOL  reduce 29
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 27
+
+	procbody  goto 24
+	expr  goto 26
+	nexpr  goto 25
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 18
+	global :  GLOBAL $$7_idlist 
+
+	IDENT  shift 96
+	.  error
+
+	idlist  goto 95
+
+state 19
+	global :  EXTERNAL $$9_idlist 
+
+	IDENT  shift 96
+	.  error
+
+	idlist  goto 97
+
+state 20
+	prochead :  PROCEDURE $$14_IDENT LPAREN arglist RPAREN 
+
+	IDENT  shift 98
+	.  error
+
+
+state 21
+	program :  error decls EOFX_    (197)
+
+	.  reduce 197
+
+
+state 22
+	record :  RECORD $$11 IDENT_LPAREN arglist RPAREN 
+
+	LPAREN  shift 99
+	.  error
+
+
+state 23
+	proc :  prochead SEMICOL locals_initial procbody END 
+	locals :  locals_retention idlist SEMICOL 
+	initial : _    (25)
+
+	DYNAMIC  shift 105
+	INITIAL  shift 102
+	LOCAL  shift 103
+	STATIC  shift 104
+	.  reduce 25
+
+	initial  goto 100
+	retention  goto 101
+
+state 24
+	proc :  prochead error procbody_END 
+
+	END  shift 106
+	.  error
+
+
+state 25
+	procbody :  nexpr_SEMICOL procbody 
+
+	SEMICOL  shift 107
+	.  error
+
+
+26: shift/reduce conflict (shift 108, red'n 30) on CONJUNC
+state 26
+	nexpr :  expr_    (30)
+	expr :  expr_CONJUNC expr1a 
+
+	CONJUNC  shift 108
+	.  reduce 30
+
+
+27: shift/reduce conflict (shift 109, red'n 31) on QMARK
+state 27
+	expr :  expr1a_    (31)
+	expr1a :  expr1a_QMARK expr1 
+
+	QMARK  shift 109
+	.  reduce 31
+
+
+state 28
+	expr :  error_    (199)
+
+	.  reduce 199
+
+
+state 29
+	expr1a :  expr1_    (33)
+
+	.  reduce 33
+
+
+30: shift/reduce conflict (shift 115, red'n 35) on TO
+30: shift/reduce conflict (shift 117, red'n 35) on ASSIGN
+30: shift/reduce conflict (shift 114, red'n 35) on AUGACT
+30: shift/reduce conflict (shift 113, red'n 35) on AUGAND
+30: shift/reduce conflict (shift 131, red'n 35) on AUGEQ
+30: shift/reduce conflict (shift 132, red'n 35) on AUGEQV
+30: shift/reduce conflict (shift 133, red'n 35) on AUGGE
+30: shift/reduce conflict (shift 134, red'n 35) on AUGGT
+30: shift/reduce conflict (shift 135, red'n 35) on AUGLE
+30: shift/reduce conflict (shift 136, red'n 35) on AUGLT
+30: shift/reduce conflict (shift 137, red'n 35) on AUGNE
+30: shift/reduce conflict (shift 138, red'n 35) on AUGNEQV
+30: shift/reduce conflict (shift 139, red'n 35) on AUGSEQ
+30: shift/reduce conflict (shift 140, red'n 35) on AUGSGE
+30: shift/reduce conflict (shift 141, red'n 35) on AUGSGT
+30: shift/reduce conflict (shift 142, red'n 35) on AUGSLE
+30: shift/reduce conflict (shift 143, red'n 35) on AUGSLT
+30: shift/reduce conflict (shift 144, red'n 35) on AUGSNE
+30: shift/reduce conflict (shift 130, red'n 35) on CARETASGN
+30: shift/reduce conflict (shift 120, red'n 35) on CONCATASGN
+30: shift/reduce conflict (shift 122, red'n 35) on DIFFASGN
+30: shift/reduce conflict (shift 127, red'n 35) on INTERASGN
+30: shift/reduce conflict (shift 121, red'n 35) on LCONCATASGN
+30: shift/reduce conflict (shift 125, red'n 35) on MINUSASGN
+30: shift/reduce conflict (shift 129, red'n 35) on MODASGN
+30: shift/reduce conflict (shift 124, red'n 35) on PLUSASGN
+30: shift/reduce conflict (shift 119, red'n 35) on REVASSIGN
+30: shift/reduce conflict (shift 118, red'n 35) on REVSWAP
+30: shift/reduce conflict (shift 112, red'n 35) on SCANASGN
+30: shift/reduce conflict (shift 128, red'n 35) on SLASHASGN
+30: shift/reduce conflict (shift 126, red'n 35) on STARASGN
+30: shift/reduce conflict (shift 116, red'n 35) on SWAP
+30: shift/reduce conflict (shift 123, red'n 35) on UNIONASGN
+state 30
+	expr1 :  expr2_    (35)
+	expr1 :  expr2_op1 expr1 
+	expr1 :  expr2_op1a expr1 
+	expr1 :  expr2_SCANASGN expr1 
+	expr1 :  expr2_AUGAND expr1 
+	expr1 :  expr2_AUGACT expr1 
+	expr2 :  expr2_TO expr3 
+	expr2 :  expr2_TO expr3 BY expr3 
+
+	TO  shift 115
+	ASSIGN  shift 117
+	AUGACT  shift 114
+	AUGAND  shift 113
+	AUGEQ  shift 131
+	AUGEQV  shift 132
+	AUGGE  shift 133
+	AUGGT  shift 134
+	AUGLE  shift 135
+	AUGLT  shift 136
+	AUGNE  shift 137
+	AUGNEQV  shift 138
+	AUGSEQ  shift 139
+	AUGSGE  shift 140
+	AUGSGT  shift 141
+	AUGSLE  shift 142
+	AUGSLT  shift 143
+	AUGSNE  shift 144
+	CARETASGN  shift 130
+	CONCATASGN  shift 120
+	DIFFASGN  shift 122
+	INTERASGN  shift 127
+	LCONCATASGN  shift 121
+	MINUSASGN  shift 125
+	MODASGN  shift 129
+	PLUSASGN  shift 124
+	REVASSIGN  shift 119
+	REVSWAP  shift 118
+	SCANASGN  shift 112
+	SLASHASGN  shift 128
+	STARASGN  shift 126
+	SWAP  shift 116
+	UNIONASGN  shift 123
+	.  reduce 35
+
+	op1  goto 110
+	op1a  goto 111
+
+state 31
+	expr2 :  expr3_    (70)
+
+	.  reduce 70
+
+
+32: shift/reduce conflict (shift 145, red'n 73) on BAR
+32: shift/reduce conflict (shift 159, red'n 73) on EQUIV
+32: shift/reduce conflict (shift 147, red'n 73) on LEXEQ
+32: shift/reduce conflict (shift 148, red'n 73) on LEXGE
+32: shift/reduce conflict (shift 149, red'n 73) on LEXGT
+32: shift/reduce conflict (shift 150, red'n 73) on LEXLE
+32: shift/reduce conflict (shift 151, red'n 73) on LEXLT
+32: shift/reduce conflict (shift 152, red'n 73) on LEXNE
+32: shift/reduce conflict (shift 160, red'n 73) on NOTEQUIV
+32: shift/reduce conflict (shift 153, red'n 73) on NUMEQ
+32: shift/reduce conflict (shift 154, red'n 73) on NUMGE
+32: shift/reduce conflict (shift 155, red'n 73) on NUMGT
+32: shift/reduce conflict (shift 156, red'n 73) on NUMLE
+32: shift/reduce conflict (shift 157, red'n 73) on NUMLT
+32: shift/reduce conflict (shift 158, red'n 73) on NUMNE
+state 32
+	expr3 :  expr4_    (73)
+	expr3 :  expr4_BAR expr3 
+	expr4 :  expr4_op4 expr5 
+
+	BAR  shift 145
+	EQUIV  shift 159
+	LEXEQ  shift 147
+	LEXGE  shift 148
+	LEXGT  shift 149
+	LEXLE  shift 150
+	LEXLT  shift 151
+	LEXNE  shift 152
+	NOTEQUIV  shift 160
+	NUMEQ  shift 153
+	NUMGE  shift 154
+	NUMGT  shift 155
+	NUMLE  shift 156
+	NUMLT  shift 157
+	NUMNE  shift 158
+	.  reduce 73
+
+	op4  goto 146
+
+33: shift/reduce conflict (shift 162, red'n 75) on CONCAT
+33: shift/reduce conflict (shift 163, red'n 75) on LCONCAT
+state 33
+	expr4 :  expr5_    (75)
+	expr5 :  expr5_op5 expr6 
+
+	CONCAT  shift 162
+	LCONCAT  shift 163
+	.  reduce 75
+
+	op5  goto 161
+
+34: shift/reduce conflict (shift 166, red'n 91) on DIFF
+34: shift/reduce conflict (shift 168, red'n 91) on MINUS
+34: shift/reduce conflict (shift 165, red'n 91) on PLUS
+34: shift/reduce conflict (shift 167, red'n 91) on UNION
+state 34
+	expr5 :  expr6_    (91)
+	expr6 :  expr6_op6 expr7 
+
+	DIFF  shift 166
+	MINUS  shift 168
+	PLUS  shift 165
+	UNION  shift 167
+	.  reduce 91
+
+	op6  goto 164
+
+35: shift/reduce conflict (shift 171, red'n 95) on INTER
+35: shift/reduce conflict (shift 173, red'n 95) on MOD
+35: shift/reduce conflict (shift 172, red'n 95) on SLASH
+35: shift/reduce conflict (shift 170, red'n 95) on STAR
+state 35
+	expr6 :  expr7_    (95)
+	expr7 :  expr7_op7 expr8 
+
+	INTER  shift 171
+	MOD  shift 173
+	SLASH  shift 172
+	STAR  shift 170
+	.  reduce 95
+
+	op7  goto 169
+
+state 36
+	expr7 :  expr8_    (101)
+
+	.  reduce 101
+
+
+37: shift/reduce conflict (shift 176, red'n 107) on AT
+37: shift/reduce conflict (shift 175, red'n 107) on BACKSLASH
+37: shift/reduce conflict (shift 174, red'n 107) on CARET
+state 37
+	expr8 :  expr9_    (107)
+	expr8 :  expr9_CARET expr8 
+	expr9 :  expr9_BACKSLASH expr10 
+	expr9 :  expr9_AT expr10 
+
+	AT  shift 176
+	BACKSLASH  shift 175
+	CARET  shift 174
+	.  reduce 107
+
+
+state 38
+	expr9 :  expr10_    (109)
+
+	.  reduce 109
+
+
+39: shift/reduce conflict (shift 180, red'n 112) on DOT
+39: shift/reduce conflict (shift 178, red'n 112) on LBRACE
+39: shift/reduce conflict (shift 177, red'n 112) on LBRACK
+39: shift/reduce conflict (shift 179, red'n 112) on LPAREN
+state 39
+	expr10 :  expr11_    (112)
+	expr11 :  expr11_LBRACK expr RBRACK 
+	expr11 :  expr11_LBRACE $$159 exprlist $$160 RBRACE 
+	expr11 :  expr11_LPAREN $$162 exprlist $$163 RPAREN 
+	expr11 :  expr11_DOT IDENT 
+	section :  expr11_LBRACK expr sectop expr RBRACK 
+
+	DOT  shift 180
+	LBRACE  shift 178
+	LBRACK  shift 177
+	LPAREN  shift 179
+	.  reduce 112
+
+
+state 40
+	expr10 :  AT_expr10 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr10  goto 181
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 41
+	expr10 :  NOT_expr10 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr10  goto 182
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 42
+	expr10 :  BAR_expr10 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr10  goto 183
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 43
+	expr10 :  CONCAT_expr10 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr10  goto 184
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 44
+	expr10 :  LCONCAT_expr10 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr10  goto 185
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 45
+	expr10 :  op10_expr10 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr10  goto 186
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 46
+	expr11 :  literal_    (138)
+
+	.  reduce 138
+
+
+state 47
+	expr11 :  section_    (139)
+
+	.  reduce 139
+
+
+state 48
+	expr11 :  return_    (140)
+
+	.  reduce 140
+
+
+state 49
+	expr11 :  if_    (141)
+
+	.  reduce 141
+
+
+state 50
+	expr11 :  case_    (142)
+
+	.  reduce 142
+
+
+state 51
+	expr11 :  while_    (143)
+
+	.  reduce 143
+
+
+state 52
+	expr11 :  until_    (144)
+
+	.  reduce 144
+
+
+state 53
+	expr11 :  every_    (145)
+
+	.  reduce 145
+
+
+state 54
+	expr11 :  repeat_    (146)
+
+	.  reduce 146
+
+
+state 55
+	expr11 :  CREATE_expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 187
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 56
+	expr11 :  IDENT_    (148)
+
+	.  reduce 148
+
+
+state 57
+	expr11 :  NEXT_    (149)
+
+	.  reduce 149
+
+
+58: shift/reduce conflict (shift 40, red'n 29) on AT
+58: shift/reduce conflict (shift 81, red'n 29) on BACKSLASH
+58: shift/reduce conflict (shift 42, red'n 29) on BAR
+58: shift/reduce conflict (shift 69, red'n 29) on CARET
+58: shift/reduce conflict (shift 43, red'n 29) on CONCAT
+58: shift/reduce conflict (shift 62, red'n 29) on CONJUNC
+58: shift/reduce conflict (shift 65, red'n 29) on DIFF
+58: shift/reduce conflict (shift 63, red'n 29) on DOT
+58: shift/reduce conflict (shift 77, red'n 29) on EQUIV
+58: shift/reduce conflict (shift 70, red'n 29) on INTER
+58: shift/reduce conflict (shift 60, red'n 29) on LBRACE
+58: shift/reduce conflict (shift 61, red'n 29) on LBRACK
+58: shift/reduce conflict (shift 44, red'n 29) on LCONCAT
+58: shift/reduce conflict (shift 75, red'n 29) on LEXEQ
+58: shift/reduce conflict (shift 76, red'n 29) on LEXNE
+58: shift/reduce conflict (shift 59, red'n 29) on LPAREN
+58: shift/reduce conflict (shift 72, red'n 29) on MINUS
+58: shift/reduce conflict (shift 80, red'n 29) on NOTEQUIV
+58: shift/reduce conflict (shift 73, red'n 29) on NUMEQ
+58: shift/reduce conflict (shift 74, red'n 29) on NUMNE
+58: shift/reduce conflict (shift 66, red'n 29) on PLUS
+58: shift/reduce conflict (shift 79, red'n 29) on QMARK
+58: shift/reduce conflict (shift 68, red'n 29) on SLASH
+58: shift/reduce conflict (shift 67, red'n 29) on STAR
+58: shift/reduce conflict (shift 78, red'n 29) on UNION
+state 58
+	expr11 :  BREAK_nexpr 
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 29
+
+	expr  goto 26
+	nexpr  goto 188
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 59
+	expr11 :  LPAREN_$$151 exprlist $$152 RPAREN 
+	$$151 : _    (151)
+
+	.  reduce 151
+
+	$$151  goto 189
+
+state 60
+	expr11 :  LBRACE_compound RBRACE 
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 29
+
+	expr  goto 26
+	nexpr  goto 191
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+	compound  goto 190
+
+state 61
+	expr11 :  LBRACK_$$155 exprlist $$156 RBRACK 
+	$$155 : _    (155)
+
+	.  reduce 155
+
+	$$155  goto 192
+
+state 62
+	expr11 :  CONJUNC_FAIL 
+	expr11 :  CONJUNC_IDENT 
+
+	IDENT  shift 194
+	FAIL  shift 193
+	.  error
+
+
+state 63
+	op10 :  DOT_    (119)
+
+	.  reduce 119
+
+
+state 64
+	op10 :  BANG_    (120)
+
+	.  reduce 120
+
+
+state 65
+	op10 :  DIFF_    (121)
+
+	.  reduce 121
+
+
+state 66
+	op10 :  PLUS_    (122)
+
+	.  reduce 122
+
+
+state 67
+	op10 :  STAR_    (123)
+
+	.  reduce 123
+
+
+state 68
+	op10 :  SLASH_    (124)
+
+	.  reduce 124
+
+
+state 69
+	op10 :  CARET_    (125)
+
+	.  reduce 125
+
+
+state 70
+	op10 :  INTER_    (126)
+
+	.  reduce 126
+
+
+state 71
+	op10 :  TILDE_    (127)
+
+	.  reduce 127
+
+
+state 72
+	op10 :  MINUS_    (128)
+
+	.  reduce 128
+
+
+state 73
+	op10 :  NUMEQ_    (129)
+
+	.  reduce 129
+
+
+state 74
+	op10 :  NUMNE_    (130)
+
+	.  reduce 130
+
+
+state 75
+	op10 :  LEXEQ_    (131)
+
+	.  reduce 131
+
+
+state 76
+	op10 :  LEXNE_    (132)
+
+	.  reduce 132
+
+
+state 77
+	op10 :  EQUIV_    (133)
+
+	.  reduce 133
+
+
+state 78
+	op10 :  UNION_    (134)
+
+	.  reduce 134
+
+
+state 79
+	op10 :  QMARK_    (135)
+
+	.  reduce 135
+
+
+state 80
+	op10 :  NOTEQUIV_    (136)
+
+	.  reduce 136
+
+
+state 81
+	op10 :  BACKSLASH_    (137)
+
+	.  reduce 137
+
+
+state 82
+	literal :  INTLIT_    (187)
+
+	.  reduce 187
+
+
+state 83
+	literal :  REALLIT_    (188)
+
+	.  reduce 188
+
+
+state 84
+	literal :  STRINGLIT_    (189)
+
+	.  reduce 189
+
+
+state 85
+	literal :  CSETLIT_    (190)
+
+	.  reduce 190
+
+
+state 86
+	return :  FAIL_    (175)
+
+	.  reduce 175
+
+
+87: shift/reduce conflict (shift 40, red'n 29) on AT
+87: shift/reduce conflict (shift 81, red'n 29) on BACKSLASH
+87: shift/reduce conflict (shift 42, red'n 29) on BAR
+87: shift/reduce conflict (shift 69, red'n 29) on CARET
+87: shift/reduce conflict (shift 43, red'n 29) on CONCAT
+87: shift/reduce conflict (shift 62, red'n 29) on CONJUNC
+87: shift/reduce conflict (shift 65, red'n 29) on DIFF
+87: shift/reduce conflict (shift 63, red'n 29) on DOT
+87: shift/reduce conflict (shift 77, red'n 29) on EQUIV
+87: shift/reduce conflict (shift 70, red'n 29) on INTER
+87: shift/reduce conflict (shift 60, red'n 29) on LBRACE
+87: shift/reduce conflict (shift 61, red'n 29) on LBRACK
+87: shift/reduce conflict (shift 44, red'n 29) on LCONCAT
+87: shift/reduce conflict (shift 75, red'n 29) on LEXEQ
+87: shift/reduce conflict (shift 76, red'n 29) on LEXNE
+87: shift/reduce conflict (shift 59, red'n 29) on LPAREN
+87: shift/reduce conflict (shift 72, red'n 29) on MINUS
+87: shift/reduce conflict (shift 80, red'n 29) on NOTEQUIV
+87: shift/reduce conflict (shift 73, red'n 29) on NUMEQ
+87: shift/reduce conflict (shift 74, red'n 29) on NUMNE
+87: shift/reduce conflict (shift 66, red'n 29) on PLUS
+87: shift/reduce conflict (shift 79, red'n 29) on QMARK
+87: shift/reduce conflict (shift 68, red'n 29) on SLASH
+87: shift/reduce conflict (shift 67, red'n 29) on STAR
+87: shift/reduce conflict (shift 78, red'n 29) on UNION
+state 87
+	return :  RETURN_nexpr 
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 29
+
+	expr  goto 26
+	nexpr  goto 195
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+88: shift/reduce conflict (shift 40, red'n 29) on AT
+88: shift/reduce conflict (shift 81, red'n 29) on BACKSLASH
+88: shift/reduce conflict (shift 42, red'n 29) on BAR
+88: shift/reduce conflict (shift 69, red'n 29) on CARET
+88: shift/reduce conflict (shift 43, red'n 29) on CONCAT
+88: shift/reduce conflict (shift 62, red'n 29) on CONJUNC
+88: shift/reduce conflict (shift 65, red'n 29) on DIFF
+88: shift/reduce conflict (shift 63, red'n 29) on DOT
+88: shift/reduce conflict (shift 77, red'n 29) on EQUIV
+88: shift/reduce conflict (shift 70, red'n 29) on INTER
+88: shift/reduce conflict (shift 60, red'n 29) on LBRACE
+88: shift/reduce conflict (shift 61, red'n 29) on LBRACK
+88: shift/reduce conflict (shift 44, red'n 29) on LCONCAT
+88: shift/reduce conflict (shift 75, red'n 29) on LEXEQ
+88: shift/reduce conflict (shift 76, red'n 29) on LEXNE
+88: shift/reduce conflict (shift 59, red'n 29) on LPAREN
+88: shift/reduce conflict (shift 72, red'n 29) on MINUS
+88: shift/reduce conflict (shift 80, red'n 29) on NOTEQUIV
+88: shift/reduce conflict (shift 73, red'n 29) on NUMEQ
+88: shift/reduce conflict (shift 74, red'n 29) on NUMNE
+88: shift/reduce conflict (shift 66, red'n 29) on PLUS
+88: shift/reduce conflict (shift 79, red'n 29) on QMARK
+88: shift/reduce conflict (shift 68, red'n 29) on SLASH
+88: shift/reduce conflict (shift 67, red'n 29) on STAR
+88: shift/reduce conflict (shift 78, red'n 29) on UNION
+state 88
+	return :  SUSPEND_nexpr 
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 29
+
+	expr  goto 26
+	nexpr  goto 196
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 89
+	if :  IF_expr THEN expr 
+	if :  IF_expr THEN expr ELSE expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 197
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 90
+	case :  CASE_expr OF LBRACE caselist RBRACE 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 198
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 91
+	while :  WHILE_expr 
+	while :  WHILE_expr DO expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 199
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 92
+	until :  UNTIL_expr 
+	until :  UNTIL_expr DO expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 200
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 93
+	every :  EVERY_expr 
+	every :  EVERY_expr DO expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 201
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 94
+	repeat :  REPEAT_expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 202
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 95
+	global :  GLOBAL $$7 idlist_    (8)
+	idlist :  idlist_COMMA IDENT 
+
+	COMMA  shift 203
+	.  reduce 8
+
+
+state 96
+	idlist :  IDENT_    (18)
+
+	.  reduce 18
+
+
+state 97
+	global :  EXTERNAL $$9 idlist_    (10)
+	idlist :  idlist_COMMA IDENT 
+
+	COMMA  shift 203
+	.  reduce 10
+
+
+state 98
+	prochead :  PROCEDURE $$14 IDENT_LPAREN arglist RPAREN 
+
+	LPAREN  shift 204
+	.  error
+
+
+state 99
+	record :  RECORD $$11 IDENT LPAREN_arglist RPAREN 
+	arglist : _    (16)
+
+	IDENT  shift 96
+	.  reduce 16
+
+	idlist  goto 206
+	arglist  goto 205
+
+state 100
+	proc :  prochead SEMICOL locals initial_procbody END 
+	procbody : _    (27)
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SEMICOL  reduce 29
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 27
+
+	procbody  goto 207
+	expr  goto 26
+	nexpr  goto 25
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 101
+	locals :  locals retention_idlist SEMICOL 
+
+	IDENT  shift 96
+	.  error
+
+	idlist  goto 208
+
+state 102
+	initial :  INITIAL_expr SEMICOL 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 209
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 103
+	retention :  LOCAL_    (22)
+
+	.  reduce 22
+
+
+state 104
+	retention :  STATIC_    (23)
+
+	.  reduce 23
+
+
+state 105
+	retention :  DYNAMIC_    (24)
+
+	.  reduce 24
+
+
+state 106
+	proc :  prochead error procbody END_    (198)
+
+	.  reduce 198
+
+
+state 107
+	procbody :  nexpr SEMICOL_procbody 
+	procbody : _    (27)
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SEMICOL  reduce 29
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 27
+
+	procbody  goto 210
+	expr  goto 26
+	nexpr  goto 25
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 108
+	expr :  expr CONJUNC_expr1a 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr1a  goto 211
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 109
+	expr1a :  expr1a QMARK_expr1 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr1  goto 212
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 110
+	expr1 :  expr2 op1_expr1 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr1  goto 213
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 111
+	expr1 :  expr2 op1a_expr1 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr1  goto 214
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 112
+	expr1 :  expr2 SCANASGN_expr1 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr1  goto 215
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 113
+	expr1 :  expr2 AUGAND_expr1 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr1  goto 216
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 114
+	expr1 :  expr2 AUGACT_expr1 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr1  goto 217
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 115
+	expr2 :  expr2 TO_expr3 
+	expr2 :  expr2 TO_expr3 BY expr3 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr3  goto 218
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 116
+	op1 :  SWAP_    (41)
+
+	.  reduce 41
+
+
+state 117
+	op1 :  ASSIGN_    (42)
+
+	.  reduce 42
+
+
+state 118
+	op1 :  REVSWAP_    (43)
+
+	.  reduce 43
+
+
+state 119
+	op1 :  REVASSIGN_    (44)
+
+	.  reduce 44
+
+
+state 120
+	op1a :  CONCATASGN_    (45)
+
+	.  reduce 45
+
+
+state 121
+	op1a :  LCONCATASGN_    (46)
+
+	.  reduce 46
+
+
+state 122
+	op1a :  DIFFASGN_    (47)
+
+	.  reduce 47
+
+
+state 123
+	op1a :  UNIONASGN_    (48)
+
+	.  reduce 48
+
+
+state 124
+	op1a :  PLUSASGN_    (49)
+
+	.  reduce 49
+
+
+state 125
+	op1a :  MINUSASGN_    (50)
+
+	.  reduce 50
+
+
+state 126
+	op1a :  STARASGN_    (51)
+
+	.  reduce 51
+
+
+state 127
+	op1a :  INTERASGN_    (52)
+
+	.  reduce 52
+
+
+state 128
+	op1a :  SLASHASGN_    (53)
+
+	.  reduce 53
+
+
+state 129
+	op1a :  MODASGN_    (54)
+
+	.  reduce 54
+
+
+state 130
+	op1a :  CARETASGN_    (55)
+
+	.  reduce 55
+
+
+state 131
+	op1a :  AUGEQ_    (56)
+
+	.  reduce 56
+
+
+state 132
+	op1a :  AUGEQV_    (57)
+
+	.  reduce 57
+
+
+state 133
+	op1a :  AUGGE_    (58)
+
+	.  reduce 58
+
+
+state 134
+	op1a :  AUGGT_    (59)
+
+	.  reduce 59
+
+
+state 135
+	op1a :  AUGLE_    (60)
+
+	.  reduce 60
+
+
+state 136
+	op1a :  AUGLT_    (61)
+
+	.  reduce 61
+
+
+state 137
+	op1a :  AUGNE_    (62)
+
+	.  reduce 62
+
+
+state 138
+	op1a :  AUGNEQV_    (63)
+
+	.  reduce 63
+
+
+state 139
+	op1a :  AUGSEQ_    (64)
+
+	.  reduce 64
+
+
+state 140
+	op1a :  AUGSGE_    (65)
+
+	.  reduce 65
+
+
+state 141
+	op1a :  AUGSGT_    (66)
+
+	.  reduce 66
+
+
+state 142
+	op1a :  AUGSLE_    (67)
+
+	.  reduce 67
+
+
+state 143
+	op1a :  AUGSLT_    (68)
+
+	.  reduce 68
+
+
+state 144
+	op1a :  AUGSNE_    (69)
+
+	.  reduce 69
+
+
+state 145
+	expr3 :  expr4 BAR_expr3 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr3  goto 219
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 146
+	expr4 :  expr4 op4_expr5 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr5  goto 220
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 147
+	op4 :  LEXEQ_    (77)
+
+	.  reduce 77
+
+
+state 148
+	op4 :  LEXGE_    (78)
+
+	.  reduce 78
+
+
+state 149
+	op4 :  LEXGT_    (79)
+
+	.  reduce 79
+
+
+state 150
+	op4 :  LEXLE_    (80)
+
+	.  reduce 80
+
+
+state 151
+	op4 :  LEXLT_    (81)
+
+	.  reduce 81
+
+
+state 152
+	op4 :  LEXNE_    (82)
+
+	.  reduce 82
+
+
+state 153
+	op4 :  NUMEQ_    (83)
+
+	.  reduce 83
+
+
+state 154
+	op4 :  NUMGE_    (84)
+
+	.  reduce 84
+
+
+state 155
+	op4 :  NUMGT_    (85)
+
+	.  reduce 85
+
+
+state 156
+	op4 :  NUMLE_    (86)
+
+	.  reduce 86
+
+
+state 157
+	op4 :  NUMLT_    (87)
+
+	.  reduce 87
+
+
+state 158
+	op4 :  NUMNE_    (88)
+
+	.  reduce 88
+
+
+state 159
+	op4 :  EQUIV_    (89)
+
+	.  reduce 89
+
+
+state 160
+	op4 :  NOTEQUIV_    (90)
+
+	.  reduce 90
+
+
+state 161
+	expr5 :  expr5 op5_expr6 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr6  goto 221
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 162
+	op5 :  CONCAT_    (93)
+
+	.  reduce 93
+
+
+state 163
+	op5 :  LCONCAT_    (94)
+
+	.  reduce 94
+
+
+state 164
+	expr6 :  expr6 op6_expr7 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr7  goto 222
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 165
+	op6 :  PLUS_    (97)
+
+	.  reduce 97
+
+
+state 166
+	op6 :  DIFF_    (98)
+
+	.  reduce 98
+
+
+state 167
+	op6 :  UNION_    (99)
+
+	.  reduce 99
+
+
+state 168
+	op6 :  MINUS_    (100)
+
+	.  reduce 100
+
+
+state 169
+	expr7 :  expr7 op7_expr8 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr8  goto 223
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 170
+	op7 :  STAR_    (103)
+
+	.  reduce 103
+
+
+state 171
+	op7 :  INTER_    (104)
+
+	.  reduce 104
+
+
+state 172
+	op7 :  SLASH_    (105)
+
+	.  reduce 105
+
+
+state 173
+	op7 :  MOD_    (106)
+
+	.  reduce 106
+
+
+state 174
+	expr8 :  expr9 CARET_expr8 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr8  goto 224
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 175
+	expr9 :  expr9 BACKSLASH_expr10 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr10  goto 225
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 176
+	expr9 :  expr9 AT_expr10 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr10  goto 226
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 177
+	expr11 :  expr11 LBRACK_expr RBRACK 
+	section :  expr11 LBRACK_expr sectop expr RBRACK 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 227
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 178
+	expr11 :  expr11 LBRACE_$$159 exprlist $$160 RBRACE 
+	$$159 : _    (159)
+
+	.  reduce 159
+
+	$$159  goto 228
+
+state 179
+	expr11 :  expr11 LPAREN_$$162 exprlist $$163 RPAREN 
+	$$162 : _    (162)
+
+	.  reduce 162
+
+	$$162  goto 229
+
+state 180
+	expr11 :  expr11 DOT_IDENT 
+
+	IDENT  shift 230
+	.  error
+
+
+state 181
+	expr10 :  AT expr10_    (113)
+
+	.  reduce 113
+
+
+state 182
+	expr10 :  NOT expr10_    (114)
+
+	.  reduce 114
+
+
+state 183
+	expr10 :  BAR expr10_    (115)
+
+	.  reduce 115
+
+
+state 184
+	expr10 :  CONCAT expr10_    (116)
+
+	.  reduce 116
+
+
+state 185
+	expr10 :  LCONCAT expr10_    (117)
+
+	.  reduce 117
+
+
+state 186
+	expr10 :  op10 expr10_    (118)
+
+	.  reduce 118
+
+
+187: shift/reduce conflict (shift 108, red'n 147) on CONJUNC
+state 187
+	expr :  expr_CONJUNC expr1a 
+	expr11 :  CREATE expr_    (147)
+
+	CONJUNC  shift 108
+	.  reduce 147
+
+
+state 188
+	expr11 :  BREAK nexpr_    (150)
+
+	.  reduce 150
+
+
+state 189
+	expr11 :  LPAREN $$151_exprlist $$152 RPAREN 
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 29
+
+	expr  goto 26
+	nexpr  goto 232
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+	exprlist  goto 231
+
+state 190
+	expr11 :  LBRACE compound_RBRACE 
+
+	RBRACE  shift 233
+	.  error
+
+
+state 191
+	compound :  nexpr_    (195)
+	compound :  nexpr_SEMICOL compound 
+
+	SEMICOL  shift 234
+	.  reduce 195
+
+
+state 192
+	expr11 :  LBRACK $$155_exprlist $$156 RBRACK 
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 29
+
+	expr  goto 26
+	nexpr  goto 232
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+	exprlist  goto 235
+
+state 193
+	expr11 :  CONJUNC FAIL_    (166)
+
+	.  reduce 166
+
+
+state 194
+	expr11 :  CONJUNC IDENT_    (167)
+
+	.  reduce 167
+
+
+state 195
+	return :  RETURN nexpr_    (176)
+
+	.  reduce 176
+
+
+state 196
+	return :  SUSPEND nexpr_    (177)
+
+	.  reduce 177
+
+
+state 197
+	expr :  expr_CONJUNC expr1a 
+	if :  IF expr_THEN expr 
+	if :  IF expr_THEN expr ELSE expr 
+
+	THEN  shift 236
+	CONJUNC  shift 108
+	.  error
+
+
+state 198
+	expr :  expr_CONJUNC expr1a 
+	case :  CASE expr_OF LBRACE caselist RBRACE 
+
+	OF  shift 237
+	CONJUNC  shift 108
+	.  error
+
+
+199: shift/reduce conflict (shift 238, red'n 168) on DO
+199: shift/reduce conflict (shift 108, red'n 168) on CONJUNC
+state 199
+	expr :  expr_CONJUNC expr1a 
+	while :  WHILE expr_    (168)
+	while :  WHILE expr_DO expr 
+
+	DO  shift 238
+	CONJUNC  shift 108
+	.  reduce 168
+
+
+200: shift/reduce conflict (shift 239, red'n 170) on DO
+200: shift/reduce conflict (shift 108, red'n 170) on CONJUNC
+state 200
+	expr :  expr_CONJUNC expr1a 
+	until :  UNTIL expr_    (170)
+	until :  UNTIL expr_DO expr 
+
+	DO  shift 239
+	CONJUNC  shift 108
+	.  reduce 170
+
+
+201: shift/reduce conflict (shift 240, red'n 172) on DO
+201: shift/reduce conflict (shift 108, red'n 172) on CONJUNC
+state 201
+	expr :  expr_CONJUNC expr1a 
+	every :  EVERY expr_    (172)
+	every :  EVERY expr_DO expr 
+
+	DO  shift 240
+	CONJUNC  shift 108
+	.  reduce 172
+
+
+202: shift/reduce conflict (shift 108, red'n 174) on CONJUNC
+state 202
+	expr :  expr_CONJUNC expr1a 
+	repeat :  REPEAT expr_    (174)
+
+	CONJUNC  shift 108
+	.  reduce 174
+
+
+state 203
+	idlist :  idlist COMMA_IDENT 
+
+	IDENT  shift 241
+	.  error
+
+
+state 204
+	prochead :  PROCEDURE $$14 IDENT LPAREN_arglist RPAREN 
+	arglist : _    (16)
+
+	IDENT  shift 96
+	.  reduce 16
+
+	idlist  goto 206
+	arglist  goto 242
+
+state 205
+	record :  RECORD $$11 IDENT LPAREN arglist_RPAREN 
+
+	RPAREN  shift 243
+	.  error
+
+
+state 206
+	arglist :  idlist_    (17)
+	idlist :  idlist_COMMA IDENT 
+
+	COMMA  shift 203
+	.  reduce 17
+
+
+state 207
+	proc :  prochead SEMICOL locals initial procbody_END 
+
+	END  shift 244
+	.  error
+
+
+state 208
+	idlist :  idlist_COMMA IDENT 
+	locals :  locals retention idlist_SEMICOL 
+
+	COMMA  shift 203
+	SEMICOL  shift 245
+	.  error
+
+
+state 209
+	initial :  INITIAL expr_SEMICOL 
+	expr :  expr_CONJUNC expr1a 
+
+	CONJUNC  shift 108
+	SEMICOL  shift 246
+	.  error
+
+
+state 210
+	procbody :  nexpr SEMICOL procbody_    (28)
+
+	.  reduce 28
+
+
+211: shift/reduce conflict (shift 109, red'n 32) on QMARK
+state 211
+	expr :  expr CONJUNC expr1a_    (32)
+	expr1a :  expr1a_QMARK expr1 
+
+	QMARK  shift 109
+	.  reduce 32
+
+
+state 212
+	expr1a :  expr1a QMARK expr1_    (34)
+
+	.  reduce 34
+
+
+state 213
+	expr1 :  expr2 op1 expr1_    (36)
+
+	.  reduce 36
+
+
+state 214
+	expr1 :  expr2 op1a expr1_    (37)
+
+	.  reduce 37
+
+
+state 215
+	expr1 :  expr2 SCANASGN expr1_    (38)
+
+	.  reduce 38
+
+
+state 216
+	expr1 :  expr2 AUGAND expr1_    (39)
+
+	.  reduce 39
+
+
+state 217
+	expr1 :  expr2 AUGACT expr1_    (40)
+
+	.  reduce 40
+
+
+218: shift/reduce conflict (shift 247, red'n 71) on BY
+state 218
+	expr2 :  expr2 TO expr3_    (71)
+	expr2 :  expr2 TO expr3_BY expr3 
+
+	BY  shift 247
+	.  reduce 71
+
+
+state 219
+	expr3 :  expr4 BAR expr3_    (74)
+
+	.  reduce 74
+
+
+220: shift/reduce conflict (shift 162, red'n 76) on CONCAT
+220: shift/reduce conflict (shift 163, red'n 76) on LCONCAT
+state 220
+	expr4 :  expr4 op4 expr5_    (76)
+	expr5 :  expr5_op5 expr6 
+
+	CONCAT  shift 162
+	LCONCAT  shift 163
+	.  reduce 76
+
+	op5  goto 161
+
+221: shift/reduce conflict (shift 166, red'n 92) on DIFF
+221: shift/reduce conflict (shift 168, red'n 92) on MINUS
+221: shift/reduce conflict (shift 165, red'n 92) on PLUS
+221: shift/reduce conflict (shift 167, red'n 92) on UNION
+state 221
+	expr5 :  expr5 op5 expr6_    (92)
+	expr6 :  expr6_op6 expr7 
+
+	DIFF  shift 166
+	MINUS  shift 168
+	PLUS  shift 165
+	UNION  shift 167
+	.  reduce 92
+
+	op6  goto 164
+
+222: shift/reduce conflict (shift 171, red'n 96) on INTER
+222: shift/reduce conflict (shift 173, red'n 96) on MOD
+222: shift/reduce conflict (shift 172, red'n 96) on SLASH
+222: shift/reduce conflict (shift 170, red'n 96) on STAR
+state 222
+	expr6 :  expr6 op6 expr7_    (96)
+	expr7 :  expr7_op7 expr8 
+
+	INTER  shift 171
+	MOD  shift 173
+	SLASH  shift 172
+	STAR  shift 170
+	.  reduce 96
+
+	op7  goto 169
+
+state 223
+	expr7 :  expr7 op7 expr8_    (102)
+
+	.  reduce 102
+
+
+state 224
+	expr8 :  expr9 CARET expr8_    (108)
+
+	.  reduce 108
+
+
+state 225
+	expr9 :  expr9 BACKSLASH expr10_    (110)
+
+	.  reduce 110
+
+
+state 226
+	expr9 :  expr9 AT expr10_    (111)
+
+	.  reduce 111
+
+
+state 227
+	expr :  expr_CONJUNC expr1a 
+	expr11 :  expr11 LBRACK expr_RBRACK 
+	section :  expr11 LBRACK expr_sectop expr RBRACK 
+
+	COLON  shift 250
+	CONJUNC  shift 108
+	MCOLON  shift 252
+	PCOLON  shift 251
+	RBRACK  shift 248
+	.  error
+
+	sectop  goto 249
+
+state 228
+	expr11 :  expr11 LBRACE $$159_exprlist $$160 RBRACE 
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 29
+
+	expr  goto 26
+	nexpr  goto 232
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+	exprlist  goto 253
+
+state 229
+	expr11 :  expr11 LPAREN $$162_exprlist $$163 RPAREN 
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 29
+
+	expr  goto 26
+	nexpr  goto 232
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+	exprlist  goto 254
+
+state 230
+	expr11 :  expr11 DOT IDENT_    (165)
+
+	.  reduce 165
+
+
+state 231
+	expr11 :  LPAREN $$151 exprlist_$$152 RPAREN 
+	exprlist :  exprlist_COMMA nexpr 
+	$$152 : _    (152)
+
+	COMMA  shift 256
+	.  reduce 152
+
+	$$152  goto 255
+
+state 232
+	exprlist :  nexpr_    (185)
+
+	.  reduce 185
+
+
+state 233
+	expr11 :  LBRACE compound RBRACE_    (154)
+
+	.  reduce 154
+
+
+state 234
+	compound :  nexpr SEMICOL_compound 
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 29
+
+	expr  goto 26
+	nexpr  goto 191
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+	compound  goto 257
+
+state 235
+	expr11 :  LBRACK $$155 exprlist_$$156 RBRACK 
+	exprlist :  exprlist_COMMA nexpr 
+	$$156 : _    (156)
+
+	COMMA  shift 256
+	.  reduce 156
+
+	$$156  goto 258
+
+state 236
+	if :  IF expr THEN_expr 
+	if :  IF expr THEN_expr ELSE expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 259
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 237
+	case :  CASE expr OF_LBRACE caselist RBRACE 
+
+	LBRACE  shift 260
+	.  error
+
+
+state 238
+	while :  WHILE expr DO_expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 261
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 239
+	until :  UNTIL expr DO_expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 262
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 240
+	every :  EVERY expr DO_expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 263
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 241
+	idlist :  idlist COMMA IDENT_    (19)
+
+	.  reduce 19
+
+
+state 242
+	prochead :  PROCEDURE $$14 IDENT LPAREN arglist_RPAREN 
+
+	RPAREN  shift 264
+	.  error
+
+
+state 243
+	record :  RECORD $$11 IDENT LPAREN arglist RPAREN_    (12)
+
+	.  reduce 12
+
+
+state 244
+	proc :  prochead SEMICOL locals initial procbody END_    (13)
+
+	.  reduce 13
+
+
+state 245
+	locals :  locals retention idlist SEMICOL_    (21)
+
+	.  reduce 21
+
+
+state 246
+	initial :  INITIAL expr SEMICOL_    (26)
+
+	.  reduce 26
+
+
+state 247
+	expr2 :  expr2 TO expr3 BY_expr3 
+
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr3  goto 265
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 248
+	expr11 :  expr11 LBRACK expr RBRACK_    (158)
+
+	.  reduce 158
+
+
+state 249
+	section :  expr11 LBRACK expr sectop_expr RBRACK 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 266
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 250
+	sectop :  COLON_    (192)
+
+	.  reduce 192
+
+
+state 251
+	sectop :  PCOLON_    (193)
+
+	.  reduce 193
+
+
+state 252
+	sectop :  MCOLON_    (194)
+
+	.  reduce 194
+
+
+state 253
+	expr11 :  expr11 LBRACE $$159 exprlist_$$160 RBRACE 
+	exprlist :  exprlist_COMMA nexpr 
+	$$160 : _    (160)
+
+	COMMA  shift 256
+	.  reduce 160
+
+	$$160  goto 267
+
+state 254
+	expr11 :  expr11 LPAREN $$162 exprlist_$$163 RPAREN 
+	exprlist :  exprlist_COMMA nexpr 
+	$$163 : _    (163)
+
+	COMMA  shift 256
+	.  reduce 163
+
+	$$163  goto 268
+
+state 255
+	expr11 :  LPAREN $$151 exprlist $$152_RPAREN 
+
+	RPAREN  shift 269
+	.  error
+
+
+state 256
+	exprlist :  exprlist COMMA_nexpr 
+	nexpr : _    (29)
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  reduce 29
+
+	expr  goto 26
+	nexpr  goto 270
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 257
+	compound :  nexpr SEMICOL compound_    (196)
+
+	.  reduce 196
+
+
+state 258
+	expr11 :  LBRACK $$155 exprlist $$156_RBRACK 
+
+	RBRACK  shift 271
+	.  error
+
+
+259: shift/reduce conflict (shift 272, red'n 178) on ELSE
+259: shift/reduce conflict (shift 108, red'n 178) on CONJUNC
+state 259
+	expr :  expr_CONJUNC expr1a 
+	if :  IF expr THEN expr_    (178)
+	if :  IF expr THEN expr_ELSE expr 
+
+	ELSE  shift 272
+	CONJUNC  shift 108
+	.  reduce 178
+
+
+state 260
+	case :  CASE expr OF LBRACE_caselist RBRACE 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	DEFAULT  shift 275
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 276
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+	caselist  goto 273
+	cclause  goto 274
+
+261: shift/reduce conflict (shift 108, red'n 169) on CONJUNC
+state 261
+	expr :  expr_CONJUNC expr1a 
+	while :  WHILE expr DO expr_    (169)
+
+	CONJUNC  shift 108
+	.  reduce 169
+
+
+262: shift/reduce conflict (shift 108, red'n 171) on CONJUNC
+state 262
+	expr :  expr_CONJUNC expr1a 
+	until :  UNTIL expr DO expr_    (171)
+
+	CONJUNC  shift 108
+	.  reduce 171
+
+
+263: shift/reduce conflict (shift 108, red'n 173) on CONJUNC
+state 263
+	expr :  expr_CONJUNC expr1a 
+	every :  EVERY expr DO expr_    (173)
+
+	CONJUNC  shift 108
+	.  reduce 173
+
+
+state 264
+	prochead :  PROCEDURE $$14 IDENT LPAREN arglist RPAREN_    (15)
+
+	.  reduce 15
+
+
+state 265
+	expr2 :  expr2 TO expr3 BY expr3_    (72)
+
+	.  reduce 72
+
+
+state 266
+	expr :  expr_CONJUNC expr1a 
+	section :  expr11 LBRACK expr sectop expr_RBRACK 
+
+	CONJUNC  shift 108
+	RBRACK  shift 277
+	.  error
+
+
+state 267
+	expr11 :  expr11 LBRACE $$159 exprlist $$160_RBRACE 
+
+	RBRACE  shift 278
+	.  error
+
+
+state 268
+	expr11 :  expr11 LPAREN $$162 exprlist $$163_RPAREN 
+
+	RPAREN  shift 279
+	.  error
+
+
+state 269
+	expr11 :  LPAREN $$151 exprlist $$152 RPAREN_    (153)
+
+	.  reduce 153
+
+
+state 270
+	exprlist :  exprlist COMMA nexpr_    (186)
+
+	.  reduce 186
+
+
+state 271
+	expr11 :  LBRACK $$155 exprlist $$156 RBRACK_    (157)
+
+	.  reduce 157
+
+
+state 272
+	if :  IF expr THEN expr ELSE_expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 280
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 273
+	case :  CASE expr OF LBRACE caselist_RBRACE 
+	caselist :  caselist_SEMICOL cclause 
+
+	RBRACE  shift 281
+	SEMICOL  shift 282
+	.  error
+
+
+state 274
+	caselist :  cclause_    (181)
+
+	.  reduce 181
+
+
+state 275
+	cclause :  DEFAULT_COLON expr 
+
+	COLON  shift 283
+	.  error
+
+
+state 276
+	expr :  expr_CONJUNC expr1a 
+	cclause :  expr_COLON expr 
+
+	COLON  shift 284
+	CONJUNC  shift 108
+	.  error
+
+
+state 277
+	section :  expr11 LBRACK expr sectop expr RBRACK_    (191)
+
+	.  reduce 191
+
+
+state 278
+	expr11 :  expr11 LBRACE $$159 exprlist $$160 RBRACE_    (161)
+
+	.  reduce 161
+
+
+state 279
+	expr11 :  expr11 LPAREN $$162 exprlist $$163 RPAREN_    (164)
+
+	.  reduce 164
+
+
+280: shift/reduce conflict (shift 108, red'n 179) on CONJUNC
+state 280
+	expr :  expr_CONJUNC expr1a 
+	if :  IF expr THEN expr ELSE expr_    (179)
+
+	CONJUNC  shift 108
+	.  reduce 179
+
+
+state 281
+	case :  CASE expr OF LBRACE caselist RBRACE_    (180)
+
+	.  reduce 180
+
+
+state 282
+	caselist :  caselist SEMICOL_cclause 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	DEFAULT  shift 275
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 276
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+	cclause  goto 285
+
+state 283
+	cclause :  DEFAULT COLON_expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 286
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 284
+	cclause :  expr COLON_expr 
+
+	error  shift 28
+	CSETLIT  shift 85
+	IDENT  shift 56
+	INTLIT  shift 82
+	REALLIT  shift 83
+	STRINGLIT  shift 84
+	BREAK  shift 58
+	CASE  shift 90
+	CREATE  shift 55
+	EVERY  shift 93
+	FAIL  shift 86
+	IF  shift 89
+	NEXT  shift 57
+	NOT  shift 41
+	REPEAT  shift 94
+	RETURN  shift 87
+	SUSPEND  shift 88
+	UNTIL  shift 92
+	WHILE  shift 91
+	AT  shift 40
+	BACKSLASH  shift 81
+	BANG  shift 64
+	BAR  shift 42
+	CARET  shift 69
+	CONCAT  shift 43
+	CONJUNC  shift 62
+	DIFF  shift 65
+	DOT  shift 63
+	EQUIV  shift 77
+	INTER  shift 70
+	LBRACE  shift 60
+	LBRACK  shift 61
+	LCONCAT  shift 44
+	LEXEQ  shift 75
+	LEXNE  shift 76
+	LPAREN  shift 59
+	MINUS  shift 72
+	NOTEQUIV  shift 80
+	NUMEQ  shift 73
+	NUMNE  shift 74
+	PLUS  shift 66
+	QMARK  shift 79
+	SLASH  shift 68
+	STAR  shift 67
+	TILDE  shift 71
+	UNION  shift 78
+	.  error
+
+	expr  goto 287
+	expr1a  goto 27
+	expr1  goto 29
+	expr2  goto 30
+	expr3  goto 31
+	expr4  goto 32
+	expr5  goto 33
+	expr6  goto 34
+	expr7  goto 35
+	expr8  goto 36
+	expr9  goto 37
+	expr10  goto 38
+	expr11  goto 39
+	op10  goto 45
+	literal  goto 46
+	section  goto 47
+	return  goto 48
+	if  goto 49
+	case  goto 50
+	while  goto 51
+	until  goto 52
+	every  goto 53
+	repeat  goto 54
+
+state 285
+	caselist :  caselist SEMICOL cclause_    (182)
+
+	.  reduce 182
+
+
+state 286
+	expr :  expr_CONJUNC expr1a 
+	cclause :  DEFAULT COLON expr_    (183)
+
+	CONJUNC  shift 108
+	.  reduce 183
+
+
+state 287
+	expr :  expr_CONJUNC expr1a 
+	cclause :  expr COLON expr_    (184)
+
+	CONJUNC  shift 108
+	.  reduce 184
+
+
+113/127 terminals, 60/300 nonterminals
+200/600 grammar rules, 288/750 states
+168 shift/reduce, 0 reduce/reduce conflicts reported
+100/350 working sets used
+memory: states,etc. 1470/12000, parser 1450/12000
+156/600 distinct lookahead sets
+516 extra closures
+2673 shift entries, 4 exceptions
+123 goto entries
+1060 entries saved by goto default
+Optimizer space used: input 5534/12000, output 607/12000
+607 table entries, 210 zero
+maximum spread: 367, maximum offset: 359

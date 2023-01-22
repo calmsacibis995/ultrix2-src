@@ -1,0 +1,69 @@
+.TH fseek 3s
+.SH NAME
+fseek, ftell, rewind \- reposition a file pointer in a stream
+.SH SYNTAX
+.B #include <stdio.h>
+.PP
+.B int fseek(stream, offset, ptrname)
+.br
+.SM
+.B FILE
+.B *stream;
+.br
+.B long offset;
+.br
+.B int ptrname;
+.PP
+.B long ftell(stream)
+.br
+.SM
+.B FILE
+.B *stream;
+.PP
+.B void rewind(stream)
+.br
+.SM
+.B FILE
+.B *stream;
+.SH DESCRIPTION
+The
+.PN fseek
+function sets the position of the next input or output
+operation on the
+.IR stream .
+The new position is at the signed distance
+.I offset
+bytes
+from the beginning, the current position, or the end of the file,
+according as 
+.I ptrname
+has the value 0, 1, or 2.
+.PP
+The
+.PN fseek
+function undoes any effects of
+.PN ungetc(3s).
+.PP
+The
+.PN ftell
+function returns the current value of the 
+offset relative to the beginning
+of the file associated with the named
+.IR stream .
+It is measured in bytes and is the only foolproof way to obtain
+an
+.I offset
+for
+.PN fseek.
+.PP
+The
+.PN rewind ( stream )
+function is equivalent to
+.PN fseek 
+( stream , 0L, 0), except that no value is returned.
+.SH DIAGNOSTICS
+The
+.PN fseek
+function returns \-1 for improper seeks, otherwise 0.
+.SH "SEE ALSO"
+lseek(2), fopen(3s)

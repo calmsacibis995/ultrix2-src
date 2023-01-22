@@ -1,0 +1,43 @@
+#! /bin/sh
+# @(#)buildrlmini	1.3 (Ultrix-32) 11/3/84
+#
+# Procedure to build a mini-root RL02.
+#
+#	From: buildmini	1.4  (Ultrix)  1/12/84
+#
+# This is an outer shell which makes a filesystem in the right
+# place, checks it, mounts it, chdir's there, and then runs
+# the shell file getrl, which does the real work of building the
+# contents of the miniroot.
+#
+# ######################### NOTICE #######################################
+# TO BE RUN ON EREHWON;
+#	The RK07 drives 0 and 1 must have the Ultrix master packs loaded.
+#		The master Ultrix root should be mounted on /Ultrix.
+#		The master /usr file system should be mounted on /Ultrix/usr.
+#		/Ultrix/usr/sys should be mounted (hk1a).
+#		rb0a will be overwritten with the miniroot.
+#
+# ########################################################################
+#
+miniroot=rl2a
+minitype=rl02
+#
+date
+umount /dev/${miniroot}	 2> /dev/null	# just in case
+echo "Making and checking filesystem "${miniroot}" of "${minitype}
+newfs r${miniroot} rl02
+sync
+fsck /dev/r${miniroot}
+echo "Mounting "${miniroot}" on /mnt."
+mount /dev/${miniroot} /mnt
+cd /mnt
+sh -v /sys/dist/getrl
+sync
+cd /
+sync
+umount /dev/${miniroot}
+echo "Unmounting and checking "${miniroot}"."
+fsck /dev/${miniroot}
+date
+echo "Done."

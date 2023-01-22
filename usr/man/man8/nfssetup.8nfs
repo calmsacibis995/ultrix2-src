@@ -1,0 +1,41 @@
+.\" Written by liza sanford-crane  (7/30/86)
+.\"
+.TH nfssetup 8nfs
+.SH NAME
+nfssetup - set up network file system (NFS)
+.SH SYNTAX
+.B /etc/nfssetup
+.br
+.SH DESCRIPTION
+The
+nfssetup(8nfs)
+command is an interactive facility that allows you to set up
+NFS on your system.
+A local area network must be setup on your system
+before you can set up NFS.
+Before running
+.B nfssetup,
+you should bring the system to single-user mode.
+Then run
+.B nfssetup
+and answer the questions:
+.EX
+# /etc/nfssetup
+.EE
+When
+.B nfssetup
+has completed,
+reboot the system.
+.SH FILES
+.ta 2i
+.nf
+/etc/exports
+.br
+/etc/fstab
+.br
+/etc/rc.local
+.fi
+.SH SEE ALSO
+biod(8nfs), mountd(8nfs), nfsd(8nfs), rwalld(8c)
+.br
+Network Management Guide

@@ -1,0 +1,49 @@
+.TH nfs_svc 2nfs
+.SH NAME
+nfs_svc, nfs_async_daemon \- Invoke NFS daemons
+.SH SYNTAX
+.nf
+.ft B
+int sock;
+nfs_svc(sock)
+.LP
+.ft B
+nfs_async_daemon()
+.pp
+.ft B
+.IX  nfs_svc  ""  \fLnfssvc\fP
+.IX  "socket operations"  nfs_svc  ""  \fLnfssvc\fP
+.IX  "network file system daemons"
+.IX  daemons  "network file system"
+.IX  nfs_async_daemon  ""  \fLasync_daemon\fP
+.IX  "socket operations"  async_daemon  ""  \fLasync_daemon\fP
+.SH DESCRIPTION
+.LP
+The
+.PN nfs_svc 
+system call starts an NFS
+daemon listening on the socket referenced by the file descriptor
+.I sock.
+The socket must be an AF_INET address format, and a SOCK_DGRAM socket
+type (protocol UDP/IP). This system call is used by nfsd(8nfs).
+.PP
+If the process is killed, the system call
+returns the diagnostic EINTR.
+.LP
+The 
+.I NFS_async_daemon
+implements the NFS daemon
+that handles asynchronous I/O for an NFS client.
+This system call is used by biod(8nfs).
+Unlike
+.I nfs_svc,
+this system call does not return any 
+diagnostics if the process is killed.
+.SH DIAGNOSTICS
+.TP 15
+[EINTR]
+The NFS daemon,
+.I nfs_svc 
+process was killed.
+.SH SEE ALSO
+socket(2), biod(8nfs), nfsd(8nfs)

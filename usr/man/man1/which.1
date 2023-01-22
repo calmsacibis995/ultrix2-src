@@ -1,0 +1,27 @@
+.\" Last modified by MJT on 27-Aug-85  0001
+.\"  Repaired beginning matter to work right in whatis database
+.TH which 1
+.SH NAME
+which \- locate a program file including aliases and paths (C shell only)
+.SH SYNTAX
+.B which
+[ name ] ...
+.SH DESCRIPTION
+The
+.B which
+command
+takes a list of names and looks for the files which would be
+executed had these names been given as commands.
+Each argument is expanded if it is aliased,
+and searched for along the user's path.
+Both aliases and path are taken from the user's \&.cshrc file.
+.SH RESTRICTIONS
+Must be executed by a csh, since only csh's know about aliases.
+.SH DIAGNOSTICS
+A diagnostic is given for names which are aliased to more than a single
+word,
+or if an executable file with the
+argument name was not found in the path.
+.SH FILES
+.ta 1i
+~/\&.cshrc	source of aliases and path values

@@ -1,0 +1,138 @@
+.TH uucp 1c
+.SH NAME
+uucp, uulog, uuname \- unix to unix copy
+.SH SYNTAX
+.B uucp
+[ option ] ...
+source-file ...  destination-file
+.PP
+.B uulog
+[ option ] ...
+.PP
+.B uuname
+[ option ] ...
+.SH DESCRIPTION
+The
+.PN uucp
+command copies files named by the source-file arguments
+to the destination-file argument.
+A file name either may be a path name on your machine or 
+may have the form
+.IP
+system-name!pathname
+.LP
+where `system-name' is taken from a list of system names
+which
+.PN uucp
+knows about.
+Shell metacharacters ?*[] appearing in the pathname part
+will be expanded on the appropriate system.
+.PP
+Pathnames may be
+a full pathname,
+a pathname preceded by
+.IR ~user,
+where
+.I user
+is a userid on the specified system
+and is replaced by that user's login directory, or
+anything else prefixed by the current directory.
+.PP
+If the result is an erroneous pathname for the remote system,
+the copy will fail.
+If the destination-file is a directory, the last part of the
+source-file name is used.
+If a simple
+.I ~user
+destination is inaccessible to 
+.B uucp,
+data is copied to a spool directory and the user
+is notified by mail(1).
+.PP
+The
+.PN uucp
+command preserves execute permissions across the transmission
+and gives 0666 read and write permissions.  For further information,
+see chmod(2).
+.PP
+The following options are interpreted by
+.PN uucp.
+.TP 
+.B -d
+Make all necessary directories for the file copy.
+.TP 
+.B -c
+Use the source file when copying out rather than
+copying the file to the spool directory.
+.TP 
+.B -m
+Send mail to the requester when the copy is complete.
+.TP
+.BI -W 
+Prevent local expansion of remote file names.
+Normally files names are prepended with the current working directory
+if a full path is not specified.  \fI\-W\fP tells 
+.PN uucp
+to expand local files only.
+.PP
+The
+.PN uulog
+command prints a summary 
+of 
+.PN uucp
+and
+.PN uux
+transactions that were recorded in the file
+/usr/spool/uucp/LOGFILE.
+.PP
+The options cause 
+.PN uulog 
+to print logging information:
+.TP
+\fB-s\fIsys\fP
+Print information about work involving system
+.I sys.
+.TP
+\fB-u\fIuser\fP
+Print information about work done for the specified
+.I user.
+.ti 3
+.SH uuname
+.PP
+The
+.PN uuname
+command lists the uucp names of known systems.
+The \fB\-l\fP option returns the local system name.
+.SH WARNINGS
+The domain of remotely accessible files can
+(and for obvious security reasons, usually should)
+be severely restricted.
+You will very likely not be able to fetch files
+by pathname.
+Ask a responsible person on the remote system to
+send them to you.
+For the same reasons, you will probably not be able
+to send files to arbitrary pathnames.
+.SH RESTRICTIONS
+.br
+All files received by
+.PN uucp
+will be owned by uucp.
+.br
+The -m option will only work sending files or receiving
+a single file.
+(Receiving multiple files specified by special shell
+characters ?*[] will not activate
+the -m option.)
+.SH FILES
+/usr/spool/uucp - spool directory
+.br
+/usr/lib/uucp/* - other data and program files
+.br
+/etc/acucap - shared autodial modem database
+.SH SEE ALSO
+mail(1), uux(1c), acucap(5)
+.br
+"Uucp Implementation Description,"
+.I ULTRIX-32 Supplementary Documentation, 
+Vol. III:System Manager

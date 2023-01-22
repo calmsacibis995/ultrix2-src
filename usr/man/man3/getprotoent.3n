@@ -1,0 +1,98 @@
+.TH getprotoent 3n
+.SH NAME
+getprotoent, getprotobynumber, getprotobyname, setprotoent, endprotoent \- get protocol entry
+.SH SYNTAX
+.nf
+.ft B
+.B #include <netdb.h>
+.PP
+.ft B
+struct protoent *getprotoent()
+.PP
+.ft B
+struct protoent *getprotobyname(name)
+char *name;
+.PP
+.ft B
+struct protoent *getprotobynumber(proto)
+int proto;
+.PP
+.ft B
+setprotoent(stayopen)
+int stayopen
+.PP
+.ft B
+endprotoent()
+.fi
+.SH DESCRIPTION
+The
+.PN getprotoent ,
+.PN getprotobyname ,
+and
+.PN getprotobynumber
+subroutines
+each return a pointer to an object with the
+following structure
+containing the broken-out
+fields of a line in the network protocol data base,
+/etc/protocols.
+.EX
+struct	protoent {
+	char	*p_name;	/* official name of protocol */
+	char	**p_aliases;	/* alias list */
+	long	p_proto;	/* protocol number */
+};
+.EE
+.PP
+The members of this structure are:
+.TP \w'p_aliases'u+2n
+p_name
+The official name of the protocol.
+.TP \w'p_aliases'u+2n
+p_aliases
+A zero terminated list of alternate names for the protocol.
+.TP \w'p_aliases'u+2n
+p_proto
+The protocol number.
+.PP
+The
+.PN getprotoent
+subroutine
+reads the next line of the file, opening the file if necessary.
+.PP
+The
+.PN setprotoent
+opens and rewinds the file.  If the
+.I stayopen
+flag is non-zero,
+the net data base will not be closed after each call to 
+.PN getprotoent
+(either directly, or indirectly through one of
+the other \*(lqgetproto\*(rq calls).
+.PP
+The
+.PN endprotoent
+subroutine closes the file.
+.PP
+The
+.PN getprotobyname
+and
+.PN getprotobynumber
+subroutines sequentially search from the beginning
+of the file until a matching
+protocol name or
+protocol number is found,
+or until EOF is encountered.
+.SH RESTRICTIONS
+All information
+is contained in a static area
+so it must be copied if it is
+to be saved.  Only the Internet
+protocols are currently understood.
+.SH DIAGNOSTICS
+Null pointer
+(0) returned on EOF or error.
+.SH FILES
+/etc/protocols
+.SH "SEE ALSO"
+protocols(5)

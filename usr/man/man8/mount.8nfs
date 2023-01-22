@@ -1,0 +1,226 @@
+.TH mount 8nfs
+.SH NAME
+mount, umount \- mount and unmount a Network File System (NFS)
+.SH SYNTAX
+.B /etc/mount \-t nfs [
+.B \-r \-v
+.B \-o 
+.I options 
+.B ] 
+.I special name
+.PP
+.B /etc/umount [
+.B \-v ] 
+.I name
+.SH DESCRIPTION
+.IX  "NFS mount command"  ""  "\fLmount\fP \(em mount file system"
+.IX  "mount NFS file system"  ""  "mount file system \(em \fLmount\fP"
+.IX  "NFS file system"  "mount"  ""  "mount \(em \fLmount\fP"
+.IX  "NFS umount command"  ""  "\fLumount\fP \(em unmount file system"
+.IX  "unmount NFS file system"  ""  "unmount file system \(em \fLumount\fP"
+.IX  "demount NFS file system"  ""  "demount file system \(em \fLumount\fP"
+.IX  "NFS file system"  "unmount"  ""  "unmount \(em \fLumount\fP"
+.IX  "NFS file system"  "demount"  ""  "demount \(em \fLumount\fP"
+The mount(8nfs)
+command determines if the file system to be mounted is of type NFS.
+The file system is of type NFS if the
+.I special 
+argument is of the form:
+host:remote_name.
+Remote_name is the name of a file system (or subtree
+of a file system) that has been exported by host.
+The file
+.I name
+must exist and it
+must be a directory.
+It becomes the name of the newly mounted file system.
+.PP
+.\" If invoked with \fB\-p\fP,
+.\" .B nfs_mount
+.\" prints the list of mounted NFS file systems reading standard input
+.\" for \fBstruct v_fs_data\fR records output from the
+.\" .B getmnt()
+.\" system call.
+.\" This option is used by the
+.\" mount(8)
+.\" command.
+.\" .PP
+The umount(8nfs)
+command unmounts the remote file system that was previously
+mounted on directory
+.I name.
+.SH OPTIONS
+.TP 12
+.B \-r
+Indicates that the file system
+is to be mounted read-only.
+.TP 12
+.B \-v
+Verbose flag to tell what did or did not happen.
+.TP 12
+\fB\-o \fIoptions\fR
+Specifies 
+.I options
+as a sequence of comma-separated words from the list below.
+The defaults are:
+.sp .5
+\fBrw,hard,intr,retry=10,000,timeo=11,retrans=4,port=NFS_PORT\fR
+.sp .5
+Defaults for 
+.I rsize 
+and 
+.I wsize 
+are set by the kernel.
+The NFS options are:
+.RS
+.LP
+.IP \fBrw\fR 1i
+read/write.
+.IP \fBro\fR
+read-only.
+.IP \fBbg\fR 1i
+If the first mount attempt fails, retry in the background.
+.IP \fBretry=\fIn\fR
+Set number of mount failure retries to 
+.I n.
+.IP \fBrsize=\fIn\fR
+Set read buffer size to 
+.I n 
+bytes.
+.IP \fBwsize=\fIn\fR
+Set write buffer size to 
+.I n
+bytes.
+.IP \fBtimeo=\fIn\fR
+Set NFS timeout to 
+.I n 
+tenths of a second.
+.IP \fBretrans=\fIn\fR 
+Set number of NFS retransmissions to 
+.I n.
+.IP \fBport=\fIn\fR
+Set server IP port number to 
+.I n.
+.IP \fBsoft\fR
+Return error if server doesn't respond.
+.IP \fBhard\fR
+Retry request until server responds.
+.IP \fBintr\fR
+Allow hard mounted file system operations to be interrupted.
+.IP \fBnosuid\fR
+Setuid and setgid programs may not be executed from this file system.
+.IP \fBnoexec\fR
+Binaries cannot be executed from this file system.
+.IP \fBpgthresh=##\fR
+Set the paging threshold for this file system in kilobytes.
+.RE
+.IP
+The
+.B bg
+option causes 
+.B mount
+to run in the background if the server's
+mountd(8nfs)
+does not respond.  
+.B mount 
+attempts each request \fBretry=\fIn\fR
+times before giving up.
+Once the file system is mounted,
+each NFS request made in the kernel waits
+\fBtimeo=\fIn\fR
+tenths of a second for a response.
+If no response arrives,
+the time-out is multiplied by 2 
+and the request is retransmitted.
+When \fBretrans=\fIn\fR
+retransmissions have been sent with no reply a
+.B soft
+mounted file system returns an error on the request and a
+.B hard
+mounted file system retries the request.
+If a hard mounted file system was mounted with the
+.B intr
+option,
+an operation within that file system that is retrying
+(for example, the server is down) can be interrupted.
+Filesystems that are mounted 
+.B rw
+(read-write)
+should use the 
+.B hard
+option.
+The number of bytes in a read or write request can be set with the
+.B rsize
+and
+.B wsize
+options.
+.PP
+The option for
+.B umount
+is:
+.TP 12
+.B \-v
+Verbose output format to tell what did or did not happen.
+.SH EXAMPLES
+.\" The
+.\" .B nfs_mount
+.\" is not the suggested interface.
+The mount(8nfs) command
+invokes
+.B nfs_mount
+to do its work.
+A sample
+.B mount
+command is:
+.EX 0
+# mount \-t nfs \-o hard,pgthresh=100 server:/usr /usr
+.EE
+.\" This would be translated to \fBnfs_mount\fP as:
+.\" .EX 0
+.\" nfs_mount \-o hard,pgthresh=100 server:/usr /usr
+.\" .EE
+To mount with 1K transfer size:
+.EX 0
+# mount \-t nfs \-o soft,rsize=1024,wsize=1024 serv:/usr/src /usr/src
+.EE
+To mount a remote file system:
+.EX 0
+# mount \-t nfs serv:/usr/src /usr/src
+.EE
+To hard mount a remote file system:
+.EX 0
+# mount \-t nfs \-o hard serv:/usr/src /usr/src
+.EE
+.\" The
+.\" .B nfs_umount
+.\" is not the suggested interface.
+.\" The umount(8nfs) command invokes
+.\" .B nfs_umount
+.\" to do its work.
+.SH RESTRICTIONS
+If the directory on which a file system is to be mounted is a
+symbolic link,
+the file system is mounted on 
+the directory to which the symbolic link refers,
+rather than being mounted on top of the symbolic link itself.
+.PP
+The
+.B /etc/nfs_mount
+and
+.B /etc/nfs_umount
+commands should only be invoked by the mount(8nfs)
+and umount(8nfs)
+commands.
+Users (and superusers) should not invoke the
+.B nfs_mount
+and
+.B nfs_umount
+commands.
+.SH FILES
+.ta 2i
+/etc/fstab	File system information file.
+/etc/nfs_mount	NFS specific mount program.
+/etc/nfs_umount	NFS specific unmount program.
+.SH "SEE ALSO"
+getmnt(2), mount(2), fstab(5), exports(5nfs), mount(8),
+umount(8), mountd(8nfs)

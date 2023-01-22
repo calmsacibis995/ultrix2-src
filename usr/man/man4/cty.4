@@ -1,0 +1,26 @@
+.TH cty 4
+.SH NAME
+cty \- extra serial line interface
+.SH DESCRIPTION
+The extra serial lines are available to the processor through the
+console registers. These lines are available on the 8100, 8200,
+8300, 8500, 8550, 8600, 8650, 8700, and 8800 machines and number three
+all total. There are also certain workstation configurations that
+may use one or more of these lines for extra console lines.
+They act like normal terminal lines except for the 8600 (8650) where
+the first line can also act as a remote console port and the other two
+lines are currently unused. Entries for these lines should be placed
+in /etc/ttys if they are used.
+.PP
+.SH RESTRICTIONS
+In general, the lines are low-performance devices.
+They can be used as terminal ports but for each character
+sent or received the CPU is interrupted. Thus it is
+recommended that the extra serial lines
+be used at low baud rates (2400 baud or less)
+so that console input and output will not severely impact system
+performance.
+.SH FILES
+/dev/ttyc?
+.SH SEE ALSO
+console(4), tty(4), MAKEDEV(8)

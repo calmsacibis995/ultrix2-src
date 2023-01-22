@@ -1,0 +1,70 @@
+.TH ypmatch 1yp
+./" Last edited by Jeff J. 6/24/86
+.SH NAME
+ypmatch - print the value of one or more keys from a yp map
+.SH SYNTAX
+.B ypmatch 
+.B [ \-d 
+\fIdomain\fR ]
+.B [ \-k ]
+.B [ \-t ]
+.I key 
+\&.\|.\|.
+.I mname 
+.br
+.B ypmatch 
+.B \-x
+.SH DESCRIPTION
+.LP
+The
+.B ypmatch 
+command prints the values associated with one or more keys from the 
+yellow pages (YP) map (database) specified by a
+.I mname,
+which may be either a
+.I mapname
+or a map 
+.I nickname.
+.LP
+Multiple keys can be specified.
+After the key values and the map name have been specified, 
+.I ypmatch 
+searches the map for all of the specified keys.
+The specified keys must be exact values in terms of capitalization
+and length.
+The
+.B ypmatch 
+command
+does not have a pattern matching capability.
+If
+.B ypmatch
+cannot match a key, it produces a diagnostic message.
+.SH OPTIONS
+.IP \fB\-d\fR
+Display the key values for the specified domain.
+.IP \fB\-k\fR
+Before printing the value of a key, print the key itself, followed by a
+colon (':').  This is useful if the keys are not duplicated in the returned
+values, or if the number of specified keys is so large that the output is
+confusing.
+.IP \fB\-t\fR
+Inhibit translation of nickname to mapname.
+For example,
+.I "ypmatch \-t zippy passwd "
+fails because there is no map named
+.I passwd,
+while
+.I ypmatch zippy passwd 
+succeeds because
+.I ypmatch 
+translates it to
+.I ypmatch zippy passwd.byname.
+.IP \fB\-x\fR
+Display the map nickname table.
+This option tells
+.I ypmatch 
+to list the nicknames (\fImnames\fR\|)
+with their associated
+.I mapnames.
+.SH SEE ALSO
+ypfiles(5yp), ypcat(1yp)

@@ -1,0 +1,34 @@
+.TH lprsetup 8 
+.SH NAME
+lprsetup \- automated line printer spooler set up
+.SH SYNTAX
+.B /etc/lprsetup
+.SH DESCRIPTION
+The
+.B lprsetup
+command provides an interactive easy-to-use facility for
+administrating the line printers on your system.
+The 
+.B lprsetup
+program contains on-line help and default answers to questions
+about adding, deleting, or changing the characteristics
+of any of the line printers on your system.
+Whenever a question is asked, the default selection is given in
+\[ \] .
+You can just enter <return> in response to the question to accept
+the default, or enter an alternate value for the given parameter.
+.PP
+The program knows about all of the possible symbols
+in the /etc/printcap file.
+See printcap(5) for a current list.
+After you have entered a printer specification, and have verified
+that it is correct,
+.B lprsetup
+then creates the spooling directory, links the output filter,
+and creates an /etc/printcap entry for the new printer.
+.PP
+If the printer is connected to the local processor, however, you
+must specify the printer device name which will be in the lp
+printcap entry.
+.SH SEE ALSO
+printcap(5)

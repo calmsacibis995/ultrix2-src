@@ -1,0 +1,542 @@
+#!/bin/sh
+#	@(#)ris	1.10	(ULTRIX)	1/9/87
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@			RIS - REMOTE INSTALLATION SERVICES		     @@
+#@@									     @@
+#@@			DATE: 07/08/86				     	     @@
+#@@
+#@@ Edits made to prompts. DATE: 7/25/86
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+RIS=/usr/adm/ris
+MOP=/usr/lib/dnet
+DNET=/usr/lib/dnet
+BIN=/usr/adm/ris/bin
+PATH=$BIN:$RIS:/bin:/usr/bin:/usr/ucb:/etc
+
+echo ""
+echo ""
+echo "WELCOME TO THE REMOTE INSTALLATION SERVICES (RIS) UTILITY  "
+test -d $RIS || { echo "$RIS does not exist"; exit; }
+test -d $BIN || { echo "$BIN does not exist"; exit; }
+test -d $DNET || { echo "$DNET does not exist"; exit; }
+chown ris /usr/adm/ris
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@			LICENSING DOUBLE CHECK			             @@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+$BIN/licheck || exit 
+test -f /usr/lib/dnet/vmunix.sys || cat /usr/sys/SAS.net/vm? >/usr/lib/dnet/vmunix.sys
+test -f /usr/lib/dnet/netload.sys || cp /usr/mdec/netload  /usr/lib/dnet/netload.sys
+grep mop_mom /etc/rc.local  >/dev/null || 
+	(
+	echo "Setting up mop_mom in rc.local"
+	echo "/etc/mop_mom &" >>/etc/rc.local
+	/etc/mop_mom &
+	)
+echo "
+
+This utility allows you to set up a network kit. Before using this
+utility, read the Overview of the Network Kit Setup Procedure
+chapter in the Network Management Guide. Then, use the Setting Up
+the Network Kit chapter, also located in the Network Management
+Guide, to help you answer the prompts displayed by this utility."
+DONE=
+while test -z "$DONE"
+	do
+	echo "
+
+	NETWORK KIT MENU
+
+	Install Software Subsets => I
+	Add Client Processor     => A
+        Remove Client Processor  => R"
+	echo -n "
+	Type your choice [no default]: "
+	read ANSWER
+	case $ANSWER in
+	A|a|P|p|R|r|I|i) DONE=DONE;;
+	esac
+	done
+echo ""
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@ SELECT INSTALL SOFTWARE SUBSETS MODE. THE 				     @@
+#@@ INSTALL SOFTWARE SUBSETS TASK IS DONE WITHIN THE			     @@
+#@@ I CASE.								     @@
+#@@ THE ADD CLIENT TASK CONTINUES ON. 					     @@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+case $ANSWER in
+	I|i)	echo "You have chosen to install software subsets to the $RIS directory. "
+		PROD=
+		test -d $RIS/instctrl && 
+			{
+			cd $RIS/instctrl
+			test -f *.image &&
+				{
+				for i in `ls -1t *.image`;
+					do
+					PROD="$PROD `echo $i |sed s/.image//`"
+					done
+				}
+			}
+		ANSW=N
+		if test -z "$PROD" 
+		then	echo ""
+		else	{
+			echo "Do you want to remove any old versions? "
+			echo  -n "Type yes or no. [no]: "
+			read ANSW
+			}
+		fi
+		case $ANSW in
+	        Y*|y*)	echo "This process removes all of the subsets and installation"
+			echo "control files associated with the specified product"
+			echo "and version. Client and model files remain untouched."
+			echo ""
+			echo "If you are not sure how to specify products and versions,"
+			echo "read the information in your System Management Guide"
+			echo "pertaining to setld and kit images."
+			echo ""
+			DONE=
+			while test -z "$DONE"
+				do
+				echo ""
+				echo "Your product choices are as follows:"
+				echo ""
+				for i in $PROD
+					do 
+					echo $i 
+					done
+				echo ""
+				echo -n "Enter the 3 character product prefix: "
+				read PREFIX
+				case $PREFIX in
+					"")	continue;;
+					*)	if test -f $RIS/instctrl/$PREFIX* 
+						then DONE=DONE
+						else echo "product $PREFIX not found?";
+						fi
+				esac
+				done
+			cd $RIS
+			for i in `ls $PREFIX*`;
+				do
+				VERSION=`expr $i : '.*\(...\)$'`
+				VCHK=
+				for k in $VERS
+					do
+					case $k in
+						$VERSION) VCHK=DUPE
+					esac
+					done
+				if test -z "$VCHK"
+				then VERS="$VERS $VERSION"
+				fi
+				done
+			DONE=
+			while test -z "$DONE"
+				do
+				echo ""
+				echo "For $PREFIX the following versions exist:"
+				echo ""
+				for i in $VERS
+					do
+					echo $i
+					done
+				echo ""
+				echo -n "Enter the 3 digit version number (For example 020): "
+				read VERNUM
+				if test -f $RIS/$PREFIX*$VERNUM
+				then DONE=DONE
+				else echo "Version $VERNUM not found?";
+				fi
+				done
+			cd $RIS
+			for i in `ls $PREFIX*$VERNUM`;
+				do 
+				DELIST="$DELIST $i"
+				rm $i
+				done
+			cd $RIS/instctrl
+			rm $PREFIX.image
+			for i in $DELIST
+				do
+				rm $i.inv $i.scp $i.ctrl
+				done
+			rm -f $RIS/clients/model.$PREFIX$VERNUM
+			rm -f $RIS/clients/model.$PREFIX$VERNUM.mand
+		esac
+		cd $RIS
+		test -d $RIS/clients || mkdir $RIS/clients
+		test -f $RIS/mandatory && rm $RIS/mandatory
+		echo ""
+		DONE=
+		while test -z "$DONE"
+			do
+			echo -n "
+Enter the full path associated with the software distribution kit
+device or mount point [no default]: "
+			read DEVICE
+			if test -f $DEVICE 
+			then DONE=DONE;
+			else 	if test -d $DEVICE 
+				then DONE=DONE;
+				fi
+			fi
+			if test -z "$DONE"
+			then echo "$DEVICE not found"
+			fi
+			done
+		echo ""
+		echo "Press RETURN after you have mounted the software"
+		echo "distribution media."
+		read ANSWER
+		echo "Loading software subsets to the $RIS directory. "
+		setld -x $DEVICE || { echo "setld extraction fault"; exit; }
+		test -f $RIS/new.image && rm $RIS/new.image
+		test -f $RIS/new.name && rm $RIS/new.name
+		cd $RIS/instctrl
+		for i in `ls -1t *.image`;
+			do
+			test -f $RIS/new.image || 
+				{	
+				cp $i $RIS/new.image
+				NEWPROD=`echo $i |sed s/.image//`
+				for k in `ls -1t $NEWPROD*.ctrl`;
+					do
+					test -f $RIS/new.name || 
+					{
+					RISTMP=`echo $k | sed s/.ctrl//`
+					NEWVER=`expr $RISTMP : '.*\(...\)$'`
+					>$RIS/new.name
+					}
+					done
+				}
+			done
+		echo "Updating the default permission model files. " 
+		rm -f $RIS/clients/model.$NEWPROD$NEWVER 
+		rm -f $RIS/clients/model.$NEWPROD$NEWVER.mand
+		for i in `grep -v ROOT $NEWPROD.image |awk '{print $3}'`
+			do
+			echo $i >>$RIS/clients/model.$NEWPROD$NEWVER
+			done
+		mv $RIS/mandatory $RIS/clients/model.$NEWPROD$NEWVER.mand
+		rm $RIS/new.name
+		rm $RIS/new.image
+		test -f $RIS/mandatory && rm $RIS/mandatory
+		echo ""
+		echo "Do you want the permission files for your client"
+		echo "processors and model files to be updated with the new"
+		echo "version of $NEWPROD modules?"
+		echo ""
+		echo "NOTE: If the files being modified have no subsets from"
+		echo "$NEWPROD product the entire set of subsets will be added"
+		echo "to the file. Otherwise only those subsets of past versions"
+		echo "of $NEWPROD will be updated to the new version. If the "
+		echo "updated file is a model file only version updating is done."
+		echo ""
+		echo -n "Type yes or no. [yes]: "
+		read ANSWER
+		echo ""
+		case $ANSWER in
+			n*|N*)	echo "
+You chose not to update the permission files for your client processors
+with these software subsets. You can find these software subsets in the
+$RIS directory
+"
+				cd $RIS
+				chown ris *
+				chown ris */*
+				exit
+		esac
+		cd $RIS/clients
+		for i in *;
+			do
+			case $i in
+			model.$NEWPROD$NEWVER*) continue;;
+			model.tmp) continue;;
+			model.*.mand) continue;;
+			model.*) test -f $i.mand && continue
+				 grep -s $NEWPROD $i || continue
+				 echo ""
+				 echo "Do you want $i to be updated? "
+				 echo -n " Type yes or no [no]: "
+				 read ANSWER
+				 case $ANSWER in
+				y*|Y*)	cp $i model.tmp
+					rm $i
+					for S in `cat model.tmp` 
+					do
+					case $S in
+					$NEWPROD*) RISTMP=`expr $S : '\(.*\)...$'`
+						   if test -f $RIS/$RISTMP$NEWVER
+						   then echo $RISTMP$NEWVER >>$i
+						   else echo "$S not in new version of $NEWPROD"
+						   fi;;
+						
+						*)	echo $S >>$i
+				  	esac
+					done;;
+				esac;;
+					
+			      *) echo ""
+				 echo "Do you want the permission file for the client "
+				 echo "processor, $i, to contain the newly installed software subsets?"
+				 echo -n "Type yes or no [no]: "
+				 read ANSWER
+				 case $ANSWER in
+				y*|Y*)	cp $i model.tmp
+					rm $i
+					DONE=
+					for S in `cat model.tmp` 
+					do
+					case $S in
+					$NEWPROD*) RISTMP=`expr $S : '\(.*\)...$'`
+						   DONE=1
+						   if test -f $RIS/$RISTMP$NEWVER
+						   then echo $RISTMP$NEWVER >>$i
+						   else echo "$S not in new version of $NEWPROD"
+						   fi;;
+						
+						*)	echo $S >>$i
+				  	esac
+					done
+				  	test -z "$DONE" && cat model.$NEWPROD$NEWVER >>$i;;
+				esac;;
+			 esac
+			 done
+		test -f $RIS/clients/model.tmp && rm model.tmp
+		cd $RIS
+		chown ris *
+		chown ris */*
+		exit;;
+	A|a)	echo "You have chosen to add a client for remote installation services."
+		test -d $RIS/clients || mkdir $RIS/clients
+		test -d $RIS/instctrl || 
+			{ echo "$RIS/instctrl does not exist"; exit; }
+		test -d $MOP || { echo "$MOP does not exist"; exit; }
+		test -d $MOP/clients || mkdir $MOP/clients
+		cd $RIS
+		continue;;
+	R|r)	echo "You have chosen to remove a client from the remote"
+		echo "installation services. "
+		DONE=
+		while test -z "$DONE"
+			do
+			echo ""
+			echo "Type the name of the client processor you want to"
+			echo -n "remove [no default]:"
+			read CLIENT
+			case $CLIENT in
+				"") continue;;
+				*)	if grep  -w -s $CLIENT /etc/hosts
+					then DONE=DONE
+					else echo "invalid client host name"
+					fi
+			esac
+			done
+		case $CLIENT in
+			?) MOPCLI=$CLIENT;;
+			??) MOPCLI=$CLIENT;;
+			???) MOPCLI=$CLIENT;;
+			????) MOPCLI=$CLIENT;;
+			?????) MOPCLI=$CLIENT;;
+			??????) MOPCLI=$CLIENT;;
+			*)	MOPCLI=`expr $CLIENT : '\(......\).*'`;;
+		esac
+		GETNODE=`/etc/getnode $MOPCLI |sed s/node//g | sed s/=//g`
+		case $GETNODE in
+			"")  echo "Invalid client name"
+			     exit;;
+		esac
+		/etc/remnode $MOPCLI
+		if test -f $DNET/nodes_p 
+		then /etc/remnode $MOPCLI -P
+		else cp $DNET/nodes_v $DNET/nodes_p
+		fi
+		grep -v $CLIENT $RIS/.rhosts >$RIS/rhost 
+		rm $RIS/clients/$CLIENT
+		rm $MOP/clients/$CLIENT.sys
+		mv $RIS/rhost $RIS/.rhosts
+		set $GETNODE;NODADR=$1
+		echo "$CLIENT removed from ris facility"
+		case $NODADR in
+			[A-Z]*) exit;;
+		esac
+		/etc/addnode $NODADR $MOPCLI
+		if test -f $DNET/nodes_p 
+		then /etc/addnode $NODADR $MOPCLI -P
+		else cp $DNET/nodes_v $DNET/nodes_p
+		fi
+		exit;;
+	*)	echo "illegal option\n"; exit;;
+esac
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@			CLIENT REGISTRY INFORMATION		             @@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+echo "
+This utility enables network downloading for a particular client
+from this host. This script sets up the node specific parameter
+packet in /usr/lib/dnet/clients and registers the client in the
+MOP database. It will also register the clients capability of 
+remotely loading subsets by creating a file in the $RIS/clients
+directory. This installation permission is created by copying a 
+already existing model file into the clients permission file.
+	 
+To successfully run this utility the following conditions must be met:
+	 
+ 	1. The client must be in the /etc/hosts file
+	2. You must know the clients hostname 
+	3. You must know the clients hardware ethernet address 
+	4. You must know which permission model file to use for this client 
+"
+echo -n "Do you want to continue? Type yes or no. [no]: "
+read ANSWER
+case $ANSWER in
+	y*|Y*)	continue;;
+	*)	exit;
+esac
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@@			LOOP TO REGISTER MULTIPLE CLIENTS	             @@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+cd $RIS
+cp /dev/null $RIS/inuse
+LOOP=
+while test -z "$LOOP"
+do
+	CLIBOT=netload.sys
+	CLIFSTP=1
+	SERVER=`hostname`
+	ARPRET=`/etc/arp $SERVER`
+	case $ARPRET in
+		"")	exit;;
+		*)	set $ARPRET;SERARP=$2
+	esac
+	DONE=
+	while test -z "$DONE"
+		do
+		echo ""
+		echo -n "Type the client processor's hostname [no default]: "
+		read CLIENT
+		case $CLIENT in
+			"")	continue;;
+			*)	ARPRET=`/etc/arp $CLIENT`
+				case $ARPRET in
+					"")	echo "$CLIENT unknown";;
+					*)	set $ARPRET;CLIARP=$2
+						DONE=DONE;;
+				esac
+		esac
+		done
+	CLISYS=vmunix.sys
+	CLIROOT= 
+	CLISWAP=
+# <cr> - " did more bad things "
+# check invalid format?
+	DONE=
+	while test -z "$DONE"
+		do
+		echo ""
+		echo "Type the client processor's hardware ethernet address, for"
+		echo -n "example, 00-Ae-F2-00-38-05 [no default]: "
+		read CLINET 
+		case $CLINET in
+			"")	continue;;
+			*)	CLIPKT=$MOP/clients/$CLIENT
+				$BIN/makpkt $SERVER $SERARP $CLIENT $CLIARP $CLIPKT $CLIROOT $CLISWAP $CLIFSTP 
+				cd $MOP/clients
+				cc -c $CLIENT $CLIENT.c
+				mv $CLIENT.o $CLIENT.sys
+				rm $CLIENT.c
+				CLIPKT=clients/$CLIENT
+				case $CLIENT in
+					?) MOPCLI=$CLIENT;;
+					??) MOPCLI=$CLIENT;;
+					???) MOPCLI=$CLIENT;;
+					????) MOPCLI=$CLIENT;;
+					?????) MOPCLI=$CLIENT;;
+					??????) MOPCLI=$CLIENT;;
+					*)	MOPCLI=`expr $CLIENT : '\(......\).*'`;;
+				esac
+				/etc/addnode $MOPCLI -h $CLINET -l $CLIBOT -s $CLISYS -t $CLIPKT && DONE=DONE;
+		esac
+		if test -z "$DONE"
+		then echo " Improper hardware address format"
+		else
+			(
+			if test -f $DNET/nodes_p 
+			then /etc/addnode $MOPCLI  -P -h $CLINET -l $CLIBOT -s $CLISYS -t $CLIPKT 
+			else cp $DNET/nodes_v $DNET/nodes_p
+			fi
+			)
+		fi
+		done
+	cd $RIS/clients
+	DONE=
+	while test -z "$DONE"
+		do
+		echo ""
+		echo "
+	You must now specify which model permission file to assign the client
+	processor you specified in a previous prompt. Your options are as
+	follows:
+
+"
+		ls -1 model.*
+		echo ""
+		echo -n "Type your choice [no default]:"
+		read MODEL
+		case $MODEL in
+			"")	continue;;
+			*)	if test -f $MODEL
+				then DONE=DONE
+				else echo "$MODEL file not found in $RIS/clients "
+				fi
+		esac
+		done
+	rm -f $CLIENT 
+	cp /dev/null model.tmp 
+	for i in `cat $MODEL`
+		do
+		PROD=`expr $i : '\(...\).*'`
+		grep -s $PROD model.tmp ||
+			(
+			VERS=`expr $i : '.*\(...\)$'`
+			cat model.$PROD$VERS.mand >>model.tmp
+			)
+		grep -s $i model.tmp || echo $i >>model.tmp
+		. $RIS/instctrl/$i.ctrl
+		case $DEPS in
+			*) for S in $DEPS 
+				do 
+				grep -s $S model.tmp || echo $S >>model.tmp
+				done;;
+		esac
+		done
+	for i in `cat model.tmp`
+		do
+		. $RIS/instctrl/$i.ctrl
+		case $DEPS in
+			'.') echo $i >>$CLIENT;;
+			*) set `echo $DEPS`
+				echo $i >>deps$#.$CLIENT;;
+		esac
+		done
+	test -f deps*.$CLIENT &&
+		(
+		cat deps*.$CLIENT >>$CLIENT
+		rm deps*.$CLIENT
+		)
+	rm model.tmp
+	test -f $RIS/.rhosts || >$RIS/.rhosts
+	grep -s $CLIENT $RIS/.rhosts ||
+		echo "$CLIENT root" >>$RIS/.rhosts;
+	echo "Do you want to add another client processor to the"
+	echo -n "$RIS/clients directory? Type yes or no [yes]: "
+	read ANSWER
+	case $ANSWER in
+		n*|N*)	LOOP=done;;
+	esac
+	cd $RIS
+	chown ris *
+	chown ris */*
+done
+

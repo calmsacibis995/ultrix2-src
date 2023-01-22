@@ -1,0 +1,70 @@
+.TH ypcat 1yp
+./" Last edited by Jeff J. 6/24/86
+.SH NAME
+ypcat - print values from a YP data base
+.SH SYNTAX
+.B ypcat
+[
+.B \-k
+] 
+[
+.B \-t
+] 
+[
+.B \-d
+.I  domainname 
+]
+.I  mname
+.br
+.B ypcat
+.B \-x
+.IX  "ypcat command"  ""  "\fLypcat\fP \(em print values from YP database"
+.IX  "print values from YP database"  ""  "print values from YP database \(em \fLypcat\fP"
+.IX  "yellow pages"  "print values from database"  ""  "print values from database \(em \fLypcat\fP"
+.SH DESCRIPTION
+The
+.B ypcat
+command prints values stored in a yellow pages (YP)
+map specified by 
+.I mname,
+which may be either a
+.I mapname
+or a map 
+.I nickname.
+.LP
+To look at the network-wide password database, 
+.I passwd.byname,
+with the nickname
+.I passwd, 
+type:
+.EX
+ypcat passwd
+.EE
+.SH OPTIONS
+.IP \fB\-d\fR
+Display information on the domain specified by
+.I domainname.
+.IP \fB\-k\fR
+Display the keys, followed by their values.
+.IP \fB\-t\fR
+Inhibit translation of 
+.I mname 
+to 
+.I mapname.
+For example,
+.I "ypcat \-t passwd"
+will fail because there is no map named
+.I passwd,
+whereas
+.I ypcat passwd
+will be translated to
+.I ypcat passwd.byname.
+.IP \fB\-x\fR
+Display the map nickname table.  
+This lists the nicknames (\fImnames\fR\|)
+the command knows of, and indicates the
+.I mapname
+associated with each
+nickname.
+.SH SEE ALSO
+domainname(1yp), ypmatch(1yp), ypfiles(5yp), ypserv(8yp) 

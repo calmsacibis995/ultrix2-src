@@ -1,0 +1,15 @@
+.TH whoami 1
+.SH NAME
+whoami \- print effective current user id
+.SH SYNTAX
+.B whoami
+.SH DESCRIPTION
+The
+.B whoami
+command prints who you are.
+It works even if you are su'd, while `who am i' does not since
+it uses /etc/utmp.
+.SH FILES
+/etc/passwd	Name data base
+.SH "SEE ALSO"
+who(1)

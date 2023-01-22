@@ -1,0 +1,33 @@
+.TH byteorder 3n
+.SH NAME
+htonl, htons, ntohl, ntohs \- convert values between host and network byte order
+.SH SYNTAX
+.nf
+.B #include <sys/types.h>
+.B #include <netinet/in.h>
+.PP
+.B netlong = htonl(hostlong);
+.B u_long netlong, hostlong;
+.PP
+.B netshort = htons(hostshort);
+.B u_short netshort, hostshort;
+.PP
+.B hostlong = ntohl(netlong);
+.B u_long hostlong, netlong;
+.PP
+.B hostshort = ntohs(netshort);
+.B u_short hostshort, netshort;
+.fi
+.SH DESCRIPTION
+These routines convert 16 and 32 bit quantities between network
+byte order and host byte order.  On machines such as the SUN
+these routines are defined as null macros in the include file
+< netinet/in.h >.
+.PP
+These routines are most often used in conjunction with Internet
+addresses and ports as returned by gethostent(3n)
+and getservent(3n).
+.SH RESTRICTIONS
+The VAX handles bytes in the reverse from most everyone else.
+.SH "SEE ALSO"
+gethostent(3n), getservent(3n)

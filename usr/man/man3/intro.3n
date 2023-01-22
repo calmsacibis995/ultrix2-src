@@ -1,0 +1,181 @@
+.TH intro 3n
+.SH NAME
+intro \- introduction to network library functions
+.SH DESCRIPTION
+This section describes functions that are available 
+for interprocess communication (IPC).  IPC takes
+place using sockets.  The
+.B socket(2)
+system call creates a communications channel based
+on domain, type, and protocol. 
+.PP
+Sockets are created without names.  The
+.B bind(2)
+system call is used to connect a name to 
+a socket.
+.PP
+A connection with another process must be made
+before data can be transferred on a bound socket.  The
+.B connect(2)
+system call is used to rendezvous with another process.  This
+process must be listening on a bound socket using the
+.B listen(2)
+system call.  This listening process can accept
+a connection request using the
+.B accept(2)
+system call.
+.PP
+Once two processes have connected and accepted an IPC,
+data can be transferred with the following system calls:
+.B read(2);
+.B write(2);
+.B send(2),
+and
+.B recv(2).
+.PP
+Connectionless sockets are also possible (a socket is
+bound and data can be transferred).  They use the
+following system calls to transfer data: 
+.B sendto
+and
+.B recvfrom.
+.PP
+IPC operates in three domains:
+.TP 15 
+UNIX\^
+local node
+.TP 15 5
+INTERNET\^
+local area network (LAN)
+.TP 15 5
+DECNET\^
+DECnet network
+.PP
+These types of sockets are available for IPC:
+.TP 20
+.I stream\^
+sequenced, reliable,unduplicated data
+.br
+CONNECTED socket
+.br
+record boundaries not preserved
+.br
+all domains
+.TP 20
+.I datagram\^
+not guaranteed to be sequenced, reliable, or
+unduplicated
+.br
+user protocol needed to give guarantees
+.br
+UNCONNECTED socket
+.br
+record boundaries preserved
+.br
+UNIX and INTERNET domains
+.TP 20
+.I sequenced packet\^
+like stream socket, except record boundaries preserved
+.br
+DECNET domain only
+.TP 20
+.I raw\^
+access to communications protocols
+.SH ROUTINES TO MANIPULATE INTERNET ADDRESSES
+The 
+.I inet
+routines manipulate Internet addresses.
+.SH ROUTINES TO MANIPULATE NETWORK DATABASE FILES
+.PP 
+Standard mapping routines are used to 
+retrieve entries in network database files.  
+Several routines operating on each database 
+file are identified by a group name:
+.TP 15
+.I gethostent\^
+retrieves entries from 
+.I etc/hosts
+.TP 15
+.I getnetent\^
+retrieves entries from
+.I etc/networks
+.TP 15
+.I getprotoent\^
+retrieves entries from
+.I etc/protocols
+.TP 15
+.I getservent\^
+retrieves entries from
+.I etc/services
+.PP
+Specific routines perform particular operations
+on each database file:
+.TP 15
+.I get...ent\^
+reads the next line of the file; opens
+the file, if necessary.
+.TP 15
+.I set...ent\^
+opens and rewinds the file.
+.TP 15
+.I end...ent\^
+closes the file
+.TP 15
+.I get...byname\^
+searches the file sequentially from the beginning
+until a matching 
+.I name
+is found, or EOF is
+encountered.
+.TP 15
+.I get...byaddr\^
+searches the file sequentially from the beginning
+until a matching 
+.I address
+is found, or EOF is
+encountered.
+.TP 15
+.I get...byport\^
+searches the file sequentially from the beginning
+until a matching 
+.I port number
+is found, or EOF is encountered.
+.TP 15
+.I get...bynumber\^
+searches the file sequentially from the beginning
+until a matching 
+.I protocol number
+is found, or EOF is encountered.
+.PP
+Each network library routine returns a pointer
+to a structure reflecting individual fields of a
+line in one of the network database files.  The
+structure for each database file contains some of
+the fields in the following list, with the prefix
+\fIx\fR replaced by a different letter in each 
+file:
+.TP 15
+.I x_addr\^
+pointer to a network address,
+returned in network-byte order
+.TP 15
+.I x_addrtype\^
+address family of the address being returned
+.TP 15
+.I x_aliases\^
+alternate names
+.TP 15
+.I x_length\^
+length of an address, in bytes.
+.TP 15
+.I x_name\^
+official name
+.TP 15
+.I x_net\^
+network number, returned in machine-byte order
+.TP 15
+.I x_port\^
+resident port
+.TP 15
+.I x_proto\^
+protocol number

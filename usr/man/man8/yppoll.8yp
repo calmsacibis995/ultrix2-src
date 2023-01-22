@@ -1,0 +1,38 @@
+.TH yppoll 8yp
+./" Last edited by Jeff J. 6/24/86
+.SH NAME
+yppoll \- determine which version of a YP map is at a master YP server host.
+.SH SYNTAX
+.B yppoll
+[ \fB-h \fIhost\fR ]
+[ \fB-d \fIdomain\fR ]
+.I mapname
+.SH DESCRIPTION
+The
+.PN yppoll 
+command asks a 
+.PN ypserv 
+process what the order number is, and which host
+is the master YP server for the named map.  
+If the server is a
+v.1 YP protocol server, 
+.PN yppoll
+uses the older protocol to communicate with 
+.PN ypserv 
+and uses the older diagnostic messages if a failure occurs.
+.SH OPTIONS
+.IP "\fB\-h \fIhost\fR"
+Ask the 
+.PN ypserv 
+process at
+.I host
+about the map parameters.  If 
+.I host 
+is not specified, the YP server for the local host is used.
+That is, the default host is the one returned by ypwhich(1yp).
+.IP "\fB\-d \fIdomain\fR"
+Use
+.I domain
+instead of the default domain.
+.SH SEE ALSO
+ypfiles(5yp), ypserv(8yp)

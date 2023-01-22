@@ -1,0 +1,71 @@
+.TH getdomainname 2yp
+.SH NAME
+getdomainname, setdomainname \- get or set name of current domain
+.SH SYNTAX
+.nf
+.ft B
+getdomainname(name, namelen)
+char *name;
+int namelen;
+.sp .5
+.ft B
+setdomainname(name, namelen)
+char *name;
+int namelen;
+.fi
+.SH DESCRIPTION
+.LP
+.IX  getdomainname  ""  \fLgetdomainname\fP
+.IX  "processes and protection"  getdomainname  ""  \fLgetdomainname\fP
+.IX  domain  "get name of current"
+.IX  "get current domain name"
+.IX  setdomainname  ""  \fLsetdomainname\fP
+.IX  "processes and protection"  setdomainname  ""  \fLsetdomainname\fP
+.IX  domain  "set name of current"
+.IX  "set current domain name"
+The 
+.PN getdomainname
+system call returns the domain name of the current processor,
+as set by
+.PN setdomainname.
+.LP
+The
+.PN setdomainname
+system call sets the domain of the host machine to be
+.I name,
+which has a length specified by
+.I namelen.
+This system call is restricted to the super-user
+and is normally used only
+when the system is bootstrapped.
+.LP
+The purpose of domains is to allow merging of two distinct networks
+that have common host names.  Each network can be
+distinguished by having a different domain name.  At the current time,
+only the yellow pages service makes use of domains.
+.PP
+The name argument is the address where the name of the current domain is
+stored.
+.PP
+The 
+.I namelen
+argument specifies the size of the
+.I name
+array.  The returned name is null-terminated unless insufficient space
+is provided.
+.SH RETURN VALUE
+If the call succeeds, a value of 0 is returned.  If the call fails, 
+a value of \-1 is returned and an error code is placed in the global
+location \fIerrno\fP.
+.SH RESTRICTIONS
+Domain names are limited to 255 characters.
+.SH DIAGNOSTICS
+.TP 15
+[EFAULT]
+The \fIname\fP parameter contains an invalid address.
+.TP 15
+[EPERM]
+The caller was not the super-user.  This error message only
+applies to the 
+.PN setdomainname
+system call.

@@ -1,0 +1,135 @@
+.TH makedbm 8yp
+.SH NAME
+makedbm \- make a Yellow Pages dbm file
+.SH SYNTAX
+.B makedbm
+[
+.B \-i
+.I yp_input_file 
+] 
+[
+.B \-o
+.I yp_output_name 
+] 
+[
+.B \-d
+.I yp_domain_name 
+] 
+[
+.B \-m
+.I yp_master_name 
+] 
+.I infile 
+.I outfile
+.br
+.B makedbm
+[
+.B \-u
+.I dbmfilename 
+]
+.SH DESCRIPTION
+.IX  "makedbm command"  ""  "\fLmakedbm\fP \(em make yellow pages dbm file"
+.IX  "make yellow pages dbm file"  ""  "make yellow pages dbm file \(em \fLmakedbm\fP"
+.IX  "create yellow pages dbm file"  ""  "create yellow pages dbm file \(em \fLmakedbm\fP"
+.IX  "yellow pages"  "make dbm file"  ""  "make dbm file \(em \fLmakedbm\fP"
+The 
+.PN makedbm
+command takes the file specified by the argument
+.I infile
+and converts it to a pair of files in dbm(3x)
+format, namely
+.I outfile.pag
+and
+.I outfile.dir.
+Each line of the input file is converted to a single
+.PN dbm
+record.
+All characters up to the first tab or space form the key,
+and the rest of the line is defined as the key's associated data.
+If a line ends with a backslash character (\),
+the data for that record is continued onto the next line.
+It is left for the clients of the Yellow Pages to interpret the number 
+character (#);
+.PN makedbm
+does not treat it as a comment character.  The
+.I infile
+parameter can be \-, in which case
+.PN makedbm
+reads the standard input.
+.LP
+The
+.PN makedbm
+command is meant to be used in generating
+.PN dbm
+files for the Yellow Pages service.
+The 
+.PN makedbm
+command generates a special entry with the key 
+.I yp_last_modified,
+which is the date of
+.I infile.
+.SH OPTIONS
+.TP
+.B \-i
+Create a special entry with the key 
+.IR yp_input_file.
+.TP
+.B \-o
+Create a special entry with the key 
+.I yp_output_name.
+.TP
+.B \-d
+Create a special entry with the key 
+.I yp_domain_name.
+.TP
+.B \-m
+Create a special entry with the key 
+.I yp_master_name.  
+If no master host name is specified, 
+.I yp_master_name 
+will be set to the local host name.
+.TP
+.B \-u
+Undo a
+.PN dbm
+file.
+That is, print out a
+.PN dbm
+file one entry per line,
+with a single space separating keys from values.
+./"
+./"the makedbm(8yp) man. page. All strings in ""'s were italicized in 
+./"the original man. 
+.SH EXAMPLE
+The following example shows how a combination of commands can be used
+to make the Yellow Pages dbm files passwd.byname.pag
+and passwd.byname.dir 
+from the /etc/passwd 
+file.  The percent sign (%) signifies the system prompt.
+.PP
+.EX
+% awk 'BEGIN { FS = ":"; OFS = "\t"; } 
+ { print $1, $0 }' /etc/passwd > ptmp
+% makedbm ptmp passwd.byname
+% rm ptmp
+.EE
+.LP
+The 
+.PN awk
+command creates the file 
+.I ptmp
+which is in a form usable by
+.PN makedbm.
+The 
+.PN makedbm 
+command uses the
+.I ptmp 
+file to create the Yellow Pages dbm files passwd.byname.dir
+and passwd.byname.pag.
+The 
+.PN rm
+command removes the 
+.I ptmp
+file.
+.SH "SEE ALSO"
+yppasswd(1yp), dbm(3x), ypmake(8yp)

@@ -1,0 +1,31 @@
+.TH doconfig 8 local "Ultrix-32 (V1.1)" "ULTRIX Programmer's Manual"
+.SH NAME
+doconfig \- a program to aid system configuration
+.SH SYNTAX
+\fB/etc/doconfig\fP
+
+.SH DESCRIPTION
+.PP
+.IR doconfig (8)
+is a shell script that, using the
+.IR sizer (8)
+program, will help the user generate a configuration file for a new
+ULTRIX system kernel.  The script, when run, will prompt the user for a
+system name and, if there is no system configuration file with that
+system name already, will build one, prompting the user for extra
+devices (normally comm devices are entered into the file this way).
+.PP
+Whether the configuration file is built or not, the script then enters
+the user into an "edit-configure-build" loop until the configuration
+and the build run without errors.  The user can then shutdown his system
+and reboot /newvmunix.  Further runs of
+.I doconfig
+can be made to further tune the configuration.
+
+.SH FILES
+/tmp/???systemname, /sys/???systemname, /sys/conf/???systemname
+
+.SH SEE ALSO
+.IR config (8),
+\fIULTRIX-32 Installation Guide\fP,
+.IR sizer (8), ed (1).

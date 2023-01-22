@@ -1,0 +1,50 @@
+# @(#)VACUUM	1.4	(ULTRIX)	6/5/86
+#
+# VACUUM
+# Digital VAX 11/780 (Star) standalone development machine
+#
+machine		vax
+cpu		"VAX780"
+ident		VACUUM
+timezone	5 dst
+maxusers	80
+physmem		24
+maxuprc		30
+options		QUOTA
+options		INET
+options		LAT
+
+config		vmunix		root on ra0 swap on ra0
+config		vmunix_usr	root on ra0g swap on ra0b
+
+adapter		mba0	at nexus ?
+disk		hp0	at mba0	drive 0
+master		mt0	at mba0 drive 1
+tape		mu0	at mt0 slave 0
+tape		mu1	at mt0 slave 1
+adapter		mba1	at nexus ?
+adapter		uba0	at nexus ?
+adapter		uba1	at nexus ?
+controller	hk0	at uba? csr 0177440 		vector rkintr
+disk		rk0	at hk0 drive 0
+disk		rk1	at hk0 drive 1
+controller	uda0	at uba?
+controller	uq0	at uda0 csr 0172150		vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+disk		ra2	at uq0 drive 2
+disk		ra3	at uq0 drive 3
+device		dz0	at uba? csr 0160110 flags 0xfe	vector dzrint dzxint
+controller	zs0	at uba? csr 0172520		vector tsintr
+device		ts0	at zs0 drive 0
+device		de0	at uba? csr 0174510		vector deintr
+device		dmc0	at uba? csr 0160070		vector dmcrint dmcxint
+device		dhu0	at uba0 csr 0160500 flags 0xffff vector dhurint dhuxint
+device		dmz0	at uba? csr 0160540 flags 0xfffffb	
+	vector dmzrinta dmzxinta dmzrintb dmzxintb dmzrintc dmzxintc
+pseudo-device	pty
+pseudo-device	loop
+pseudo-device	inet
+pseudo-device	ether
+pseudo-device	lat
+pseudo-device	lta

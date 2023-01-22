@@ -1,0 +1,50 @@
+.\" Last modified by MJT on 3-Jul-86  0838
+.\"  Merged RR and Jenkins changes with latest library version.  Sigh.
+.\"
+.TH getgroups 2
+.SH NAME
+getgroups \- get group access list
+.SH SYNTAX
+.nf
+.ft B
+#include <sys/param.h>
+.PP
+.ft B
+getgroups(gidsetsize, gidset) 
+int gidsetsize, *gidset;
+.fi
+.SH DESCRIPTION
+The 
+.PN getgroups
+call gets the current group access list of the user process
+and stores it in the array 
+.IR gidset .
+The parameter
+.I gidsetsize
+indicates the number of entries that may be placed in 
+.I gidset
+and is modified on return to indicate the actual number of groups returned.
+.SH RETURN VALUE
+Upon success, the call returns the actual
+number of groups returned to array
+.IR gidset .  
+No more than NGROUPS, as defined in <sys/param.h>, will
+be returned.
+.PP
+A value of \-1 indicates that an error occurred, and the error
+code is stored in the global variable \fIerrno\fP\|.
+.SH DIAGNOSTICS
+The possible errors for 
+.PN getgroups
+are:
+.TP 15
+[EINVAL]
+The argument 
+.I gidsetsize
+is smaller than the number of groups in the group set.
+.TP 15
+[EFAULT]
+The argument \fIgidset\fP specifies
+invalid addresses.
+.SH "SEE ALSO"
+setgroups(2), initgroups(3x)

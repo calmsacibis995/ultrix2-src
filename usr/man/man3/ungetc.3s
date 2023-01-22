@@ -1,0 +1,40 @@
+.TH ungetc 3s 
+.SH NAME
+ungetc \- push character back into input stream
+.SH SYNTAX
+.B #include <stdio.h>
+.PP
+.B ungetc(c, stream)
+.br
+.SM
+.B FILE
+.B *stream;
+.SH DESCRIPTION
+The
+.PN ungetc
+routine pushes the character
+.I c
+back on an input stream.  That character will be returned by the next
+.PN getc
+call on that stream.
+The
+.PN ungetc 
+routine returns 
+.IR c .
+.PP
+One character of pushback is guaranteed provided
+something has been
+read from the stream and the stream is actually buffered.
+Attempts to push EOF are rejected.
+.PP
+The
+fseek(3s)
+routine erases all memory of pushed back characters.
+.SH DIAGNOSTICS
+The
+.PN ungetc
+routine returns
+.SM EOF
+if it can't push a character back.
+.SH "SEE ALSO"
+fseek(3s), getc(3s), setbuf(3s)

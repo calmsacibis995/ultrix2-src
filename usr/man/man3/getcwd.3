@@ -1,0 +1,65 @@
+.TH getcwd 3 
+.SH NAME
+getcwd \- get path-name of current working directory
+.SH SYNTAX
+.nf
+.B char \(**getcwd (buf, size)
+.B char \(**buf;
+.B int size;
+.fi
+.SH DESCRIPTION
+The
+.PN getcwd
+subroutine returns a pointer to the current directory path-name.
+The value of
+.I size
+must be at least two greater than the length of the
+path-name to be returned.
+.PP
+If
+.I buf
+is a
+.SM NULL
+pointer,
+.PN getcwd
+will obtain
+.I size
+bytes of space using 
+malloc(3).
+In this case, the pointer returned by
+.PN getcwd
+may be used as the argument in a subsequent call to
+.I free.
+.PP
+The function is implemented by using 
+popen(3)
+to pipe the output of the 
+pwd(1)
+command into the specified string space.
+.SH EXAMPLE
+.RS
+.nf
+char \(**cwd, \(**getcwd();
+\&.
+\&.
+\&.
+if ((cwd = getcwd((char \(**)NULL, 64)) == NULL) {
+.RS
+perror(``pwd'');
+exit(1);
+.RE
+}
+printf(``%s\en'', cwd);
+.fi
+.RE
+.SH DIAGNOSTICS
+Returns
+.SM NULL
+with
+.I errno
+set if
+.I size
+is not large enough, or if an error ocurrs
+in a lower-level function.
+.SH "SEE ALSO"
+pwd(1), malloc(3), popen(3)

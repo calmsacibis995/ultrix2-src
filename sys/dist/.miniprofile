@@ -1,0 +1,406 @@
+#!/bin/sh
+#
+# 001 - June, 1986 - Lea Gottfredsen & Tungning Cherng
+#		Added in network remote support.
+#
+# 000 - April 11, 1986, by Tungning Cherng
+# 	Prompt edits - Sept. 19, 1986, by Al Wojtas
+stty dec new prterase
+PATH=.:/etc:/bin
+HOME=/
+export PATH TERM HOME
+LL="
+"
+MSG1="${LL} *** CHOOSE INSTALLATION OPTION *** ${LL}
+You must now choose one of the following options: ${LL}
+	1 Installation
+	2 System management ${LL}
+Type your choice [1]: "
+MSG2="${LL} *** SELECT THE SOFTWARE DISTRIBUTION DEVICE *** ${LL}
+The installation booklet for your processor explains the following table 
+of software distribution devices and which installation media you should 
+load on it:${LL}"
+MSG3="${LL} *** SELECT THE SYSTEM DISK DRIVE *** ${LL}
+The installation booklet for your processor explains the following table 
+of system disk drives, one of which will contain the root file system: ${LL} "
+MSG4="${LL}The installation software is restoring the root file system 
+to partition 'a' of the system disk,"
+MSG5="${LL}The installation software checks the root file system on 
+partition 'a' of the system disk,"
+ERMSG1="${LL}This error causes the installation procedure to stop. 
+One possible cause for the error is a corrupt system disk. You
+may want to replace or use another system disk, and begin the installation
+again. If this error message appears a second time, contact
+a DIGITAL representative."
+ERMSG2="${LL}The installation software could not access 
+your distribution device. Make sure the distribution 
+device is on line and ready before you again select the 
+device from the table."
+ERMSG3="${LL} The installation software could not access your
+system disk. Make sure the system disk drive is on
+line and write-enabled (if applicable to your disk drive) before 
+you again select the device from the table."
+ERMSG4="
+NO valid device is found.  Contact a DIGITAL field service representative."
+
+
+while : true
+do
+	echo -n "$MSG1"
+	read resp
+	case $resp in
+	 	"" | 1 ) break  ;;
+		2)	exit 1 ;;
+	esac
+done
+
+trap '
+while :
+do
+	echo -n "Do you really want to quit the installation <y/n>?  "
+	read ans
+	case $ans in
+	[yY]* )  echo "Restart your installation."
+		 exit 1 ;;
+	[nN]* )
+	         break ;;
+	esac
+done ' 1 2 3
+		
+RISROOT=/usr/adm/ris/ROOT
+remoteflag=n
+if test -f gethost
+then
+	eval `gethost` && remoteflag=y  2> /dev/null
+fi
+case $remoteflag in
+y )
+	echo "
+Because your software distribution kit is the network,
+you do not have to prepare and select the software 
+distribution device."
+	;;
+* )
+	while : true
+	do
+		echo "$MSG2"
+		MEDIA=`finder -i`
+		case $? in
+		0 )	;;
+		* )
+			echo $ERMSG4
+			exit 1 ;;
+		esac
+		set xx $MEDIA
+		media_D=$2; media_d=$3; media_u=$4	
+		LABEL="SUPPORTED SOFTWARE"
+		case $media_D in
+		TK* )
+			echo "
+REMOVE THE TAPE LABELLED 'STANDALONE ULTRIX TK50 #1'."
+			;;
+		RX* )
+			LABEL="ROOT 1"
+			;;
+		RA60 )
+			LABEL="SUPPORTED & UNSUPPORTED SOFTWARE"
+			;;
+		esac
+		while :
+		do
+			echo -n "
+The software distribution device you selected is ${media_D}, and 
+its device number is ${media_u}.  After you put the media labelled
+$LABEL on this device, make sure it is 
+on line and write protected.  
+${LL}Press the RETURN key when you are ready to continue. "
+			read ans
+			case $ans in
+			"" ) 	break ;;
+			back) continue 2 ;;
+			esac
+		done
+		media_p=
+		case $media_D in	
+		RA60)
+			media_p=g ;;
+		RX50)	
+			media_p=c ;;
+		esac
+		cd /dev
+		MAKEDEV $media_d$media_u$media_p > /dev/null
+		case $? in
+		0 )	;;
+		* )
+			echo "
+The MAKEDEV command could not make the special files on the
+$media_d$media_u device. $ERMSG1 "
+			exit 1	;;
+		esac
+		cd /
+		case $media_D in	
+		RA60 | RX50 )
+			dd if=/dev/r$media_d$media_u$media_p count=1 >/dev/null 2>&1
+			case $? in
+			0 )	;;
+			* )	
+				echo "$ERMSG2"
+				continue ;;
+			esac
+			;;
+		*)	
+			mt -f /dev/rmt0h rew	
+			case $? in
+			0 )	;;
+			* )	
+			echo "$ERMSG2"
+				rm -f /dev/*mt*
+				continue ;;
+			esac
+			;;
+		esac
+		break
+	done
+	;;
+esac	
+
+while : true
+do
+	echo "$MSG3"
+	ROOTF=`finder -r`
+	case $? in
+	0 )	;;
+	* )
+		echo $ERMSG4
+		exit 1 ;;
+	esac
+	set xx $ROOTF
+	root_D=$2; root_d=$3; root_u=$4
+	case $root_d$root_u in
+	$media_d$media_u )
+		echo "
+You attempted to allocate the root file system on $root_d$root_u, which 
+contains your distribution medium. Choose another disk device from the
+table."
+		continue ;;
+	esac
+	while :
+	do
+		echo -n "
+The system disk you selected is ${root_D}, and its device number is ${root_u}. 
+Make sure this disk drive is on line and write-enabled (if applicable to
+your disk drive).${LL}${LL}Press the RETURN key when you are ready to continue. "
+		read ans 
+		case $ans in
+		"" )	break ;;
+		back )
+			continue 2 ;;
+		esac
+	done
+	case $root_D in
+	RA60 )
+		ns=42;nt=4;;
+	RA80 | RM80 | R80 )
+		ns=31;nt=14;;
+	RA81 )
+		ns=51;nt=14;;
+	RA82 )
+		ns=57;nt=15;;
+	RA90 )
+		ns=70; nt=13;;
+	RD31 )
+		ns=17; nt=4;;
+	RD32 )
+		ns=17; nt=6;;
+	RD52 )
+		ns=18;nt=7;;
+	RD53 )
+		ns=18;nt=8;;
+	RD54 )
+		ns=17;nt=15;;
+	RM03 )
+		ns=32;nt=5;;
+	RM05 )
+		ns=32;nt=19;;
+	RP05 | RP06 )
+		ns=22;nt=19;;
+	RP07 )
+		ns=50; nt=32 ;;
+	* )
+		echo  "${LL}
+You specified ${root_D}, which is not a supported disk. "
+	exit 1 ;;
+	esac
+	echo "
+The installation software now allocates the root file system on
+partition 'a' of the system disk, ${root_d}${root_u} ${root_D}. ${LL}"
+	cd /dev
+	MAKEDEV ${root_d}${root_u}a ${root_d}${root_u}c > /dev/null
+	case $? in
+	0 )	;;
+	* )
+		echo "
+The MAKEDEV command could not make the special files for the
+system disk, $root_d$root_u. $ERMSG1"
+		exit 1 ;;
+	esac
+	cd /
+
+	chpt -d /dev/r${root_d}${root_u}c >/dev/null 2>&1
+
+	dd if=vaxboot of=/dev/r${root_d}${root_u}a bs=8192 count=1 > /dev/null 2>&1
+	case $? in
+	0 )	;;
+	* )	echo "$ERMSG3"
+		rm -f /dev/*${root_d}${root_u}* 
+		continue ;;
+	esac
+	break
+done
+
+
+echo "Making the root file system on $root_d$root_u $root_D."
+mkfs /dev/r${root_d}${root_u}a 15884 $ns $nt 8192 1024 
+case $? in
+0 )	;;
+* )
+	echo "
+The mkfs command failed to construct a file system on
+partition 'a' of the system disk, ${root_d}${root_u}. $ERMSG1"
+	exit 1	;;
+esac
+mount -o force /dev/${root_d}${root_u}a /mnt 
+case $? in
+0 ) ;;
+* )
+	echo "
+The mount command failed to mount partition 'a' of the system
+disk, ${root_d}${root_u}. $ERMSG1"
+	exit 1 ;;
+esac
+
+case $remoteflag in
+y )
+	cd /mnt
+	echo "$MSG4 ${root_d}${root_u} ${root_D}. "
+	rsh $SERVER -l ris -n "dd if=$RISROOT bs=10k" | restore rf - 
+	case $? in
+	0 )	;;
+	* )
+		echo "
+The root file system restore operation failed.  Please check with the
+system manager of your host server."
+		exit 1
+		;;
+	esac
+
+	dd if=/netstart of=netstart 2>/dev/null
+	dd if=/etc/hosts of=etc/hosts 2>/dev/null
+	;;
+	
+* )
+	while : true
+	do
+		case $media_D in
+	   	RA60 )
+			echo "${LL}
+The installation software checks your distribution medium, ${media_d}${media_u},
+to ensure that it is not corrupt. "
+			fsck /dev/r${media_d}${media_u}${media_p} 
+			case $? in
+			0 ) ;;
+			* )
+				echo "
+The fsck command failed to complete a file consistency check
+for the file system on partition ${media_p} of the ra60 distribution medium,
+${media_d}${media_u}. $ERMSG1"
+				exit 1 ;;
+			esac
+			mkdir rootdump
+			mount -r /dev/${media_d}${media_u}${media_p} /rootdump 
+			case $? in
+			0 )	;;
+			* )
+				echo "
+The mkdir command failed to make a rootdump directory in partition ${media_p} 
+of the ra60 distribution medium, ${media_d}${media_u}. $ERMSG1"
+				exit 1 ;;
+			esac
+			cd /mnt
+			echo "$MSG4 ${root_d}${root_u} ${root_D}."
+			restore rf /rootdump/ROOT 
+			case $? in
+			0 )	;;
+			* )
+				echo "
+The restore command could not access the root file system. $ERMSG1"
+				exit 1 ;;
+			esac
+			break
+			;;
+	    	RX50)
+			cd /mnt
+			echo "$MSG4 ${root_d}${root_u} ${root_D}."
+			restore rBf 400 /dev/${media_d}${media_u}$media_p
+			case $? in
+			0 )	;;
+			* )
+				echo -n "
+The restore command failed to access the RX50 distribution medium. To
+correct the error, make sure you loaded the appropriate RX50 distribution
+medium correctly in the drive. Then answer y to the following question.
+	
+Do you want to continue with the installation? Type y or n. [y]: "
+				read resp
+				case $resp in
+				n* | N*)
+					;;
+				*)
+					continue ;;
+				esac
+				;;
+			esac
+			break
+			;;
+	    	* )
+			cd /mnt
+			mt -f /dev/nrmt0h fsf 2
+			echo "$MSG4 ${root_d}${root_u} ${root_D}."
+			restore rf /dev/nrmt0h
+			case $? in 
+			0 )	;;
+			* )
+				echo "
+The restore command failed to access the magnetic tape distribution
+medium. $ERMSG1"
+				exit 1 ;;
+			esac
+			break
+			;;
+		esac
+	done
+	;;
+esac
+
+echo "$root_D $root_d $root_u $media_D $media_d $media_u $media_p" > .minidevice
+dd if=/tmp/showboot of=/mnt/tmp/showboot 2>/dev/null
+cd /
+umount /dev/${root_d}${root_u}a
+echo "$MSG5 ${root_d}${root_u}  ${root_D}."
+fsck /dev/r${root_d}${root_u}a 
+case $? in
+0 )	;;
+* )
+	echo "
+The fsck command failed to complete a file system consistency check 
+for the file system on partition 'a' of the system disk, ${root_d}${root_u}.
+$ERMSG1 "
+	exit 1
+	;;
+esac
+
+echo "${LL}*** TYPE THE BOOTSTRAP COMMAND ***"
+dd if=/tmp/showboot 2>/dev/null 
+sync
+sync
+halt

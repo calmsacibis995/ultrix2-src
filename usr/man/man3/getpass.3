@@ -1,0 +1,35 @@
+.\" Last modified by BAMichaud on 12-Nov-85 1300
+.\" Last modified by BAM on 19-Jul-85  1100  
+.\"
+.TH getpass 3 
+.SH NAME
+getpass \- read a password
+.SH SYNTAX
+.nf
+.B char *getpass(prompt)
+.B char *prompt;
+.fi
+.SH DESCRIPTION
+The
+.PN getpass
+subroutine
+reads a password from the file /dev/tty,
+or if that cannot be opened, from the standard input,
+after prompting with the null-terminated string
+.I prompt
+and disabling echoing.
+A pointer is returned to a null-terminated string
+of at most 8 characters.
+.SH ENVIRONMENT
+When your program is compiled using the System V environment,
+if the file /dev/tty cannot be opened, a NULL
+pointer is returned.  An interrupt will terminate
+input and send an interrupt signal to the calling
+process before returning.
+.SH RESTRICTIONS
+The return value points to static data
+whose content is overwritten by each call.
+.SH FILES
+/dev/tty
+.SH "SEE ALSO"
+crypt(3)

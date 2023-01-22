@@ -1,0 +1,95 @@
+.TH dmc 4
+.SH NAME
+dmc \- DEC DMC-11/DMR-11 point-to-point communications device
+.SH SYNTAX
+.B "device dmc0 at uba0 csr 0167600 flags 0x???? vector dmcrint dmcxint"
+.SH DESCRIPTION
+The
+.PN dmc
+interface provides access to a point-to-point communications
+device which runs at either 1 Mb/s or 56 Kb/s.  DMC-11's communicate
+using the DEC DDCMP link layer protocol.
+.PP
+The
+.PN dmc
+interface driver also supports a DEC DMR-11 providing point-to-point
+communication running at data rates from 2.4 Kb/s to 1 Mb/s.
+DMR-11's are a more recent design and thus are preferred over DMC-11's.
+.PP
+The host's address must be specified with an SIOCSIFADDR ioctl
+before the interface will transmit or receive any packets.
+.PP
+Several protocols can be multiplexed over a
+.PN dmc
+link simultaneously.  Conversely, a
+.PN dmc
+can be set up such that only one protocol family can use
+that device.  If the latter approach is taken, an SIOCSTATE
+ioctl must be issued by the protocol family requesting
+device ownership.  The family's address must appear in the
+``if_family'' structure member, and ``if_nomuxhdr'' must
+be set.  Before requesting ownership, the device's
+current ownership should be read and saved.  This will
+allow device ownership to be returned to a previous owner.
+.PP
+The first byte of the flags word can be set up to indicate
+what mode the device should use.  The supported modes are
+0 for full duplex, 1 for maintenance mode, and 2 for half
+duplex.  In addition, if the device is a
+.PN dmr ,
+the number of outstanding transmit buffers can be increased
+from a default of 7 to a maximum of 24 buffers by specifying
+a hexadecimal value in the second byte of the flags word.
+For example, if the flags word is set to 0x1800, then 24
+transmit buffers will be allocated on a device set up to run
+full duplex.
+.SH DIAGNOSTICS
+.BR "dmcprobe: can't start device" .
+The
+.PN dmc
+could not be started at boot time.
+.PP
+.BR "dmcinit:  DMC not running" .
+The 
+.PN dmc
+unexpectedly stopped running.
+.PP
+.BR "dmc%d: done unalloc rbuf" .
+The
+.PN dmc
+returned a receive or transmit buffer that was not
+allocated to it.
+.PP
+.BR "dmc%d: bad control %o" .
+A bad parameter was passed to the
+.I dmcload
+routine.
+.PP
+.BR "dmc%d: unknown address type %d" .
+An input packet was received which contained a type of
+address unknown to the driver.
+.PP
+.BR "dmc%d: bad packet address 0x%x" . 
+The device returned a buffer with an unexpected buffer
+address.
+.PP
+.BR "dmc%d: can't handle af%d" .
+The interface was handed a message which has addresses
+formatted in an unsuitable address family.  Formerly
+reported as
+.BR "dmc%d: af%d not supported" .
+.PP
+.BR "dmc%d: internal loopback enable requested" .
+The device is being put in internal loopback at a user's
+request.
+.PP
+.BR "dmc%d: internal loopback disable requested" .
+The device is being taken out of internal loopback at a user's
+request.
+.PP
+.BR "DMC FATAL ERROR 0%o" .
+.PP
+.BR "DMC SOFT ERROR 0%o" .
+.SH SEE ALSO
+intro(4n)
+inet(4f)

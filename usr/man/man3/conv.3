@@ -1,0 +1,69 @@
+.TH conv 3
+.SH NAME
+toupper, tolower, _toupper, _tolower, toascii \- translate characters
+.SH SYNTAX
+.nf
+.B #include <ctype.h>
+.PP
+.B int toupper (c)
+.B int c;
+.PP
+.B int tolower (c)
+.B int c;
+.PP
+.B int _toupper (c)
+.B int c;
+.PP
+.B int _tolower (c)
+.B int c;
+.PP
+.B int toascii (c)
+.B int c;
+.SH DESCRIPTION
+The
+.PN toupper
+and
+.PN tolower
+subroutines have as domain the range of
+getc(3s):
+the integers from \-1 through 255.
+If the argument of
+.PN toupper
+represents a lowercase letter, the
+result is the corresponding uppercase
+letter.
+If the argument of
+.PN tolower
+represents an uppercase letter, the
+result is the corresponding lowercase
+letter.
+All other arguments in the domain are
+returned unchanged.
+.PP
+The macros
+.PN _toupper
+and
+.PN _tolower ,
+are macros that accomplish the same thing as
+.PN toupper
+and
+.PN tolower
+but have restricted domains and are faster.
+.PN _toupper
+requires a lowercase letter as its argument;
+its result is the corresponding uppercase letter.
+The macro
+.PN _tolower
+requires an uppercase letter as its argument;
+its result is the corresponding lowercase letter.
+Arguments outside the domain cause undefined results.
+.PP
+The
+.PN toascii
+yields its argument with all bits turned off that are not
+part of a standard
+.SM ASCII
+character; it is intended for compatibility
+with other systems.
+.SH SEE ALSO
+ctype(3), getc(3s)

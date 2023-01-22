@@ -1,0 +1,70 @@
+.TH bdiff 1
+.SH NAME
+bdiff \- big diff
+.SH SYNTAX
+.B bdiff
+\fIfile1\fR \fIfile2\fR [\fBn\fR]
+.B [ \-s ]
+.SH DESCRIPTION
+The
+.PN bdiff
+command is used in a manner analogous to
+diff(1)
+to find which lines must be changed in two files to bring them
+into agreement.
+Its purpose is to allow processing of files that are too large
+for diff(1).
+.PP
+The 
+.PN bdiff
+command ignores lines common to the beginning of both files,
+splits the remainder of each file into
+.IR n -line
+segments, and invokes
+diff(1)
+upon corresponding segments.
+The value of
+.I n\^
+is 3500 by default.
+If the optional third argument is given and if it is
+numeric, it is used as the value for
+.IR n.
+This is useful in those cases in which 3500-line segments are
+too large for
+.PN diff,
+causing it to fail.
+.PP
+The output of
+.PN bdiff
+is exactly that of
+.PN diff:
+line numbers adjusted to account for the segmenting of the files
+to make it look as if the files had been processed
+whole.
+Note that
+because of the segmenting of the files,
+.PN bdiff
+does not necessarily find the
+smallest sufficient set of file differences.
+.SH OPTIONS
+If either
+.I file1\^
+or
+.I file2 
+is \fB\-\fR,
+the standard input is read.
+The optional
+.B \-s
+(silent) argument specifies that
+no diagnostics are to be printed by
+.PN bdiff.
+However, this does not suppress possible exclamations by
+.PN diff.
+If both optional arguments are specified, they must appear in the
+order indicated above.
+.SH DIAGNOSTICS
+Use sccshelp(1) for explanations.
+.SH FILES
+/tmp/bd?????
+.SH "SEE ALSO"
+diff(1)

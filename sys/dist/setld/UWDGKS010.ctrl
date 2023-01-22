@@ -1,0 +1,6 @@
+NAME='ULTRIX Workstation UWDGKS010'
+DESC='Graphical Kernel Standard 0b'
+NVOLS=1:3
+MTLOC=1:3
+DEPS=UWDX010
+FLAGS=2

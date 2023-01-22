@@ -1,0 +1,116 @@
+.TH tms 4
+.SH NAME
+tms \- TMSCP tape controller interface
+.SH SYNTAX
+For UNIBUS, QBUS;
+.br
+.B "controller klesiu0 at uba0"
+.br
+.B "controller tmscp0 at klesiu0 csr 0174500 vector tmscpintr"
+.br
+.B "tape tms0 at tmscp0 drive 0"
+.PP
+For VAXBI:
+.br
+.B "controller klesib0 at vaxbi0 node 0"
+.br
+.B "controller tmscp0 at klesib0
+.br
+.B "tape tms0 at tmscp0 drive 0"
+.SH DESCRIPTION
+Prior to Version 2.0, this device was referenced by 
+tmscp(4).
+.PP
+The TMSCP
+driver provides a standard tape drive interface
+as described in
+mtio(4).
+This is a driver for any controller which adheres
+to the Tape Mass Storage Control Protocol (TMSCP).
+The TMSCP controllers communicate with the host
+through a packet oriented protocol termed
+the Tape Mass Storage Control Protocol.
+Consult the file
+<vax/tmscp.h>
+for a detailed
+description of this protocol.
+This driver also supports n-buffered reads and writes to
+the raw tape interface (used with streaming tape drives).
+See nbuf(4) for further details.
+.SH TAPE SUPPORT
+TK50, TK70, TU81, TU81e
+.SH DIAGNOSTICS
+The following messages are printed at the console:
+.LP
+.B
+tmscp controller failed to init.
+.br
+The controller failed to initialize properly.  This may indicate a
+hardware problem.
+.LP
+.B
+tmscp can't get command packet
+.br
+The controller was unable to obtain a command packet from the
+command ring.
+.LP
+.B
+tmscp%d: random interrupt ignored.
+.br
+An unexpected interrupt was received (e.g. when no i/o was pending).
+The interrupt is ignored.
+.LP
+.B
+tmscp%d:  interrupt in unknown state %d ignored.
+.br
+An interrupt was received when the driver was in an unknown internal state.
+Indicates a hardware problem or a driver bug.
+.LP
+.B
+tmscp%d:  fatal error (%0).
+.br
+The port (tmscp controller) detected a "fatal error".  The contents of
+the status register are displayed.
+.LP
+.B
+Bad ioctl on tms unit %d.
+.br
+An unknown mt ioctl command was issued to the driver.
+.LP
+.B
+tmscp%d:  invalid cmd, encode = %o, status = %o.
+.br
+The TMSCP response packet endcode field did not contain a valid opcode.
+The endcode is printed and the driver's internal state.
+.LP
+.B
+tmscp unknown packet.
+.br
+A TMSCP packet of unknown type was received from the tmscp controller.
+Check the cabling to the controller.
+.LP
+The following messages are written to the system error log file,
+/usr/adm/syserr/syserr.<hostname>.
+.LP
+.B
+tmscpstrat:  ubinfo 0x%x.
+.br
+(VAX 11/750 only.)  When allocating UNIBUS resources, the driver found
+it already had resources previously allocated.
+.LP
+.B
+tmscp%d sa %o, state %d.
+(Additional status information given after a hard i/o error.)
+The values of the tmscp controller status register and the
+internal driver state are printed.
+.LP
+The following types of TMSCP error packets are 
+returned by the tmscp controller to the host:
+controller error, host memory access error, tape transfer
+error, STI error, STI Drive Error Log, STI Formatter
+Error Log, and unknown error.
+.SH FILES
+/dev/rmt???
+/dev/nrmt???
+.SH SEE ALSO
+mtio(4), nbuf(4), MAKEDEV(8), uerf(8)

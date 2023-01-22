@@ -1,0 +1,244 @@
+rm -f ato.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ ato.c
+cc -O -w -I. -I../src -c ato.c
+rm -f ato.c
+rm -f opcode.h
+cc ../src/opc.c -o opc
+opc >opcode.h
+rm -f opc
+rm -f call.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ call.c
+cc -O -w -I. -I../src -c call.c
+rm -f call.c
+rm -f case.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ case.c
+cc -O -w -I. -I../src -c case.c
+rm -f case.c
+rm -f clas.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ clas.c
+cc -O -w -I. -I../src -c clas.c
+rm -f clas.c
+rm -f const.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ const.c
+cc -O -w -I. -I../src -c const.c
+rm -f const.c
+rm -f conv.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ conv.c
+cc -O -w -I. -I../src -c conv.c
+rm -f conv.c
+rm -f cset.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ cset.c
+cc -O -w -I. -I../src -c cset.c
+rm -f cset.c
+rm -f y.tab.h y.tab.c
+/usr/ucb/eyacc ../src/pas.y > /dev/null
+ex - y.tab.c <../src/gram
+echo that makes y.tab.h and y.tab.c
+rm -f error.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ error.c
+cc -O -w -I. -I../src -c error.c
+rm -f error.c
+rm -f fdec.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ fdec.c
+cc -O -w -I. -I../src -c fdec.c
+rm -f fdec.c
+rm -f fend.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ fend.c
+cc -O -w -I. -I../src -c fend.c
+rm -f fend.c
+rm -f fhdr.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ fhdr.c
+cc -O -w -I. -I../src -c fhdr.c
+rm -f fhdr.c
+rm -f flvalue.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ flvalue.c
+cc -O -w -I. -I../src -c flvalue.c
+rm -f flvalue.c
+rm -f forop.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ forop.c
+cc -O -w -I. -I../src -c forop.c
+rm -f forop.c
+rm -f func.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ func.c
+cc -O -w -I. -I../src -c func.c
+rm -f func.c
+rm -f gen.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ gen.c
+cc -O -w -I. -I../src -c gen.c
+rm -f gen.c
+rm -f hash.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ hash.c
+cc -O -w -I. -I../src -c hash.c
+rm -f hash.c
+rm -f lab.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ lab.c
+cc -O -w -I. -I../src -c lab.c
+rm -f lab.c
+rm -f lookup.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ lookup.c
+cc -O -w -I. -I../src -c lookup.c
+rm -f lookup.c
+rm -f lval.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ lval.c
+cc -O -w -I. -I../src -c lval.c
+rm -f lval.c
+rm -f stklval.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ stklval.c
+cc -O -w -I. -I../src -c stklval.c
+rm -f stklval.c
+rm -f main.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ main.c
+cc -O -w -I. -I../src -c main.c
+rm -f main.c
+rm -f nl.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ nl.c
+cc -O -w -I. -I../src -c nl.c
+rm -f nl.c
+rm -f proc.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ proc.c
+cc -O -w -I. -I../src -c proc.c
+rm -f proc.c
+rm -f put.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ put.c
+cc -O -w -I. -I../src -c put.c
+rm -f put.c
+rm -f rec.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ rec.c
+cc -O -w -I. -I../src -c rec.c
+rm -f rec.c
+rm -f rval.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ rval.c
+cc -O -w -I. -I../src -c rval.c
+rm -f rval.c
+rm -f stkrval.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ stkrval.c
+cc -O -w -I. -I../src -c stkrval.c
+rm -f stkrval.c
+rm -f savenl.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ savenl.c
+cc -O -w -I. -I../src -c savenl.c
+rm -f savenl.c
+rm -f stat.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ stat.c
+cc -O -w -I. -I../src -c stat.c
+rm -f stat.c
+rm -f string.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ string.c
+cc -O -w -I. -I../src -c string.c
+rm -f string.c
+rm -f subr.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ subr.c
+cc -O -w -I. -I../src -c subr.c
+rm -f subr.c
+rm -f tmps.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ tmps.c
+cc -O -w -I. -I../src -c tmps.c
+rm -f tmps.c
+rm -f tree.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ tree.c
+cc -O -w -I. -I../src -c tree.c
+rm -f tree.c
+rm -f type.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ type.c
+cc -O -w -I. -I../src -c type.c
+rm -f type.c
+rm -f var.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ var.c
+cc -O -w -I. -I../src -c var.c
+rm -f var.c
+rm -f TRdata.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ TRdata.c
+cc -O -w -I. -I../src -c TRdata.c
+rm -f TRdata.c
+rm -f treen.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ treen.c
+cc -O -w -I. -I../src -c treen.c
+rm -f treen.c
+rm -f yycopy.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yycopy.c
+cc -O -w -I. -I../src -c yycopy.c
+rm -f yycopy.c
+rm -f yycosts.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yycosts.c
+cc -O -w -I. -I../src -c yycosts.c
+rm -f yycosts.c
+rm -f yyerror.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yyerror.c
+cc -O -w -I. -I../src -c yyerror.c
+rm -f yyerror.c
+rm -f yyget.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yyget.c
+cc -O -w -I. -I../src -c yyget.c
+rm -f yyget.c
+rm -f yyid.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yyid.c
+cc -O -w -I. -I../src -c yyid.c
+rm -f yyid.c
+rm -f yylex.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yylex.c
+cc -O -w -I. -I../src -c yylex.c
+rm -f yylex.c
+rm -f yymain.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yymain.c
+cc -O -w -I. -I../src -c yymain.c
+rm -f yymain.c
+rm -f yyoptions.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yyoptions.c
+cc -O -w -I. -I../src -c yyoptions.c
+rm -f yyoptions.c
+rm -f yypanic.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yypanic.c
+cc -O -w -I. -I../src -c yypanic.c
+rm -f yypanic.c
+rm -f yyparse.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yyparse.c
+cc -O -w -I. -I../src -c yyparse.c
+rm -f yyparse.c
+rm -f yyprint.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yyprint.c
+cc -O -w -I. -I../src -c yyprint.c
+rm -f yyprint.c
+rm -f yyput.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yyput.c
+cc -O -w -I. -I../src -c yyput.c
+rm -f yyput.c
+rm -f yyrecover.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yyrecover.c
+cc -O -w -I. -I../src -c yyrecover.c
+rm -f yyrecover.c
+rm -f yyseman.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yyseman.c
+cc -O -w -I. -I../src -c yyseman.c
+rm -f yyseman.c
+rm -f yytree.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ yytree.c
+cc -O -w -I. -I../src -c yytree.c
+rm -f yytree.c
+rm -f p2put.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ p2put.c
+cc -O -w -I. -I../src -c p2put.c
+rm -f p2put.c
+rm -f stab.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ stab.c
+cc -O -w -I. -I../src -c stab.c
+rm -f stab.c
+rm -f pcproc.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ pcproc.c
+cc -O -w -I. -I../src -c pcproc.c
+rm -f pcproc.c
+rm -f pcfunc.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ pcfunc.c
+cc -O -w -I. -I../src -c pcfunc.c
+rm -f pcfunc.c
+rm -f pccaseop.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ pccaseop.c
+cc -O -w -I. -I../src -c pccaseop.c
+rm -f pccaseop.c
+rm -f pclval.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ pclval.c
+cc -O -w -I. -I../src -c pclval.c
+rm -f pclval.c
+rm -f sconv.c
+cd ../src; /usr/ucb/mkstr - ../pi/pi3.0strings ../pi/ sconv.c
+cc -O -w -I. -I../src -c sconv.c
+rm -f sconv.c

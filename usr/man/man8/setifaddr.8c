@@ -1,0 +1,25 @@
+.TH setifaddr 8c
+.SH NAME
+setifaddr \- set network interface address
+.SH SYNTAX
+.B /etc/setifaddr
+interface address
+.SH DESCRIPTION
+The
+.PN setifaddr
+command
+assigns a network address to a network interface.
+It must be used at boot time to define the network address
+of each interface present on a machine.  It may also be used at
+a later time to redefine an interface's address.  The
+.I interface
+parameter is a string of the form ``name unit'', e.g. ``en0'', while
+the address is either a host name present in the host name data
+base, hosts(5),
+or a DARPA Internet address expressed in the Internet standard
+``dot notation''.
+.SH DIAGNOSTICS
+Messages indicating the specified interface does not exit, the
+requested address is unknown.
+.SH "SEE ALSO"
+intro(4n), rc(8)

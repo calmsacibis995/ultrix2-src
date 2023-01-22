@@ -1,0 +1,46 @@
+.TH fsync 2
+.SH NAME
+fsync \- synchronize a file's in-core state with that on disk
+.SH SYNTAX
+.ft B
+fsync(fd)
+.br
+int fd;
+.ft R
+.SH DESCRIPTION
+The
+.PN fcync
+system call causes all modified data and attributes of 
+.I fd
+to be moved to a permanent storage device.
+This results in all in-core modified copies
+of buffers for the associated file to be written to a disk.
+.PP
+The
+.PN fsync
+call should be used by programs which require a file to be
+in a known state, for example, in building a simple transaction
+facility.
+.PP
+A 0 value is returned on success.  A \-1 value indicates
+an error.
+.SH DIAGNOSTICS
+The 
+.PN fsync
+call fails if:
+.TP 15
+[EBADF]
+The 
+.I fd
+argument is not a valid descriptor.
+.TP 15
+[EINVAL]
+The
+.I fd
+argument refers to a socket.
+.TP 15
+[EIO]
+An I/O error occurred while reading from or writing to the file
+system.
+.SH "SEE ALSO"
+sync(1), sync(2), update(8)

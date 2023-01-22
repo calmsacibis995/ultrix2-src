@@ -1,0 +1,33 @@
+.TH ttynam 3f
+.SH NAME
+ttynam, isatty \- find name of a terminal port
+.SH SYNTAX
+.B character*(*) function ttynam (lunit)
+.sp 1
+.B logical function isatty (lunit)
+.SH DESCRIPTION
+The
+.PN ttynam
+subroutine
+returns a blank padded path name
+of the terminal device associated with logical unit
+.IR lunit .
+.PP
+The
+.PN isatty
+subroutine returns .true.
+Otherwise,
+if
+.I lunit
+is associated with a terminal device, .false.
+.SH DIAGNOSTICS
+The
+.PN ttynam
+returns an empty string (all blanks) if
+.I lunit
+is not associated with a terminal device in directory `/dev'.
+.SH FILES
+/dev/\(**
+.br
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a

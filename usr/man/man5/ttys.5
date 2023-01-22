@@ -1,0 +1,197 @@
+.\" Last modified by MJT on 27-Aug-85  1115
+.\"  Fixed whatis problem, added tm line
+.\"  This file last edited by Carolyn Belman, July, 1985.
+.TH ttys 5
+.SH NAME
+ttys \- terminal initialization data
+.SH DESCRIPTION
+.PP
+The /etc/ttys
+file contains information used by various
+routines to initialize and control the use of terminal 
+special files.  This file is created when the system
+is installed, and can be updated at any time.
+.PP
+Each terminal 
+special file (
+/dev/ttyxx
+), has a line in the
+.B ttys
+file.  Each line contains 
+several fields.  Fields are separated by tabs or spaces.  A field
+with more than one word should be enclosed in quotes.  Blank
+lines and comments can appear anywhere in the file; comments
+begin with a # character and are terminated by a newline character.
+Unspecified fields default to the empty string or zero,
+as appropriate.
+.PP
+The format of each line is as follows:
+.PP
+.RS
+\fIname command type flag1 flag2\fR ...
+.RE
+.PP
+where:
+.IP \fIname\fR 1i
+is the name of the special file for the terminal in the /dev
+directory. Some examples are:
+.EX
+console
+ttyd0
+ttyd1
+.EE
+.IP \fIcommand\fR 1i
+is the command to be executed 
+each time the terminal is initialized.  This can happen
+when the system is booted, or when the superuser adds 
+new terminals to the
+.PN ttys
+file and initializes the new terminals. 
+The command is usually
+.MS getty 8
+, which performs such tasks as baud-rate recognition,
+reading the login name, and calling
+.MS login 1 . 
+It can be, however, any command you wish, such as the
+startup command for a window system terminal emulator, or
+a command to maintain other daemon processes.
+.IP \fItype\fR 1i
+is the type of terminal normally connected to the terminal
+special file.  You can find the possible types by examining
+the 
+.PN /etc/termcap
+file on your system.  The types available are given as
+the third field in
+entries in that file.  Some examples are:
+.EX
+vt100
+vt200
+dialup
+.EE
+.IP \fIflags\fR 1i
+are the flags to be set in the
+.PN ty_status 
+or
+.PN ty_window
+fields of the structure returned by the 
+.MS getttyent 3
+routine.  If the line ends in a comment, the
+comment is included in the
+.PN ty_comment
+field of this structure.
+.IP "" 1i
+These fields are used by the
+.MS init 8
+command that is executed when terminals
+are initialized.
+.IP "" 1i
+The 
+.PN ty_status
+flags are:
+.RS
+.IP \f(CWon\fR 1i
+Sets the TTY_ON bit in the
+.MS getttyent 3
+.PN ty_status
+field.  This enables logins for this terminal.
+.IP "" 1i
+The default if this flag is not set is that logins
+are disabled for the terminal.
+.IP \f(CWoff\fR 1i
+Clears the TTY_ON bit in the
+.MS getttyent 3
+.PN ty_status
+field.  This disables logins for this terminal.
+.IP \f(CWsecure\fR 1i
+Sets the TTY_SECURE bit in the 
+.MS getttyent 3
+.PN ty_status
+field.  This allows the root user to log in on this
+terminal.  (The \f(CWon\fR flag should also be set.)
+.IP "" 1i
+The default if this flag is not set is that the
+root user cannot log in on this terminal.
+.IP \f(CWnomodem\fR 1i
+Sets the TTY_LOCAL bit in the
+.MS getttyent 3
+.PN ty_status
+field.  The line will ignore modem signals.  This is the
+default if neither the \f(CWmodem\fR nor \f(CWnomodem\fR flag
+is set.
+.IP \f(CWmodem\fR 1i
+Clears the TTY_LOCAL bit in the
+.MS getttyent 3
+.PN ty_status
+field.  The line will recognize modem signals.
+.IP "" 1i
+The default if this flag is not set is \f(CWnomodem\fR.  That is,
+the line will not recognize modem signals.
+.IP \f(CWshared\fR 1i
+Sets the TTY_SHARED bit in the
+.MS getttyent 3
+.PN ty_status
+field.  The line can be used for both incoming and
+outgoing connections.
+.IP "" 1i
+The default if this flag is not set is that the
+line cannot be used for incoming and outgoing
+connections.
+.RE
+.IP "" 1i
+The 
+.PN ty_window
+flag is:
+.RS
+.IP \f(CWwindow="\fIstring\f(CW"\fR 1.25i
+The quoted \fIstring\fR is a window system process
+that
+.MS init 8
+will maintain for the terminal line.
+.RE
+.KS
+.SH EXAMPLES
+.PP
+.KS
+The following example permits the root user to log in
+on the console at 1200 baud:
+.EX
+console "/etc/getty std.1200" vt100 on secure
+.EE
+.KE
+.KS
+This example allows dialup at 1200 baud without root
+login:
+.EX
+ttyd0 "/etc/getty d1200" dialup on
+.EE
+.KE
+These two examples allow login at 9600 baud with two
+different terminal
+types:  hp2621-nl and plugboard.
+.EX
+tty00 "/etc/getty std.9600" hp2621-nl on
+ttyH1 "/etc/getty std.9600" plugboard on
+.EE
+These two examples show network pseudo terminals, which
+should not have
+.PN getty
+enabled.
+.EX
+ttyp0 none network
+ttyp1 none network off
+.EE
+This example shows a terminal emulator and window-system
+startup entry and should be typed all on one line.
+.EX
+ttyv0 "/usr/bin/xterm -L -r -i -fn 9x15 =80x24+0-0 unix:0"
+xterm on secure window="/usr/bin/X 0 -0 #000000 -1 #FFFFFF"
+.EE
+This example shows an example of an entry for an lta device:
+.EX
+tty01 "/etc/getty 2" vt100 on modem secure # LAT
+.EE
+.SH FILES
+.IP /etc/ttys 1i
+The full pathname for the file
+.SH SEE ALSO
+login(1), getttyent(3), gettytab(5), init(8), getty(8) 

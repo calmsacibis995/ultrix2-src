@@ -1,0 +1,158 @@
+.\"
+.\" GCT last update: Tue Sep 30 11:55:56 EDT 1986
+.\"
+.\" to produce output: ditroff -man.repro setld.8 > OUT &
+.\"                   lpr -n -Pln < OUT 
+.\"
+.TH  setld 8
+.SH NAME
+ setld \- system software subset utility
+.SH SYNTAX
+.B setld \-d
+.I subset ...
+.br
+.B setld \-a
+.I loc-code subset ...
+.br
+.B setld \-i
+[ \fIsubset ...\fR ]
+.br
+.B setld \-c
+.I subset message
+.br
+.B setld \-l
+.I loc-code
+.br
+.B setld \-x
+.I loc-code
+.br
+.B setld \-v
+[ \fIsubset ...\fR ]
+.br
+.SH DESCRIPTION
+The
+.PN setld
+utility enables superusers to load, unload, 
+and inventory software subsets.
+You must be in the root directory before using the 
+.PN setld
+utility.
+.PP
+The location code, \fIloc-code,\fR is used by
+.PN setld
+to determine which media device to use.  Valid location codes
+include the following, where \fI?\fR refers to the
+logical unit number of the device:
+.RS
+.IP \fI/dev/rmt?h\fR 12 
+or
+.IP \fI/dev/rmt?l\fR 12
+magnetic tapes
+.IP \fI/dev/rra?a\fR 12
+rx50 diskette drives
+.IP \fI/mnt\fR 12
+ra60 disk drives
+.IP \fIhostname:\fR 12
+for network installations
+.RE
+.PP
+Note that location code for ra60 drives is a directory and that
+.PN setld
+assumes that the ra60 installation media is mounted there.
+.PP
+The following options are available with the
+.PN setld
+utility:
+.IP \fB\-d\fR
+Removes files related to the named subset or subsets
+from the system hierarchy.  For example, the following
+command removes the sccs software subset:
+.EX
+setld -d ultsccs020
+.EE
+.IP \fB\-a\fR 
+Transfers files related to the named subset or subsets
+from the installation media to the system hierarchy.
+The \-a option requires an argument naming the input location 
+from which the subsets are loaded.  For example, the following 
+command loads the Pascal subset onto the file-system 
+hierarchy that has its root in the current
+working directory:
+.EX
+setld \-a /dev/rmt0h ultpascal020
+.EE
+.IP
+The following command
+loads the F77 and Pascal subsets from diskettes
+mounted on the named rx50 device:
+.EX
+setld \-a /dev/rra1a ultf77020 ultpascal020
+.EE
+and the sequence of commands
+.EX
+fsck /dev/rra3g
+mount /dev/ra3g /mnt
+setld -a /mnt ultf77020 ultpascal020
+.EE
+will do the same from your ra60 pack mounted on logical unit number
+3.
+.IP \fB\-i\fR
+Gives an inventory of all files in the named subset or subsets.  If no
+argument is given,
+.PN setld
+Displays installed subsets in uppercase letters and
+uninstalled subsets in lowercase letters.
+For example, the following command lists all files contained
+in the accounting software subset:
+.EX
+setld -i ultacct020
+.EE
+.IP \fB\-c\fR
+Sends the specified reconfiguration message to the named subset.
+.IP \fB\-l\fR
+Loads any subset or subsets found on the installation media currently
+mounted at the named location.  For example, the following command 
+loads a layered
+product from the named tape device:
+.EX
+setld \-l /dev/rmt0h
+.EE
+.IP \fB\-x\fR
+Loads media images from the specified tape device to the
+current working directory.  
+For example, the following command loads all media
+images found on the device into the current working directory:
+.EX
+setld \-x /dev/rmt0h
+.EE
+.IP \fB\-v\fR
+Executes the IVP (Internal Verification Program) for layered
+product subsets.  Not all layered products have them.
+.SH FILES
+/usr/adm/bin/ready
+User Readiness Confirmation Program
+.br
+/usr/adm/subsets/*.ctrl	
+Subset Control Data Files
+.br
+/usr/adm/subsets/*.image
+Subset Image Data Files
+.br
+/usr/adm/subsets/*.inv	
+Subset Inventory Data Files
+.br
+/usr/adm/subsets/*.lk
+Lock File Specifying Subset Dependencies 
+.br
+/usr/adm/subsets/*.scp	
+Subset Control Programs
+.PP
+.SH RESTRICTIONS
+The system does not check for sufficient disk
+storage space when a subset is added.  It is possible to
+add part of a subset and then exceed the available disk
+capacity on systems with small fixed disks.	  
+.PP
+All NFS file systems should be dismounted before using 
+.PN setld
+with the following options \-a, \-d, \-l.

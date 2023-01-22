@@ -1,0 +1,866 @@
+#!/bin/sh
+#
+#	@(#)MAKEDEV	1.55	(ULTRIX)	3/18/87
+#
+#************************************************************************
+#									*
+#			Copyright (c) 1986 by				*
+#		Digital Equipment Corporation, Maynard, MA		*
+#			All rights reserved.				*
+#									*
+#************************************************************************
+#
+# Device MAKEDEV script.
+# See makedev(8) for more information.
+#
+# Generic:
+# DEC supported:
+#	boot*	    boot and std devices by cpu number, e.g., "boot750"
+#	mvax*	    all microvax specific setups
+#		    (use mvax2000 for MicroVAX 2000)
+#	vaxstation* VAXstation 2000 specific setup
+#		    (use vaxstation2000 for VAXstation 2000)
+#	std	    standard devices below, with all console subsystems:
+#	drum		kernel drum device
+#	errlog		error log device
+#	kUmem		kernel Unibus memory device
+#	kmem		kernel memory device
+#	mem		memory device
+#	null		null device
+#	trace		trace device
+#	tty		tty device
+# DEC unsupported:
+#	local	    customer specific devices
+#
+# Console subsystems:
+# DEC supported:
+#	console     system console
+#	crl	    86?0 rl02 disk
+#	cs*	    8??0 rx50 floppies
+#	ctu*	    725/730/750 tu58 cassettes
+#	cty*	    console extra serial line units
+#	cfl	    78? rx01 floppy
+#
+# Disks:
+# DEC supported:
+#	hp*	    massbus rm??
+#	ra*	    unibus/qbus/bi/hsc mscp
+#	rb*	    unibus idc w/ rb??
+#	rd*	    VAXstation 2000 & MicroVAX 2000 - rd disks
+#	rk*	    unibus rk??
+#	rl*	    unibus/qbus rl??
+#	rx*	    VAXstation 2000 & MicroVAX 2000 - rx disks
+# DEC unsupported:
+#	urx*	    unibus rx02
+#	up*	    unibus disk emulations
+#
+# Tapes:
+# DEC supported:
+#	mu*	    massbus tu78
+#	tms*	    unibus/qbus/bi/hsc tmscp
+#	ts*	    unibus/qbus ts11, ts05, and tu80
+#	tu*	    massbus te16, tu45, and tu77
+#	st*	    VAXstation 2000 & MicroVAX 2000 - TZK50 cartridge tape
+# DEC unsupported:
+#	tm*	    unibus te10 and emulations
+#	ut*	    unibus tu45 emulations
+#	uu*	    unibus dl11 w/ tu58
+#
+# Terminals:
+# DEC supported:
+#	dhq*	    qbus dhq11
+#	dhu*	    unibus dhu11
+#	dhv*	    qbus dhv11
+#	dmb*	    bi dmb32 including dmbsp serial printer/plotter
+#	dmf*	    unibus dmf32 including dmfsp serial printer/plotter
+#	dmz*	    unibus dmz32
+#	dz*	    unibus dz11 and dz32
+#	ss*	    VAXstation 2000 & MicroVAX 2000 - basic 4 serial line unit
+#	dzq*	    qbus dzq11
+#	dzv*	    qbus dzv11
+#	lta*	    sets of 16 network local area terminals (lat)
+#	pty*	    sets of 16 network pseudoterminals
+#	qd*	    qbus vcb02 graphics controller/console.
+#	qv*	    qbus vcb01 graphics controller/console.
+#	sm*	    VAXstation 2000 monochrome bitmap graphics/console.
+# DEC unsupported:
+#	dh*	    unibus dh11 and emulations
+#
+# Printers:
+# DEC supported:
+#	dmbsp*	    bi dmb32 serial printer/plotter
+#	dmfsp*	    unibus dmf32 serial printer/plotter
+#	lp*	    unibus lp11 parallel printer
+#	lpv*	    qbus lpv11 parallel printer
+# DEC unsupported:
+#	ct*	    unibus dr11-c interface to CAT typesetter
+#	va*	    unibus Varian interface
+#	vp*	    unibus Versatec interface
+#
+# Call units:
+# DEC unsupported:
+#	dn*	    unibus dn11 and emulations
+#
+# Special purpose devices:
+# DEC unsupported:
+#	ad*	    unibus Data Translation interface
+#	ik*	    unibus Ikonas interface
+#	ps*	    unibus E & S interface
+#
+umask 77
+
+case $1 in
+-s) silent=1 ; shift;;
+*) silent=0 ;;
+esac
+
+for fullname
+do
+
+tryname=`expr $fullname : ',*\(.[a-zA-Z]*\)'`
+tryunit=`expr $fullname : '[^0-9]*\([0-9]*\)'`
+trypart=`expr $fullname : '[^0-9]*[0-9]*\(.*\)'`
+if test $silent -eq 0 ; then
+	echo "MAKEDEV: special file(s) for "$fullname": "
+fi
+case $tryname in
+boot*|mvax|vaxstation)
+	case $tryname in
+	mvax) case $tryunit in
+	      2000) ;;
+	      *) tryunit=2;;
+	      esac;;
+	bootI) tryunit=1;;
+	bootII) tryunit=2;;
+	vaxstation) tryunit=2000;;
+	boot) ;;
+	*)
+		echo MAKEDEV: bad boot name in: $fullname
+		exit 1
+	;;
+	esac
+	case $tryunit in
+	1|2) bootdev=rra3a; devlist="console ra0 ra1 ra2a ra3a";;
+	725|730) bootdev=tu1; devlist="console ctu0 ctu1";;
+	750) bootdev=tu0; devlist="console ctu0";;
+	780|785) bootdev=floppy; devlist="console cfl";;
+	2000) bootdev=rrx2a; devlist="console rd0 rd1 rx2a";;
+	8100) bootdev=rcs1a; devlist="console cs1 cs2 cty1 cty2 cty3";;
+	8200|8300) bootdev=rcs1a; devlist="console cs1 cs2 cty1 cty2 cty3";;
+	8600|8650) bootdev=crl; devlist="console crl cty1 cty2 cty3";;
+	8500|8550|8700|8800) bootdev=rcs1a; devlist="console cs1 cs2 cty1 cty2 cty3";;
+	*)
+		echo MAKEDEV: bad cpu number in: $fullname
+		exit 1
+	;;
+	esac
+	if test ! -f ./$bootdev ; then
+		/dev/MAKEDEV -s $devlist
+	fi
+	if test ! -f ./bootdev ; then
+		echo -n "bootdev " ; ln $bootdev bootdev
+	fi
+	if test ! -f ./drum ; then
+		/dev/MAKEDEV -s drum errlog kUmem kmem mem null trace tty
+	fi
+;;
+std)
+	if test ! -f ./drum ; then
+		/dev/MAKEDEV -s drum errlog kUmem kmem mem null trace tty \
+			     console crl cs1 cs2 ctu0 ctu1 \
+			     cty1 cty2 cty3 cfl
+	fi
+;;
+drum|errlog|kUmem|kmem|mem|null|trace|tty)
+	case $tryname in
+	drum) chr=7 ; base=0 ; prot=644;;
+	errlog) chr=43 ; base=0 ; prot=600;;
+	kUmem) chr=3 ; base=3 ; prot=644;;
+	kmem) chr=3 ; base=1 ; prot=644;;
+	mem) chr=3 ; base=0 ; prot=644;;
+	null) chr=3 ; base=2 ; prot=666;;
+	trace) chr=48 ; base=0 ; prot=444;;
+	tty) chr=2 ; base=0 ; prot=666;;
+	esac
+	if test ! -f ./$tryname ; then
+		echo -n $tryname" " ; /etc/mknod $tryname c \
+		$chr $base ; /bin/chmod $prot $tryname
+	fi
+;;
+console|crl|cs|ctu|cty|cfl)
+	case $tryname in
+	console) chr=0 ; base=0 ; prot=622;;
+	crl) chr=40 ; base=0 ; prot=644;;
+	cs) blk=16 ; chr=41 ; prot=644;;
+	ctu) blk=8 ; prot=644;;
+	cty) chr=0 ; prot=622;;
+	cfl) chr=8 ; base=0 ; prot=644;;
+	esac
+	case $tryname in
+	console|crl)
+		if test ! -f ./$tryname ; then
+			echo -n $tryname" " ; /etc/mknod $tryname c \
+			$chr $base ; /bin/chmod $prot $tryname
+		fi
+	;;
+	cfl)
+		if test ! -f ./floppy ; then
+			echo -n floppy" " ; /etc/mknod floppy c \
+			$chr $base ; /bin/chmod $prot floppy
+		fi
+	;;
+	cs)
+	partlet=$trypart
+	case $tryunit in
+	1|2)
+		case $trypart in
+		a) partnum=0;; c) partnum=2;;
+		[bde-zA-Z])
+			echo MAKEDEV: bad partition value in: $fullname
+			exit 1
+		;;
+		esac
+		case $trypart in
+		[ac])
+			if test ! -f ./cs$tryunit$partlet ; then
+			echo -n $tryname$tryunit$partlet" " ; \
+			/etc/mknod $tryname$tryunit$partlet b \
+				   $blk `expr $tryunit '*' 8 + $partnum` ; \
+				   /bin/chmod $prot $tryname$tryunit$partlet
+			fi
+			if test ! -f ./rcs$tryunit$partlet ; then
+			echo -n "r"$tryname$tryunit$partlet" " ; \
+			/etc/mknod r$tryname$tryunit$partlet c \
+				   $chr `expr $tryunit '*' 8 + $partnum` ; \
+				   /bin/chmod $prot r$tryname$tryunit$partlet
+			fi
+		;;
+		*)
+			for partlet in a c
+			do
+			case $partlet in
+			a) partnum=0;; c) partnum=2;;
+			esac
+			if test ! -f ./cs$tryunit$partlet ; then
+			echo -n $tryname$tryunit$partlet" " ; \
+			/etc/mknod $tryname$tryunit$partlet b \
+				   $blk `expr $tryunit '*' 8 + $partnum` ; \
+				   /bin/chmod $prot $tryname$tryunit$partlet
+			fi
+			if test ! -f ./rcs$tryunit$partlet ; then
+			echo -n "r"$tryname$tryunit$partlet" " ; \
+			/etc/mknod r$tryname$tryunit$partlet c \
+				   $chr `expr $tryunit '*' 8 + $partnum` ; \
+				   /bin/chmod $prot r$tryname$tryunit$partlet
+			fi
+			done
+		;;
+		esac
+	;;
+	*)
+		echo MAKEDEV: bad floppy disk unit in: $fullname
+		exit 1
+	;;
+	esac
+	;;
+	ctu)
+	case $tryunit in
+	0|1)
+		if test ! -f ./tu$tryunit ; then
+			echo -n "tu"$tryunit" " ; /etc/mknod tu$tryunit \
+			b $blk $tryunit ; /bin/chmod $prot tu$tryunit
+		fi
+	;;
+	*)
+		echo MAKEDEV: bad cassette tape unit in: $fullname
+		exit 1
+	;;
+	esac
+	;;
+	cty)
+	case $tryunit in
+	1|2|3)
+		if test ! -f ./ttyc$tryunit ; then
+			echo -n "ttyc"$tryunit" " ; /etc/mknod ttyc$tryunit \
+			c $chr $tryunit ; /bin/chmod $prot ttyc$tryunit
+		fi
+	;;
+	*)
+		echo MAKEDEV: bad serial line unit in: $fullname
+		exit 1
+	;;
+	esac
+	;;
+	esac
+;;
+hp|ra|rb|rd|rk|rl|rx)
+	partlet=$trypart
+	maxunits=32
+	case $tryname in
+	hp) blk=0; chr=4;;
+	ra) blk=9; chr=9;;
+	rb) blk=11; chr=23;;
+	rk) blk=3; chr=11;;
+	rl) blk=14; chr=32;;
+	rd|rx) blk=19; chr=47; maxunits=3;;
+	esac
+	if test $tryunit -lt $maxunits 2>/dev/null
+	then
+	    case $tryname in
+	    hp|ra|rb|rl|rd|rx)
+		case $trypart in
+		a) partnum=0;; b) partnum=1;; c) partnum=2;;
+		d) partnum=3;; e) partnum=4;; f) partnum=5;;
+		g) partnum=6;; h) partnum=7;;
+		[i-zA-Z])
+		    echo MAKEDEV: bad partition value in: $fullname
+		    exit 1
+		;;
+		esac
+		case $trypart in
+		[a-h])
+		    if test ! -f ./$tryname$tryunit$partlet ; then
+		    echo -n $tryname$tryunit$partlet" " ; \
+		    /etc/mknod $tryname$tryunit$partlet b \
+			       $blk `expr $tryunit '*' 8 + $partnum`
+		    fi
+		    if test ! -f ./r$tryname$tryunit$partlet ; then
+		    echo -n "r"$tryname$tryunit$partlet" " ; \
+		    /etc/mknod r$tryname$tryunit$partlet c \
+			       $chr `expr $tryunit '*' 8 + $partnum`
+		    fi
+		;;
+		*)
+		    for partlet in a b c d e f g h
+		    do
+		    if test $tryname = rx
+		    then
+			case $partlet in
+			a) partlet=a ;;
+			c) partlet=c ;;
+			*) continue ;;
+			esac
+		    fi
+		    case $partlet in
+		    a) partnum=0;; b) partnum=1;; c) partnum=2;;
+		    d) partnum=3;; e) partnum=4;; f) partnum=5;;
+		    g) partnum=6;; h) partnum=7;;
+		    esac
+		    if test ! -f ./$tryname$tryunit$partlet ; then
+		    echo -n $tryname$tryunit$partlet" " ; \
+		    /etc/mknod $tryname$tryunit$partlet b \
+			       $blk `expr $tryunit '*' 8 + $partnum`
+		    fi
+		    if test ! -f ./r$tryname$tryunit$partlet ; then
+		    echo -n "r"$tryname$tryunit$partlet" " ; \
+		    /etc/mknod r$tryname$tryunit$partlet c \
+			       $chr `expr $tryunit '*' 8 + $partnum`
+		    fi
+		    done
+		;;
+		esac
+	    ;;
+	    rk)
+		case $trypart in
+		a) partnum=0;; b) partnum=1;; c) partnum=2;;
+		g) partnum=6;;
+		[defhi-zA-Z])
+		    echo MAKEDEV: bad partition value in: $fullname
+		    exit 1
+		;;
+		esac
+		case $trypart in
+		[abcg])
+		    if test ! -f ./$tryname$tryunit$partlet ; then
+		    echo -n $tryname$tryunit$partlet" " ; \
+		    /etc/mknod $tryname$tryunit$partlet b \
+			       $blk `expr $tryunit '*' 8 + $partnum`
+		    fi
+		    if test ! -f ./r$tryname$tryunit$partlet ; then
+		    echo -n "r"$tryname$tryunit$partlet" " ; \
+		    /etc/mknod r$tryname$tryunit$partlet c \
+			       $chr `expr $tryunit '*' 8 + $partnum`
+		    fi
+		;;
+		*)
+		    for partlet in a b c g
+		    do
+		    case $partlet in
+		    a) partnum=0;; b) partnum=1;; c) partnum=2;;
+		    g) partnum=6;;
+		    esac
+		    if test ! -f ./$tryname$tryunit$partlet ; then
+		    echo -n $tryname$tryunit$partlet" " ; \
+		    /etc/mknod $tryname$tryunit$partlet b \
+			       $blk `expr $tryunit '*' 8 + $partnum`
+		    fi
+		    if test ! -f ./r$tryname$tryunit$partlet ; then
+		    echo -n "r"$tryname$tryunit$partlet" " ; \
+		    /etc/mknod r$tryname$tryunit$partlet c \
+			       $chr `expr $tryunit '*' 8 + $partnum`
+		    fi
+		    done
+		;;
+		esac
+	    ;;
+	    esac
+	else
+	    echo MAKEDEV: bad disk unit in: $fullname
+	    exit 1
+	fi
+;;
+mu|tms|ts|tu|st)
+	umask 0 ; unit=$tryunit ; count=0
+	maxunits=32
+	case $tryname in
+	mu) chr=19;;
+	tms) chr=36;;
+	ts) chr=16;;
+	tu) chr=5;;
+	st) chr=46; maxunits=1;;
+	esac
+	if test $tryunit -lt $maxunits 2>/dev/null
+	then
+	    while :
+	    do
+	    if test -f ./rmt$count"h"
+	    then
+		count=`expr $count + 1`
+	    else
+		break
+	    fi
+	    done
+	    if test $unit -ge 4
+	    then
+		tryunit=`expr $unit '%' 4`
+		temp=`expr $unit '/' 4`
+		tryunit=`expr $tryunit + $temp '*' 32`
+	    fi
+# test for ls because of standalone system doesn't have ls.
+# Remove in future, when standalone system updated.
+	    if test -f /bin/ls
+	    then
+	        ls -l *rmt* > tmp$$ 2> /dev/null
+	    fi
+	    case $tryname in
+	    mu|tms|tu)
+		for k in 0 4 8 12
+		do
+		    minnum=`expr $k + $tryunit`
+# test for awk because of standalone system doesn't have awk.
+# Remove in future, when standalone system updated.
+	    	    if test -f /bin/awk
+		    then
+		        made=`awk ' BEGIN { s = "n" }
+			    { if ($4 == '$chr'"," && $5 == '$minnum')
+				s = "y"
+			    } 
+			    END { print s }' tmp$$`
+		    else
+			made="n"
+		    fi
+		    if test $made = "y"
+		    then
+			continue
+		    else
+			case $k in
+			0) echo -n "rmt"$count"l " 
+		    	   /etc/mknod ./rmt$count"l" c $chr $minnum
+			;;
+			4) echo -n "nrmt"$count"l "
+		    	   /etc/mknod ./nrmt$count"l" c $chr $minnum
+			;;
+			8) echo -n "rmt"$count"h "
+		    	   /etc/mknod ./rmt$count"h" c $chr $minnum
+			;;
+			12) echo -n "nrmt"$count"h "
+		    	    /etc/mknod ./nrmt$count"h" c $chr $minnum
+			;;
+			esac
+		    fi
+		done
+	    ;;
+	    ts|st)
+		for k in 8 12
+		do
+		    minnum=`expr $k + $tryunit`
+# test for awk because of standalone system doesn't have awk.
+# Remove in future, when standalone system updated.
+	    	    if test -f /bin/awk
+		    then
+		        made=`awk ' BEGIN { s = "n" }
+			    { if ($4 == '$chr'"," && $5 == '$minnum')
+				s = "y"
+			    } 
+			    END { print s }' tmp$$`
+		    else
+			made="n"
+		    fi
+		    if test $made = "y"
+		    then
+			continue
+		    else
+			case $k in
+			8) echo -n "rmt"$count"h "
+		    	   /etc/mknod ./rmt$count"h" c $chr $minnum
+			;;
+			12) echo -n "nrmt"$count"h "
+		    	    /etc/mknod ./nrmt$count"h" c $chr $minnum
+			;;
+			esac
+		    fi
+		done
+	    ;;
+	    esac
+# test for ls because of standalone system doesn't have ls.
+# Remove in future, when standalone system updated.
+	    if test -f /bin/ls
+	    then
+	    	rm tmp$$
+	    fi
+	else
+		echo MAKEDEV: bad tape unit in: \
+		     $fullname : $maxunits tape devices maximum
+		exit 1
+	fi
+;;
+dh[quv]|sh|ss|sm|sg|dm[fbz]|dz|dz[qv]|lta|pty|qd|qv)
+	umask 44
+	unit=$tryunit
+	maxunits=10
+	id1=0
+	id2=0
+	minnum=0
+	scan=1
+	scancnt=0
+	savid1=0; savid2=0
+	case $tryname in
+	dz[qv]) chr=1; linecnt=4; skipcnt=4; base=0;;
+	ss) chr=45; linecnt=4; skipcnt=4; base=1; id2=1; scan=1; maxunits=1;;
+	dh[qv]) chr=33; linecnt=8; skipcnt=8; base=0;;
+	sh) chr=51; linecnt=8; skipcnt=0; base=0; id2=4; scan=1; maxunits=1;;
+	dz) chr=1; linecnt=8; skipcnt=0; base=0;;
+	dmz) chr=34; linecnt=24; skipcnt=0; base=0;;
+	dhu) chr=33; linecnt=16; skipcnt=0; base=0;;
+	dmb) chr=44; linecnt=8; skipcnt=0; base=0; /dev/MAKEDEV -s dmbsp$unit;;
+	dmf) chr=22; linecnt=8; skipcnt=0; base=0; /dev/MAKEDEV -s dmfsp$unit;;
+	lta) chr=39; linecnt=16; skipcnt=0; base=0;;
+	pty) umask 0; ttychr=20; ptychr=21; id2=0;;
+	qd) umask 111; chr=42 ; base=1;;
+	qv) umask 111; chr=0 ; base=1;;
+	sm) umask 111; chr=0 ; base=1;;
+	sg) umask 111; chr=0 ; base=1;;
+	esac
+	case $tryname in
+	dh[quv]|sh|ss|dm[fbz]|dz|dz[qv]|lta)
+	if test $tryunit -ge $maxunits 2>/dev/null
+	then
+		echo MAKEDEV: bad terminal unit in: \
+		     $fullname : $maxunits terminal devices maximum
+		umask 77
+		exit 1
+	fi
+	case $tryunit in
+	[0-9]*) ;;
+	*)
+		echo MAKEDEV: bad terminal unit in: \
+		     $fullname : $maxunits terminal devices maximum
+		umask 77
+		exit 1;;
+	esac
+	while :
+	do
+	if test -f ./tty$id1$id2
+	then
+		scancnt=0
+	else
+		scancnt=`expr $scancnt + 1`
+		if test $scancnt -eq 1
+		then
+			savid1=$id1
+			savid2=$id2
+		fi
+		if test $scancnt -ge `expr $linecnt - $base`
+		then
+			id1=$savid1
+			id2=$savid2
+			break
+		fi
+	fi
+	id2=`expr $id2 + $scan`
+	if test $id2 -ge 10
+	then
+		id2=0
+		case $id1 in
+		A) id1=B;; B) id1=C;;
+		C) id1=D;; D) id1=E;; E) id1=F;;
+		F) id1=G;; G) id1=H;; H) id1=I;;
+		I) id1=J;; J) id1=K;; K) id1=L;;
+		L) id1=M;; M) id1=N;; N) id1=O;;
+		O) id1=P;; P) id1=Q;; Q) id1=R;;
+		R) id1=S;; S) id1=T;; T) id1=U;;
+		U) id1=V;; V) id1=W;; W) id1=X;;
+		X) id1=Y;; Y) id1=Z;;
+		Z) echo MAKEDEV: reserved tty line characters: a-z
+		   umask 77
+		   exit 1
+		;;
+		*)
+			id1=`expr $id1 + 1`
+			if test $id1 -ge 10
+			then
+				id1=A
+			fi
+		;;
+		esac
+	fi
+	done
+	ls -l tty* > tmp$$ 2> /dev/null
+	while :
+	do
+	if test $base -ne $linecnt
+	then
+		minnum=`expr $linecnt '*' $tryunit + \
+		       $skipcnt '*' $tryunit + $base`
+		base=`expr $base + 1`
+		made=`awk ' BEGIN { s = "n" }
+			{ if ($4 == '$chr'"," && $5 == '$minnum')
+				s = "y"
+			} 
+			END { print s }' tmp$$`
+		if test $made = "y"
+		then
+			continue
+		else
+			echo -n "tty"$id1$id2" "
+			/etc/mknod tty$id1$id2 c $chr $minnum
+		fi
+		id2=`expr $id2 + 1`
+		if test $id2 -ge 10
+		then
+			id2=0
+			case $id1 in
+			A) id1=B;; B) id1=C;;
+			C) id1=D;; D) id1=E;; E) id1=F;;
+			F) id1=G;; G) id1=H;; H) id1=I;;
+			I) id1=J;; J) id1=K;; K) id1=L;;
+			L) id1=M;; M) id1=N;; N) id1=O;;
+			O) id1=P;; P) id1=Q;; Q) id1=R;;
+			R) id1=S;; S) id1=T;; T) id1=U;;
+			U) id1=V;; V) id1=W;; W) id1=X;;
+			X) id1=Y;; Y) id1=Z;;
+			Z) echo MAKEDEV: reserved tty line characters: a-z
+			   umask 77
+			   exit 1
+			;;
+			*)
+				id1=`expr $id1 + 1`
+				if test $id1 -ge 10
+				then
+					id1=A
+				fi
+			;;
+			esac
+		fi
+	else
+		break
+	fi
+	done
+	rm tmp$$
+	umask 77
+	;;
+	pty)
+		case $tryunit in
+		0) base=0 ; id1=p;;
+		1) base=16 ; id1=q;;
+		2) base=32 ; id1=r;;
+		3) base=48 ; id1=s;;
+		4) base=64 ; id1=t;;
+		5) base=80 ; id1=u;;
+		*)
+			echo MAKEDEV: bad pseudoterminal unit in: \
+			     $fullname : 5 pseudoterminal devices maximum
+			umask 77
+			exit 1
+		;;
+		esac
+		while :
+		do
+		if test $id2 -ge 10
+		then
+		    case $id2 in
+		    10) id2l=a;; 11) id2l=b;; 12) id2l=c;; 13) id2l=d;;
+		    14) id2l=e;; 15) id2l=f;; *) break;;
+		    esac
+		else
+		    id2l=$id2
+		fi
+		if test ! -f ./pty$id1$id2l ; then
+		echo -n "pty"$id1$id2l" "; /etc/mknod pty$id1$id2l c \
+					  $ptychr `expr $base + $id2`
+		fi
+		if test ! -f ./tty$id1$id2l ; then
+		echo -n "tty"$id1$id2l" "; /etc/mknod tty$id1$id2l c \
+					  $ttychr `expr $base + $id2`
+		fi
+		id2=`expr $id2 + 1`
+		done
+		umask 77
+	;;
+	qd)
+		case $tryunit in
+		0)
+			test ! -f ./qconsole &&
+			{
+				echo -n "qconsole "
+				/etc/mknod qconsole c $chr \
+					`expr $tryunit \* 4 + $base`
+			}
+		;;
+		esac
+		case $tryunit in
+		0)
+			test -f ./qd$tryunit ||
+			{
+				echo -n "qd"$tryunit" "
+				/etc/mknod qd$tryunit c $chr \
+					`expr $tryunit \* 4 + 2`
+			}
+		;;
+		1)
+			test -f ./qd$tryunit ||
+			{
+				echo -n "qd"$tryunit" "
+				/etc/mknod qd$tryunit c $chr \
+					`expr $tryunit \* 4 + 2`
+			}
+			test -f ./ttyc$tryunit ||
+			{
+				echo -n "ttyc"$tryunit" "
+				/etc/mknod ttyc$tryunit c $chr \
+					`expr $tryunit \* 4`
+			}
+		;;
+		*)
+			echo MAKEDEV: bad qdss unit in: $fullname
+			umask 77
+			exit 1
+		;;
+		esac
+		umask 77
+	;;
+	qv)
+		case $tryunit in
+		0)
+			test -f ./qvscreen ||
+			{
+				echo -n "qvscreen "
+				/etc/mknod qvscreen c $chr $base
+				echo -n "mouse "
+				/etc/mknod mouse c $chr `expr $base + 1`
+			}
+		;;
+		*)
+			echo MAKEDEV: bad qvss unit in: $fullname
+			umask 77
+			exit 1
+		;;
+		esac
+		umask 77
+	;;
+	sm)
+		case $tryunit in
+		0)
+			test -f ./smscreen ||
+			{
+				echo -n "smscreen "
+				/etc/mknod smscreen c $chr `expr $base + 1`
+				echo -n "mouse "
+				/etc/mknod mouse c $chr $base
+			}
+		;;
+		*)
+			echo MAKEDEV: bad sm unit in: $fullname
+			umask 77
+			exit 1
+		;;
+		esac
+		umask 77
+	;;
+	sg)
+		case $tryunit in
+		0)
+			test -f ./sgscreen ||
+			{
+				echo -n "sgscreen "
+				/etc/mknod sgscreen c $chr `expr $base + 1`
+				echo -n "sg0 "
+				/etc/mknod sg0 c $chr $base
+			}
+		;;
+		*)
+			echo MAKEDEV: bad sg unit in: $fullname
+			umask 77
+			exit 1
+		;;
+		esac
+		umask 77
+	;;
+	esac
+;;
+dm[bf]sp|lp|lpv)
+	umask 77
+	unit=$tryunit
+	case $tryname in
+	lp|lpv) chr=15 ; base=8 ; skipcnt=8;;
+	dmbsp) chr=44 ; base=128;;
+	dmfsp) chr=22 ; base=128;;
+	esac
+	if test $tryunit -le 4 2>/dev/null ; then
+	    while :
+	    do
+	    if test -f ./lp$tryunit ; then
+		tryunit=`expr $tryunit + 1`
+		if test $tryunit -ge 5 ; then
+			echo MAKEDEV: bad printer unit in: \
+			     $fullname : 5 printer devices maximum
+			exit 1
+		fi
+	    else
+		break
+	    fi
+	    done
+	    if test ! -f ./lp$tryunit ; then
+		echo -n "lp"$tryunit" "
+		case $tryname in
+		lp|lpv)
+			    /etc/mknod lp$tryunit c \
+			    $chr `expr $tryunit '*' $skipcnt`
+		;;
+		dm[bf]sp)
+			    /etc/mknod lp$tryunit c \
+			    $chr `expr $unit + $base`
+		;;
+		esac
+		chmod 666 ./lp$tryunit
+	    fi
+	else
+		echo MAKEDEV: bad printer unit in: \
+			     $fullname : 5 printer devices maximum
+		exit 1
+	fi
+;;
+local|urx|tm|ut|uu|up|dh|ct|va|vp|dn|ad|ik|ps)
+	echo MAKEDEV: attempting to execute /dev/MAKEDEV.local:
+	/bin/sh /dev/MAKEDEV.local $fullname
+;;
+*)
+	echo MAKEDEV: unknown device in: $fullname
+	exit 1
+;;
+esac
+if test $silent -eq 0 ; then
+echo ""
+fi
+done
+exit

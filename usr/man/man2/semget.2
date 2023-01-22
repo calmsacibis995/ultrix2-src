@@ -1,0 +1,144 @@
+.TH semget 2
+.SH NAME
+semget \- get set of semaphores
+.SH SYNTAX
+.nf
+.ft B
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+.PP
+.ft B
+int semget (key, nsems, semflg)
+key_t key;
+int nsems, semflg;
+.fi
+.SH DESCRIPTION
+The
+.PN semget
+system call
+returns the semaphore identifier associated with
+.I key.
+.sp
+A semaphore identifier and associated data structure and set containing 
+.I nsems
+semaphores
+are created for
+.I key 
+if one of the following are true:
+.RS 8
+.PP
+The
+.I key
+is equal to 
+.B IPC_PRIVATE
+.PP
+The
+.I key
+does not already have a semaphore identifier associated with it, and
+.RI ( semflg
+&
+.BR IPC_CREAT )
+is "true".
+.RE
+For further information, see intro(2).
+.PP
+Upon creation,
+the data structure associated with the new semaphore identifier
+is initialized as follows:
+.RS 8
+The
+.BR sem_perm.cuid ,
+.BR sem_perm.uid ,
+.BR sem_perm.cgid
+and
+.B sem_perm.gid
+are set equal to the effective user ID and effective group ID, respectively, of
+the calling process.
+.sp
+The low-order 9 bits of
+.B sem_perm.mode
+are set equal to the low-order 9 bits of
+.IR semflg .
+.PP
+The
+.B sem_nsems 
+is set equal to the value of
+.I nsems.
+.PP
+The
+.B sem_otime
+is set equal to 0 and
+.B sem_ctime 
+is set equal to the current time.
+.sp
+.in -8
+.PP
+Upon successful completion, a non-negative integer, namely a semaphore
+identifier is returned.  Otherwise, a value of -1 is returned and 
+.I errno
+is set to indicate the error.
+.SH DIAGNOSTICS
+The
+.I semget
+system call
+will fail if one or more of the following are true:
+.TP 15
+[EINVAL]
+The
+.I nsems
+is either less than or equal to zero or greater than the system imposed limit
+.TP 15
+[EACCES]
+A semaphore identifier exists for
+.I key
+but operation permission 
+as specified by the low-order 9 bits of
+.I semflg
+would not be granted. 
+For further information, see intro(2).
+.TP 15
+[EINVAL]
+A semaphore identifier exists for
+.I key 
+but the number of semaphores in the set associated with it is less than 
+.I nsems
+and
+.I nsems
+is not equal to zero. 
+.TP 15
+[ENOENT]
+A semaphore identifier does not exist for
+.I key 
+and 
+.RI ( semflg
+&
+.BR IPC_CREAT )
+is "false". 
+.TP 15
+[ENOSPC]
+A semaphore identifier is to be created
+but the system imposed limit on the
+maximum number of allowed semaphore
+identifiers system wide would be exceeded.
+.TP 15
+[ENOSPC]
+A semaphore identifier is to be created
+but the system imposed limit on the
+maximum number of allowed semaphores
+system wide would be exceeded.
+.TP 15
+[EEXIST]
+A semaphore identifier exists for
+.I key
+but 
+.RI (( semflg
+&
+.BR IPC_CREAT )
+& 
+.RI ( semflg
+&
+.BR IPC_EXCL ))
+is "true". 
+.SH SEE ALSO
+semctl(2), semop(2), ftok(3)

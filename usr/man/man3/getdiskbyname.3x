@@ -1,0 +1,49 @@
+.\" Last modified by MJT 22-Apr-85  1506
+.\"
+.TH getdiskbyname 3x
+.SH NAME
+getdiskbyname \- get disk description by its name
+.SH SYNTAX
+.nf
+.B #include <disktab.h>
+.PP
+.B struct disktab *
+.B getdiskbyname(name)
+.B char *name;
+.fi
+.SH DESCRIPTION
+The
+.PN getdiskbyname
+subroutine
+takes a disk name (for example, rm03) and returns a structure
+describing its geometry information and the standard
+disk partition tables.  All information obtained from
+the 
+disktab(5)
+file.
+.PP
+< disktab.h >
+has the following form:
+.EX
+
+#define DISKTAB        "/etc/disktab"
+
+struct  disktab {
+        char    *d_name;                /* drive name */
+        char    *d_type;                /* drive type */
+        int     d_secsize;              /* sector size in bytes */
+        int     d_ntracks;              /* # tracks/cylinder */
+        int     d_nsectors;             /* # sectors/track */
+        int     d_ncylinders;           /* # cylinders */
+        int     d_rpm;                  /* revolutions/minute */
+        struct  partition {
+                int     p_size;         /* #sectors in partition */
+                short   p_bsize;        /* block size in bytes */
+                short   p_fsize;        /* frag size in bytes */
+        } d_partitions[8];
+};
+
+struct  disktab *getdiskbyname();
+.EE
+.SH "SEE ALSO"
+disktab(5)

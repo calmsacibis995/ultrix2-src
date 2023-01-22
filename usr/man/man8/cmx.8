@@ -1,0 +1,90 @@
+.TH cmx 8 
+.SH NAME
+cmx \- generic communication exerciser
+.SH SYNTAX
+.B /usr/field/cmx
+[
+.B \-h
+] [
+.BI \-o file
+.B ] [
+.BI \-t n
+] 
+.B \-l
+.I line-1 
+.B ...
+.SH DESCRIPTION
+The 
+.B cmx 
+exerciser will write, read, and validate random data
+and packet lengths on a given communications line. 
+The line under
+test must have a loopback connector attached to the
+distribution panel or the cable and the line must be 
+disabled in the /etc/ttys file and a non-modem line.
+That is, the ty_status flag must be set to ``off''.
+.PP
+The exerciser will run until
+.CT C
+or
+\fBkill -15 \fIpid\fR is sent to the process.
+.PP
+A logfile is made in /usr/field
+for you to examine and then remove.  If there are errors
+listed in the logfile, make sure that you check the
+/usr/adm/syserr/syserr.<hostname> file,
+because that is where the driver and kernel error messages
+are saved.
+.PP
+You must specify the 
+.B \-l 
+flag followed by the lines to test.
+The \fIline-n\fR arguments identify the lines to be tested.
+A maximum of 32 lines can be tested at any one time.  The
+\fIline-n\fR arguments are specified as names taken from the /dev
+directory without the letters ``tty''.  For example, if the /dev
+directory lists tty03, the \fIline\fR argument is 03.
+.PP
+The DEVICES section lists the devices that can be tested.
+.SH OPTIONS
+.IP \fB\-h\fR
+Prints help message about this command.
+.IP \fB\-o\fIfile\fR
+Save output diagnostics in \fIfile\fR.
+.IP \fB\-t\fIn\fR
+Run time in minutes (\fIn\fR).
+The default is to run until 
+a 
+.CT C
+or 
+\fBkill -15 \fIpid\fR is sent to the process.
+.SH RESTRICTIONS
+.PP
+Pseudo devices (those whose first character after tty is 
+p, q, r, s, t, u) cannot be tested.  Neither can lta devices
+with major #39. 
+.SH DEVICES
+.PP 
+Use the 
+.B file
+command on /dev/tty* to find out which tty line corresponds to a
+device line number.
+.SH EXAMPLES
+The following example runs the
+.B cmx 
+exerciser for 60 minutes on lines 00, 13, 22, and 32.
+.EX
+% /usr/field/cmx -t60 -l 00 13 22 32
+.EE
+The following example runs the
+.PN cmx 
+exerciser on lines 11, 42, 45, and 76 in the background until
+interrupted by a
+.CT C
+or 
+\fBkill -15 \fIpid\fR.
+.EX
+% /usr/field/cmx -l 11 42 45 76 &
+.EE
+.SH "SEE ALSO"
+ULTRIX-32 System Management Guide

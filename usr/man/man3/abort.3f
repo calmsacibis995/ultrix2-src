@@ -1,0 +1,22 @@
+.TH abort 3f
+.SH NAME
+abort \- terminate abruptly with memory image
+.SH SYNTAX
+.B subroutine abort (string)
+.br
+.B character*(*) string
+.SH DESCRIPTION
+The
+.PN abort
+subroutine
+cleans up the I/O buffers and then aborts producing a
+.I core
+file in the current directory.
+If
+.I string
+is given, it is written to logical unit 0 preceded by ``abort:''.
+.SH FILES
+.ie \nM /usr/ucb/lib/libF77.a
+.el /usr/lib/libF77.a
+.SH "SEE ALSO"
+abort(3)

@@ -1,0 +1,29 @@
+.TH sigblock 2
+.SH NAME
+sigblock \- block signals
+.SH SYNTAX
+.nf
+.B sigblock(mask);
+.B int mask;
+.SH DESCRIPTION
+The
+.PN sigblock
+system call
+causes the signals specified in
+.I mask
+to be added to the set of signals currently
+being blocked from delivery.  Signal
+.I i
+is blocked if the
+.IR i -th
+bit in 
+.I mask
+is a 1.
+.PP
+It is not possible to block SIGKILL,
+SIGSTOP, or SIGCONT;  this restriction is silently
+imposed by the system.
+.PP
+The previous set of masked signals is returned.
+.SH "SEE ALSO"
+kill(2), sigsetmask(2), sigvec(2)

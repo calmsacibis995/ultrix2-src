@@ -1,0 +1,28 @@
+.TH wait 3f
+.SH NAME
+wait \- wait for a process to terminate
+.SH SYNTAX
+.B integer function wait (status)
+.br
+.B integer status
+.SH DESCRIPTION
+The
+.PN wait
+routine causes its caller to be suspended 
+until a signal is received or one of
+its child processes terminates.
+If any child has terminated since the last
+.PN wait,
+return is immediate; if there are no children, return is immediate
+with an error code.
+.PP
+If the returned value is positive, it is the process ID of the child and
+.I status
+is its termination status, see
+wait(2).
+If the returned value is negative, it is the negation of a system error code.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+wait(2), kill(3f), perror(3f), signal(3f)

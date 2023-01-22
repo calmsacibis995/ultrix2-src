@@ -1,0 +1,70 @@
+.TH nfsstat 8nfs
+.SH NAME
+nfsstat \- display Network File System statistics
+.SH SYNTAX
+.B /usr/etc/nfsstat 
+[
+.B \-csnrz
+]
+[
+.B vmunix
+]
+[
+.B core
+]
+.SH DESCRIPTION
+.IX  "nfsstat command"  ""  "\fLnfsstat\fP \(em display network statistics"
+.IX  "NFS statistics"  "display"  ""  "display \(em \fLnfsstat\fP"
+.IX  "statistics of NFS"  display  ""  "display \(em \fLnfsstat\fP"
+The
+.PN nfsstat
+command displays statistical information about the
+Network File System (NFS) and
+Remote Procedure Call (RPC) interfaces in the kernel.
+It can also be used to reinitialize this information.
+If no options are given,
+.PN nfsstat 
+defaults to all options set to on except the z option. 
+.SH OPTIONS
+.TP
+.B \-c
+Display client information.
+The client side NFS and RPC information will be printed.
+This option can be combined with the
+.B \-n
+and
+.B \-r
+options to print client NFS or client RPC information only.
+.TP
+.B \-s
+Display server information.  The server side NFS and RPC information
+will be printed.
+.TP
+.B \-n
+Display NFS information.
+NFS information for both the client and server side will be printed.
+Can be combined with the
+.B \-c
+and
+.B \-s
+options to print client or server NFS information only.
+.TP
+.B \-r
+Display RPC information. RPC information for both client and server side
+will be printed.  Can be combined with the
+.B \-c 
+and
+.B \-s 
+options to print client or server RPC information only.
+.TP
+.B \-z
+Reinitialize statistics.
+Can be combined with any of the above options to reset 
+particular sets of statistics to zero after printing them.
+The user must have write permission on /dev/kmem
+to use this option.
+.SH FILES
+.ta \w'/dev/kmem\0\0\0'u
+/vmunix 	system namelist
+.br
+/dev/kmem	kernel memory

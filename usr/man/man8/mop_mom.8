@@ -1,0 +1,75 @@
+.TH mop_mom 8 
+.SH NAME
+mop_mom \- MOP down-line/up-line load listener 
+.SH SYNTAX
+.B /etc/mop_mom 
+.SH DESCRIPTION
+The
+.PN mop_mom 
+listens for down-line load and up-line dump
+requests on behalf of your local 
+ULTRIX node.  The
+.PN mop_mom 
+command is usually included in the /etc/rc.local 
+file as a backround task.  When a 
+down-line load or up-line dump request is received from a target node, 
+.PN mop_mom
+spawns the loader, 
+.B mop_dumpload, 
+to process the load request.  The following minimum 
+criteria must be met for 
+.B mop_dumpload 
+to accept and process a load request:
+.PP
+.RS 5
+The Ethernet 
+physical address of the target node 
+must be specified in the nodes database entry for the requesting 
+target node.  For further information, see 
+addnode(8).
+.PP
+The loader must be given the name of the image file to down-line load. 
+If the image file name is specified in a target node's down-line load 
+request, then the loader uses that file.  Otherwise, the file name 
+must be defined in the requesting node's database entry.
+For further information, see addnode(8).  
+If an absolute pathname is not associated with the image file name, the 
+primary default path, /usr/lib/mop, is used.  If the image file is not
+in /usr/lib/mop, the secondary default, 
+/usr/lib/dnet, is used.  The names of the files in /usr/lib/dnet 
+must be in lowercase with a .sys extension.
+.PP
+The loader must be given the name of the dump 
+file that will contain the 
+up-line dump image of the requesting node's memory.  The dump file 
+name must be defined in the requesting node's database entry.
+For further information, see addnode(8).
+.RE 
+.SH EXAMPLE
+.EX
+/etc/mop_mom & 
+.EE
+.PP
+This command is usually included in the 
+/etc/rc.local 
+file, which causes 
+.PN mop_mom 
+to listen for down-line and up-line load requests.
+.SH RESTRICTIONS 
+Currently, 
+.PN mop_mom 
+supports only DECSA Terminal Servers and DECServer 100s.
+.SH FILES 
+.TP 30
+/usr/lib/dnet mop_dumpload 
+down-line loader 
+.TP 30
+/usr/lib/mop
+primary default pathname for all image files
+.TP 30
+/usr/lib/dnet/*.sys
+secondary default pathname
+.SH SEE ALSO
+addnode(8), ccr(8), getnode(8), load(8), remnode(8), trigger(8)
+.br
+System Management Guide

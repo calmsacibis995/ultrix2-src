@@ -1,0 +1,31 @@
+.TH chmod 3f
+.SH NAME
+chmod \- change mode of a file
+.SH SYNTAX
+.B integer function chmod (name, mode)
+.br
+.B character*(*) name, mode
+.SH DESCRIPTION
+This function changes the filesystem
+.I mode
+of file
+.IR name .
+The
+.I mode
+can be any specification recognized by
+chmod(1).  The
+.I name
+must be a single pathname.
+.PP
+The normal returned value is 0.
+Any other value will be a system error number.
+.SH RESTRICTIONS
+Pathnames can be no longer than MAXPATHLEN as defined in
+< sys/param.h >.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.br
+/bin/chmod		exec'ed to change the mode.
+.SH "SEE ALSO"
+chmod(1)

@@ -1,0 +1,22 @@
+.TH gcore 1
+.SH NAME
+gcore \- get core images of running processes
+.SH SYNTAX
+.B gcore
+process-id ...
+.SH DESCRIPTION
+The
+.B gcore
+command
+creates a core image of each specified process,
+suitable for use with adb(1)
+or dbx(1).
+.SH RESTRICTIONS
+Paging activity that occurs while
+.B gcore
+is running may cause the program
+to become confused.
+For best results,
+the desired processes should be stopped.
+.SH FILES
+core.<process-id>	core images

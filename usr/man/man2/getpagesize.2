@@ -1,0 +1,23 @@
+.TH getpagesize 2
+.SH NAME
+getpagesize \- get system page size
+.SH SYNTAX
+.nf
+.ft B
+pagesize = getpagesize()
+int pagesize;
+.ft R
+.fi
+.SH DESCRIPTION
+The
+.PN getpagesize
+system call returns the number of bytes in a page.
+Page granularity is the granularity of many of the memory
+management calls.
+.PP
+The page size is a 
+.I system
+page size and may not be the same as the underlying
+hardware page size.
+.SH SEE ALSO
+pagesize(1), sbrk(2)

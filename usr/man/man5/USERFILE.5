@@ -1,0 +1,75 @@
+.TH USERFILE 5
+.SH NAME
+USERFILE \- defines uucp security
+.SH SYNTAX
+.B /usr/lib/uucp/USERFILE
+.SH DESCRIPTION
+The
+.B uucp
+utility uses the USERFILE to establish what access a
+remote system may have to the local system.  
+An entry should exist for each system; if no entries
+exist for a particular system, the default entries
+are used.
+The entries for particular systems have the following
+format:
+.IP "" 1.2i
+\fIlogin-name\fR,\fInode-name \fRX\fI# path-name\fR ...
+.IP \fIlogin-name\fR 1i
+The name with which the remote system logs in.
+.IP \fInode-name\fR
+The name of the remote node. 
+.IP X\fI#\fR 1i
+The execution level for the remote system.  The remote
+system can execute commands defined in the 
+L.cmds(5)
+file that have an execution level less than or equal to
+the number \fI#\fR.
+.IP \fIpath-name\fR 1i
+The remote system can access anything at the local system
+with this prefix.
+.PP
+Two entries must also be provided for systems not otherwise
+listed:
+.IP "" .5i
+remote, X\fI# path-name\fR ...
+.br
+local, X\fI# path-name\fR ...
+.PP
+These entries define the execution level and access pathnames
+for the local system and all remote systems not defined by
+specific entries.
+.SH EXAMPLES
+.EX 
+remote, X1 /usr/spool/uucppublic
+local, X9 /
+max,systemY /usr/sources /usr/src/share
+max,systemZ X3 /usr
+.EE
+In the above example, the node named systemY with the
+login name max has access to anything with the pathname
+prefixes 
+/usr/sources 
+and 
+/usr/src/share.  
+The node
+named systemZ with the login name max can execute
+commands defined in
+L.cmds(5)
+with an execution level of 3 or lower.  It can access
+anything with the pathname prefix 
+/usr.
+.PP
+Any other remote systems can execute commands defined
+in
+L.cmds(5)
+with an execution level of 1 or 0.  They can access
+anything with the pathname prefix of
+/usr/spool/uucppublic.
+.PP
+Users on the local system can execute any of the commands 
+defined in 
+.B L.cmd 
+and access anything on the system.
+.SH SEE ALSO
+System Management Guide

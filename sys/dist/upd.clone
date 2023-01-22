@@ -1,0 +1,266 @@
+#! /bin/sh
+# upd.clone --
+#   clone an ra60 update pack to some other type of media.
+#
+#
+
+#/* clone from device */
+RAUNIT=6
+
+#/* directories where things are mounted */
+RAMOUNT=/clone
+NEWMOUNT=/cloneto
+FROMTMP=/tmp/cl.from.$$
+TOTMP=/tmp/cl.to.$$
+RKSIZE=
+
+#/* names of the subsets */
+SUBSETLIST="installation basutil1 basutil2 f77 pascal modula2"
+SUBSETLIST="$SUBSETLIST lisp games selfhlp mandoc contrib"
+
+# make mount directories.
+mkdir $RAMOUNT > /dev/null 2>&1
+mkdir $NEWMOUNT > /dev/null 2>&1
+
+# get type of media to make.
+while : # true
+do
+	#/* a little menu */
+	echo -n "
+These are the types of media you can create: 
+
+	1)	RL02
+	2)	RK07
+	3)	RA60
+
+Choose the number coresponding to the media
+you are trying to create: "
+
+	read CHOICE
+	case "$CHOICE" in
+	1)	echo -n "You chose RL02, is this correct (y/n)[n]? "
+		read YORN
+		case "$YORN" in
+		[Yy]*)	MEDIA=rl02
+			UNIT=2
+			DEVICE=/dev/rl2c
+			RAWDEVICE=/dev/rrl2c
+			break
+			;;
+		esac
+		;;
+	2)	echo -n "You chose RK07, is this correct (y/n)[n]? "
+		read YORN
+		case "$YORN" in
+		[Yy]*)	MEDIA=rk07
+			UNIT=0
+			DEVICE=/dev/hk0c
+			RAWDEVICE=/dev/rhk0c
+			RKSIZE=" -s 53724 "
+			break
+			;;
+		esac
+		;;
+	3)	echo -n "You chose RA60, is this correct (y/n)[n]? "
+		read YORN
+		case "$YORN" in
+		[Yy]*)	;;
+		*)	continue
+			;;
+		esac
+		case `hostname` in
+		vacuum)	;;
+		*)	echo "You must be on VACUUM to clone ra60's (FATAL)"
+			exit 1
+			;;
+		esac
+		MEDIA=ra60
+		RAUNIT=1
+		UNIT=2
+		DEVICE=/dev/ra2c
+		RAWDEVICE=/dev/rra2c
+		break
+		;;
+	esac
+done
+
+# spinup, fsck, and mount kit to be cloned.
+#
+RADEVICE=ra${RAUNIT}c
+RRADEVICE=/dev/r${RADEVICE}
+RADEVICE=/dev/$RADEVICE
+
+umount $RADEVICE >/dev/null 2>&1
+echo -n "Please mount the ra60 update kit on the ra60 unit $RAUNIT drive,
+press <RETURN> when the drive is spun up and ready: "
+read JUNK
+echo "Checking disk...."
+fsck -n $RRADEVICE > /dev/null 2>&1
+case $? in
+0)	mount -r $RADEVICE $RAMOUNT
+	case $? in
+	0)	;;
+	*)	echo "Error mounting update master (FATAL)."
+		exit 1
+		;;
+	esac
+	;;
+*)	echo "The update master has file system inconsistencies! (FATAL)"
+	exit 1
+	;;
+esac
+
+trap 'sync
+sync
+rm -f $FROMTMP $TOTMP
+echo "
+Dismounting update master pack."
+sleep 2
+umount $RADEVICE
+exit 1' 1 2 3
+
+
+VOL=0
+echo "SUBSETLIST = $SUBSETLIST"
+for SUBSET in $SUBSETLIST
+do
+	echo "Cloning $SUBSET..."
+	NEWDISK=nil
+	case "$MEDIA" in
+	rk07)	case "$SUBSET" in
+		installation)
+			NEWDISK=inst
+			;;
+		mandoc)	#/* pack change here */
+			NEWDISK=anynew
+			;;
+		esac
+		;;
+	rl02)	#/* little diskies */
+		case "$SUBSET" in
+		installation)
+			NEWDISK=inst
+			;;
+		basutil2|lisp|contrib)
+			NEWDISK=anynew
+			;;
+		esac
+		;;
+	ra60)	case "$SUBSET" in
+		installation)
+			NEWDISK=inst
+			;;
+		esac
+		;;
+	esac
+	case "$NEWDISK" in
+	anynew)	#/* pack swapping time */
+		OLDVOL=$VOL
+		VOL=`expr $VOL + 1`
+		sync;sync;sync
+		sleep 2
+		umount $DEVICE
+		echo "Verifying file-system on new volume."
+		fsck $RAWDEVICE
+		case $? in
+		0)	;;
+		*)	echo "Error: file-system inconsistencies on newly-created pack. (FATAL)"
+			exit 1
+			;;
+		esac
+		echo -n "
+Please dismount and label $MEDIA volume $OLDVOL.
+
+Mount volume $VOL, when on-line and ready, press <RETURN>: "
+		read JUNK
+		echo "Making file-system..."
+		newfs -b 8192 -f 1024 $RKSIZE $RAWDEVICE $MEDIA
+		echo "Checking file-system..."
+		fsck $RAWDEVICE
+		mount $DEVICE $NEWMOUNT
+		case $? in
+		0)	> $NEWMOUNT/volume$VOL
+			;;
+		*)	echo "Error: can't mount $DEVICE (FATAL)"
+			exit 1
+			;;
+		esac
+		;;
+	inst)	#/* set up first pack */
+		VOL=1
+		echo -n "
+Please mount $MEDIA volume 1 on $MEDIA unit $UNIT.
+When the drive is on-line and ready, press <RETURN> :"
+		read JUNK
+		echo "Making file-system..."
+		newfs -b 8192 -f 1024 $RKSIZE $RAWDEVICE $MEDIA
+		echo "Checking file-system..."
+		fsck $RAWDEVICE
+		mount $DEVICE $NEWMOUNT
+		case "$?" in
+		0)	;;
+		*)	echo "Error: can't mount $DEVICE (FATAL)"
+			exit 1
+			;;
+		esac
+		> $NEWMOUNT/volume$VOL
+		cp ${RAMOUNT}/${SUBSET} $NEWMOUNT
+		echo "
+Verifying copy..."
+		> $FROMTMP
+		> $TOTMP
+		dd if=$RAMOUNT/$SUBSET of=$FROMTMP count=16 > /dev/null 2>&1
+		dd if=$NEWMOUNT/$SUBSET of=$TOTMP count=16 > /dev/null 2>&1
+		cmp -s $TOTMP $FROMTMP
+		case $? in
+		0)	;;
+		*)	echo "
+Verification failed! (FATAL)"
+			sync
+			sync; umount $DEVICE
+			exit 1
+			;;
+		esac
+		continue
+		;;
+	esac
+	for EXT in obs mand opt
+	do
+		cp ${RAMOUNT}/${SUBSET}.${EXT} $NEWMOUNT
+		echo "
+Verifying copy..."
+		> $FROMTMP
+		> $TOTMP
+		dd if=$RAMOUNT/$SUBSET.$EXT of=$FROMTMP count=16 >/dev/null 2>&1
+		dd if=$NEWMOUNT/$SUBSET.$EXT of=$TOTMP count=16 >/dev/null 2>&1
+		cmp -s $FROMTMP $TOTMP
+		case $? in
+		0)	;;
+		*)	echo "
+Verification failed! (FATAL)"
+			sync;sync
+			umount $DEVICE
+			exit 1
+			;;
+		esac
+	done
+done
+echo "Unmounting $DEVICE"
+sync;sync;sync
+sleep 2
+umount $DEVICE
+echo "
+Verifying file-systems on new volume."
+fsck $RAWDEVICE
+case $? in
+0)	;;
+*)	echo "Error: file-system inconsistencies on newly created pack! (FATAL)"
+	exit 1
+	;;
+esac
+
+sync;sync
+echo "
+Dismounting master pack..."
+umount $RADEVICE
+exit 0

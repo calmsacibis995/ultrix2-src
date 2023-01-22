@@ -1,0 +1,29 @@
+.TH cd 1
+.SH NAME
+cd \- change working directory
+.SH SYNTAX
+.B cd
+directory
+.SH DESCRIPTION
+The
+.I directory
+becomes the new working directory.
+The process must have execute (search)
+permission in
+.I directory.
+.PP
+Because a new process is created to execute each command,
+.B cd
+would be ineffective if it were written as a
+normal command.  It is therefore recognized and executed
+by the shells.
+In csh(1) you may specify a list of directories in which
+.B directory
+is to be sought as a subdirectory if it is not
+a subdirectory of the current directory;
+see the description of the
+.I cdpath
+variable in
+csh(1).
+.SH "SEE ALSO"
+csh(1), pwd(1), sh(1), chdir(2)

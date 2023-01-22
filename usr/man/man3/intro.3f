@@ -1,0 +1,26 @@
+.TH intro 3f
+.SH NAME
+intro \- introduction to FORTRAN library functions
+.SH DESCRIPTION
+.PP
+This section describes those functions that are in the FORTRAN run time
+library.  The functions listed here provide an interface from \fIf77\fP
+programs to the system in the same manner as the C library does for C
+programs.  They are automatically loaded as needed by the Fortran compiler
+.IR f77 (1).
+.PP
+Most of these functions are in libU77.a. 
+Some are in libF77.a or libI77.a.
+A few intrinsic functions are described for the sake of completeness.
+.PP
+For efficiency, the SCCS ID strings are not normally included in the
+.I a.out
+file. To include them, simply declare
+.nf
+
+	external f77lid
+
+.fi
+in any
+.I f77
+module.

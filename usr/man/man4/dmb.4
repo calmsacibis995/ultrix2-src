@@ -1,0 +1,77 @@
+.TH dmb 4
+.SH NAME
+dmb \- DMB32 communications multiplexor
+.SH SYNTAX
+.B "device dmb0 at vaxbi? node? flags 0x????"
+.br
+.ti +0.5i
+.B "vector dmbsint dmbaint dmblint"
+.SH DESCRIPTION
+A
+DMB32
+device provides eight communication lines with modem control.
+The device driver also supports a connection to a line printer
+through the line printer port of the
+DMB32.
+.PP
+Each line attached to a
+DMB32
+serial line port behaves as described
+in
+tty(4).
+Input and output for each line may independently be set to run at any
+of 16 speeds; see
+tty(4)
+for the encoding.
+.PP
+Bit
+.I i
+of flags may be specified for a
+.B dmb
+to say that a line is not properly connected, and that the
+line should be treated as hard-wired with carrier always present.
+Thus, specifying ``flags 0x0004'' in the specification of
+.B dmb0
+would cause line 2 on the DMB32 to be treated as hard-wired
+with carrier always present.
+.SH RESTRICTIONS
+The DMB32
+provides a synchronous port, but this is
+not supported by the driver.
+.SH DIAGNOSTICS
+.IP "\fBdmbinit: device broken\fR" 0.3i
+This message is produced at system boot time if the DMB32
+fails its internal self test.
+.IP "\fBdmb%d: fifo overflow\fR" 0.3i
+The character input fifo overflowed
+before it could be serviced.  This can happen if the cpu is running
+with elevated priority for too long a period of time.
+No user interaction is required.
+.IP "\fBdmb%d: DMA Error. tbuf = 0x%x\fR" 0.3i
+A DMA output transfer failed.  This could be caused by a memory error
+or an invalid pte.
+For a description of the error code in the
+"tbuf" register, see the DMB32 User Guide.
+.IP "\fBdmb%d: Modem Error. tbuf = 0x%x\fR" 0.3i
+Indicates a problem with a modem or its cable.
+For a description of the error code in the
+"tbuf" register, see the DMB32 User Guide.
+.IP "\fBdmb%d: Internal Error. tbuf = 0x%x\fR" 0.3i
+Indicates that the DMB32 detected an internal error.
+For a description of the error code in the
+"tbuf" register, see the DMB32 User Guide.
+.IP "\fBdmb%d: uio move error\fR" 0.3i
+An error occurred when copying a printer buffer from user space
+to system space.
+.IP "\fBdmbsint\fR" 0.3i
+The unsupported synchronous port of the DMB32 interrupted because
+of a problem.  Check your interrupt vectors for a conflict with
+another device.
+.SH FILES
+.nf
+.DT
+/dev/tty??
+/dev/ttyd?		(modem lines only)
+.fi
+.SH SEE ALSO
+tty(4), MAKEDEV(8), dmbsp(4)

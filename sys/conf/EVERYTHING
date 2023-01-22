@@ -1,0 +1,161 @@
+#
+# @(#)EVERYTHING	1.6	(ULTRIX)	2/12/87
+# Ultrix-32 Build Template to test loadability of all objects produced
+#
+machine		vax
+cpu		"VAX8800"
+cpu		"VAX8600"
+cpu		"VAX8200"
+cpu		"VAX780"
+cpu		"VAX750"
+cpu		"VAX730"
+cpu		"VAX725"
+cpu		"VAX785"
+cpu		"MVAX"
+ident		GENERIC
+timezone	5 dst
+maxusers	8
+maxuprc		25
+physmem		8
+release		2.0
+version		0
+processors	2
+options		INET
+options		QUOTA
+options		EMULFLT
+options		LAT
+options		DLI
+options		BSC
+options		NFS
+options		RPC
+options		SYS_TRACE
+
+config		vmunix		swap generic
+config		hkvmunix	root on hk
+config		hpvmunix	root on hp
+
+controller 	vaxbi0	at nexus ?
+controller 	vaxbi1	at nexus ?
+controller 	vaxbi2	at nexus ?
+controller 	vaxbi3	at nexus ?
+controller	mba0	at nexus ?
+controller	mba1	at nexus ?
+controller	mba2	at nexus ?
+controller	mba3	at nexus ?
+controller	uba0	at vaxbi ? node ?
+controller	uba1	at nexus ?
+controller	uba2	at nexus ?
+controller	uba3	at nexus ?
+disk		hp0	at mba? drive 0
+disk		hp1	at mba? drive ?
+disk		hp2	at mba? drive ?
+disk		hp3	at mba? drive ?
+master		ht0	at mba? drive ?
+tape		tu0	at ht0 slave 0
+tape		tu1	at ht0 slave 1
+master		mt0	at mba? drive ?
+tape		mu0	at mt0 slave 0
+tape		mu1	at mt0 slave 1
+controller	hk0	at uba? csr 0177440 		vector rkintr
+disk		rk0	at hk0 drive 0
+disk		rk1	at hk0 drive 1
+controller	tm0	at uba? csr 0172520		vector tmintr
+tape		te0	at tm0 drive 0
+tape		te1	at tm0 drive 1
+controller	ut0	at uba? csr 0172440		vector utintr
+tape		tj0	at ut0 drive 0
+tape		tj1	at ut0 drive 1
+controller	klesiu0	at uba0
+port		tmscp0	at klesiu0 csr 0174500		vector tmscpintr
+controller	klesib0	at vaxbi? node?
+controller	tmscp1	at klesib0 			vector tmscpintr
+tape		tms0	at tmscp? drive 0
+controller	sc0	at uba? csr 0176700 		vector upintr
+disk		up0	at sc0 drive 0
+disk		up1	at sc0 drive 1
+controller	kdb0	at vaxbi? node ?
+controller 	uq1	at kdb0	vector uqintr
+disk		ra0	at uq1 drive 4
+controller	uda0	at uba? csr 0172150		
+controller	uq0	at uda0	vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+controller	sdc0	at uba0 csr 0x200c0000		vector sdintr
+disk		rd0	at sdc0 drive 0
+disk		rd1	at sdc0 drive 1
+disk		rx2	at sdc0 drive 2
+controller	idc0	at uba0 csr 0175606		vector idcintr
+disk		rb0	at idc0 drive 0
+disk		rb1	at idc0 drive 1
+disk		rb2	at idc0 drive 2
+disk		rb3	at idc0 drive 3
+controller	hl0	at uba? csr 0174400		vector rlintr
+disk		rl0	at hl0 drive 0
+disk		rl1	at hl0 drive 1
+controller	fx0	at uba? csr 0177170		vector rxintr
+disk		urx0	at fx0 drive 0
+disk		urx1	at fx0 drive 1
+device		dn0	at uba? csr 0160020		vector dnintr
+device	 	dh0	at uba? csr 0160020		vector dhrint dhxint
+device		dm0	at uba? csr 0170500		vector dmintr
+device		dz0	at uba? csr 0160100 flags 0xff	vector dzrint dzxint
+device		ss0	at uba? csr 0x200a0000 flags 0x0f vector ssrint ssxint
+device		dhu0	at uba? csr 0160440 flags 0xff	vector dhurint dhuxint	
+device		sh0	at uba0 csr 0x38000000 flags 0xff vector shrint shxint	
+device		dmz0	at uba? csr 0160500 flags 0xffffff	
+	vector dmzrinta dmzxinta dmzrintb dmzxintb dmzrintc dmzxintc
+controller	zs0	at uba? csr 0172520		vector tsintr
+device		ts0	at zs0 drive 0
+controller	stc0	at uba0 csr 0x200c0080		vector stintr
+tape		st0	at stc0 drive 0
+device		dmf0	at uba? csr 0170000	
+	vector dmfsrint dmfsxint dmfdaint dmfdbint dmfrint dmfxint dmflint
+device		dmb0	at vaxbi? node? flags 0xff vector dmbsint dmbaint dmblint
+controller	aie0	at vaxbi? node?
+device		bvpni0	at aie0 vector bvpniintr
+
+device		ik0	at uba? csr 0172460		vector ikintr
+device		its0	at uba? csr 0173000		vector itsintr
+# MicroVAX qvss and qdss (and VAXstar monochrome and color)
+device		qv0	at uba0 csr 0177200 flags 0x0f 	vector qvkint qvvint
+device		sm0	at uba0 csr 0x200f0000 flags 0x0f vector smvint
+device		qd0	at uba0 csr 0177400 flags 0x0f 	vector qddint qdaint qdiint
+device		qd1	at uba0 csr 0177402 flags 0x0f 	vector qddint qdaint qdiint
+device		sg0	at uba0 csr 0x3c000000 flags 0x0f vector sgaint sgfint
+# data translation QBUS ad driver!
+device          ad0     at uba0 csr 0170400     	vector adintr
+# varian pseudo driver!
+device		vp0	at uba? csr 0177510		vector vpintr vpintr
+device		lp0	at uba? csr 0177554		vector lpintr
+pseudo-device	pty
+pseudo-device	bk
+pseudo-device	sys_trace
+# the network starts here...
+pseudo-device	imp
+pseudo-device	inet
+pseudo-device	loop
+pseudo-device	ether
+pseudo-device	hc
+pseudo-device	lat
+pseudo-device	lta
+pseudo-device	dli
+pseudo-device	bsc
+pseudo-device	nfs
+pseudo-device	rpc
+
+device		de0	at uba? csr 0174510	vector deintr
+device		qe0	at uba0 csr 0174440	vector qeintr
+device		se0	at uba0 csr 0x200e0000	vector seintr
+device		dpv0	at uba? csr 0160010	vector dpvrint dpvxint
+device		dup0	at uba? csr 0160050	vector duprint dupxint
+device		en0	at uba? csr 0161000	vector enxint enrint encollide
+device		ec0	at uba? csr 0164330	vector ecrint eccollide ecxint
+device		il0	at uba? csr 0164000	vector ilrint ilcint
+device		acc0	at uba? csr 0167600	vector accrint accxint
+device		un0	at uba? csr 0160200	vector unintr
+device		dmc0	at uba? csr 0160400	vector dmcrint dmcxint
+device		dmv0	at uba? csr 0160060	vector dmvrint dmvxint
+device		vv0	at uba? csr 0160400	vector vvrint vvxint
+device		hy0	at uba? csr 0160400	vector hyint
+device		css0	at uba? csr 0160400	vector cssxint cssrint
+device		pcl0	at uba? csr 0160400	vector pclrint pclxint

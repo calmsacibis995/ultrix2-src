@@ -1,0 +1,206 @@
+#!/bin/sh
+#
+# SCCSID= @(#)buildmini	1.16	(ULTRIX)	1/15/87
+#
+# Usage: sh buildmini [ gen | net ]
+#
+# Buildmini - The Procedure to build a meory file system for installation.
+#--------------------------------------------------------------------------
+# 	Modification History
+#
+# 002 - July, 1986 	- Lea Gottfredsen &  Tungning Cherng
+#		Added the network remote installation support
+#
+# 001 - April 24, 1986  by Tungning Cherng
+#	  	Revised for the V2.0 generic installtion.
+#
+#	Based on the V1.2 'buildmini' - by Greg Tarsa and Bob Fontaine.
+#
+
+PATH=.:/etc:/bin:/usr/bin:/usr/ucb
+export PATH
+umask 0
+
+Ultrixroot=${Ultrixroot-ra3a}
+Ultrixusr=${Ultrixusr-ra3h}
+miniroot=${miniroot-ra4f}
+minitype=${minitype-ra81}
+DEST=${DEST-'/usr/release/ULT/bootdir'}
+MASTERROOT=${MASTERROOT-'/usr/release/build'}
+
+USAGE="$0 [ gen | net ]"
+case $1 in
+gen )
+	netflag=false	
+	echo "Mounting the ${MASTERROOT} partitions"
+	mount -r /dev/${Ultrixroot} ${MASTERROOT}
+	mount -r /dev/${Ultrixusr} ${MASTERROOT}/usr
+	;;
+net )
+	netflag=true
+	echo -n "Is the /dev/${Ultrixroot} writable <y>?  "
+	read ans
+	case $ans in
+	[Yy]* )
+		mount /dev/${Ultrixroot} ${MASTERROOT}
+		mount /dev/${Ultrixusr} ${MASTERROOT}/usr
+		;;
+	* )
+		echo "Need to be writable !!!"
+		exit 1
+		;;
+	esac
+	;;	
+* )
+	echo $USAGE	
+	exit 1 ;;
+esac
+
+HOMEDIR=`pwd`
+echo "
+* * * Making the mini root on device ${miniroot} * * *"
+date
+echo "Making and checking filesystem "${miniroot}" of "${minitype}
+
+echo 'a' > junk
+case $netflag in
+true )
+	dd if=junk of=/dev/$miniroot ibs=1536b conv=sync
+	mkfs /dev/r${miniroot} 1536 1536 1 4096 512 ||
+	{ 
+		echo "Cannot make mewfs on ${minitype}" 
+		exit 1 
+	}
+	;;
+false )
+	dd if=junk of=/dev/$miniroot ibs=1024b conv=sync
+	mkfs /dev/r${miniroot} 1024 1024 1 4096 512 ||
+	{
+		 echo "Cannot make mewfs on ${minitype}" 
+		 exit 1 
+	}
+	;;
+esac
+rm junk
+
+sync
+
+fsck /dev/r${miniroot}	
+
+echo "Mounting "${miniroot}" on /mnt."
+mount /dev/${miniroot} /mnt
+cd /mnt
+
+#
+# The shell file that calls this shell file (buildmini)
+# changes directory to the destination of the miniroot.
+[ `pwd` = '/' ] &&
+{
+	echo You just '(almost)' destroyed the root
+	exit
+}
+
+echo "Starting the build of the miniroot."
+#
+# make top level directories
+for K in bin etc tmp dev mnt
+{
+	mkdir $K
+}
+
+#
+# copy the needed programs (from the real root).
+# (We may want to strip them for space).
+
+cp ${MASTERROOT}/dev/MAKEDEV dev/MAKEDEV
+cp ${MASTERROOT}/usr/mdec/vaxboot .			
+cp ${MASTERROOT}/usr/sys/dist/.miniprofile .profile
+
+case $netflag in
+true )
+	cp ${MASTERROOT}/usr/mdec/netload ${DEST}
+	cp ${MASTERROOT}/sys/dist/gethost .
+	for prog in ifconfig protocols rshd services passwd 
+	do
+		cp ${MASTERROOT}/etc/$prog etc
+    		strip etc/$prog 
+	done
+	for prog in hostname ls ed
+	do
+		cp ${MASTERROOT}/bin/$prog bin
+    		strip bin/$prog 
+	done
+	cp ${MASTERROOT}/usr/ucb/rsh bin
+    	strip bin/rsh 
+	;;
+esac
+
+for prog in mkfs restore halt init mount mknod fsck umount ufs_mount \
+	chpt radisk
+{
+    cp ${MASTERROOT}/etc/$prog etc
+    strip etc/$prog
+}
+
+cp ${MASTERROOT}/sys/dist/finder bin	
+strip bin/finder
+for prog in sh sync mkdir stty echo test expr rm dd mt chmod
+{
+    cp ${MASTERROOT}/bin/$prog bin
+    strip bin/$prog
+}
+
+cd dev
+${MASTERROOT}/etc/mknod console c 0 0
+${MASTERROOT}/etc/mknod kmem c 3 1
+${MASTERROOT}/etc/mknod tty c 2 0
+${MASTERROOT}/etc/mknod null c 3 2
+${MASTERROOT}/bin/chmod 666 tty null
+ls -l 
+
+cd /mnt
+ln bin/test bin/[	#put the square bracket into the directory
+case $netflag in
+true )
+	ln bin/stty bin/STTY
+	;;
+esac
+
+rm -rf lost+found
+
+cd /
+sync
+sync
+echo " Checking space on ${miniroot} "
+df /dev/${miniroot}
+umount /dev/${miniroot}
+echo "Unmounting and checking "${miniroot}"."
+fsck /dev/r${miniroot}
+
+case $netflag in
+false )
+	cd ${DEST}
+	### dd if=/dev/r$miniroot of=miniroot.gen count=1024
+	make -f ${MASTERROOT}/sys/dist/make.sas MEMFS=/dev/r$miniroot \
+	MASTERROOT=$MASTERROOT DISTROOT=${MASTERROOT} clean all #TK50.1A 
+	cd ${HOMEDIR}
+	;;
+true )
+	cd ${DEST}
+	### dd if=/dev/r$miniroot of=miniroot.net count=1536
+	cd ${MASTERROOT}/sys/SAS.net
+	${MASTERROOT}/sys/dist/fsmrg /dev/r${miniroot} vmunix
+	cp vmunix ${DEST}/vmunix.net
+	dd if=vmunix of=vm1 bs=10k count=38
+	dd if=vmunix of=vm2 bs=10k skip=38 count=38
+	dd if=vmunix of=vm3 bs=10k skip=76 count=38
+	dd if=vmunix of=vm4 bs=10k skip=114 count=38
+	cd ${HOMEDIR}
+	umount /dev/${Ultrixusr}
+	umount /dev/${Ultrixroot}
+	;;
+esac
+
+date
+echo "Done."
+

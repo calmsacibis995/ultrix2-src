@@ -1,0 +1,18 @@
+.TH print 1
+.SH NAME
+print \- pr to the line printer
+.SH SYNTAX
+.B print
+file ...
+.SH DESCRIPTION
+The
+.B print
+command uses
+.B pr
+to print a copy of each named file on the line printer.
+It is a one line shell script:
+.EX
+lpr -p $*
+.EE
+.SH SEE ALSO
+lpr(1), pr(1)

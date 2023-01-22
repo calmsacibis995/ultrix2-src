@@ -1,0 +1,99 @@
+.TH fstab 5 
+.SH NAME
+fstab \- file containing static information about known filesystems.
+.SH DESCRIPTION
+The /etc/fstab
+file contains descriptive information about the known file
+systems.
+By convention, /etc/fstab is created and maintained as a read-only
+file by the system administrator.
+Each file system is described by its own line within /etc/fstab.
+The order of these lines and the file systems they represent
+is important because
+.PN fsck
+and
+.PN mount 
+sequentially process /etc/fstab
+in the performance of their tasks.
+.PP
+The format of each file system description in /etc/fstab
+is as follows:
+.EX
+spec:file:type:freq:passno:name:opts
+.EE
+The meanings of these fields are:
+.IP "spec   -" 10
+block special file name of the device on which the file 
+system is located.  It can also be a network name for 
+.PN nfs,
+such as /@erie 
+or /@suez.
+.IP "file   -" 10
+pathname of the directory on which the file system is mounted.
+.IP "type   -" 10
+how the file system is mounted.  The ways in which a file
+system can be mounted are 
+.br 
+rw - mount the file system read-write
+.br
+ro - mount the file system read only 
+.br
+rq - mount the file system read-write with quotas
+.br
+sw - make the special file part of the swap space
+.br
+xx - ignore the entry
+.IP "freq   -" 10
+frequency (in days) with which rw, ro, and rq file systems are dumped
+by the dump(8) command. 
+.IP "passno -" 10
+order in which rw, ro, and rq file systems are checked at reboot time  
+fsck(8) command. 
+.IP "name   -" 10
+name of the file system type.  File systems can have the following
+types:
+ufs - ULTRIX file system 
+.br
+nfs - SUN Network file system
+.IP "opts   -" 10
+arbitrary options field.  This field contains an arbitrary string
+meaningful only when mounting file systems with the specified
+file system type name. 
+.PP
+Special actions occur for file systems of type sw and rq at
+system boot time.
+File systems of type sw are made part of the swap space by the
+swapon(8) command and
+disk quotas are automatically processed by the quotacheck(8)
+command and then enabled by the quotaon(8) command for rq file
+systems. 
+.SH EXAMPLE
+A simple fstab file for a microVAX could appear as:
+.PP
+.nf
+/dev/ra0a:/:rw:1:1:ufs::
+/dev/ra1g:/usr:rw:1:2:ufs::
+/@bigvax:/bigvax:rw:0:0:nfs::
+.fi
+.SH RESTRICTIONS
+The passno field of the root file system should be specified 
+as 1.  Other file systems should have larger values.  File 
+systems on the same device should have distinct passno fields.
+File systems on different devices may have the identical passno
+fields to allow them to be simultaneously checked.
+.PP
+All field delimiters (:) must exist within each file system description
+and only the opts field may not be present.  However,
+only the fields spec and type are meaningful to sw file systems and
+only the type field is meaningful to xx file systems.
+.PP
+The file system description within /etc/fstab should be parsed
+only through use of the
+getfsent(3x) routines.
+.SH FILES
+.TP 15
+/etc/fstab
+File system information file
+.SH SEE ALSO
+getfsent(3x), dump(8), fsck(8), mount(8), mount(8nfs), mount(8ufs)
+quotacheck(8), quotaon(8), swapon(8)

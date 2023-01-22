@@ -1,0 +1,50 @@
+.TH pix 1
+.SH NAME
+pix \- Pascal interpreter and executor
+.SH SYNTAX
+.B pix
+[
+.B \-blnpstuwz
+] [
+.B \-i
+name ...
+]
+name.p
+[
+argument ...
+]
+.SH DESCRIPTION
+The
+.B pix
+command is a `load and go' version of Pascal which combines
+the functions of the interpreter code translator
+.B pi
+and the executor
+.B px.
+It uses
+.B pi
+to translate the program in the file name.p
+and, if there were no fatal errors during translation,
+causes the resulting interpreter code
+to be executed by
+.B px
+with the specified arguments.
+A temporary file is used for the object code;
+the file
+.I obj
+is neither created nor destroyed.
+.SH FILES
+.ta 2i
+/usr/ucb/pi	Pascal translator
+.br
+/usr/ucb/px	Pascal executor
+.br
+/tmp/pix*	temporary
+.br
+/usr/lib/how_pix	basic explanation
+.SH SEE\ ALSO
+pi(1), px(1)
+.br
+"Berkeley Pascal User's Manual,"
+.I ULTRIX-32 Supplementary Documents
+Vol. II:Programmer

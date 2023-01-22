@@ -1,0 +1,127 @@
+.TH roffbib 1
+.SH NAME
+roffbib \- run off bibliographic database
+.SH SYNTAX
+.B roffbib
+[ options ] [ file... ]
+.SH DESCRIPTION
+The
+.PN roffbib
+command prints out all records in a bibliographic database,
+in bibliography format rather than as footnotes or endnotes.
+Generally it is used in conjunction with
+.PN sortbib :
+.LP
+.EX
+sortbib  database | roffbib
+.EE
+.LP
+The
+.PN roffbib
+command accepts most of the options understood by
+nroff(1). 
+Most improtantly, the
+.B \-T
+flag is used to specify terminal type.
+.PP
+If abstracts or comments are entered following the %X field key,
+.PN roffbib
+will format them into paragraphs for an annotated bibliography.
+Several %X fields may be given if several
+annotation paragraphs are desired.
+The
+.B \-x
+flag suppresses the printing of these abstracts.
+.PP
+The
+.B \-e
+flag produces equally-spaced words in adjusted lines, using full
+terminal resolution.
+.PP
+The
+.B \h
+flag uses output tabs during horizontal spacing to speed 
+output and reduce output character count. 
+Tab characters are assumed to be every 8 nominal character widths.
+.PP
+The
+.B \-n
+.I N
+flag numbers the first generated page.
+.PP
+.B \-o
+.I list
+flag prints only pages whose page numbers appear in the
+comma-separated \fIlist\fR of numbers and ranges.  A range 
+.I N\-M
+means pages 
+.I N
+through
+.I M.
+An initial 
+.I \-N 
+means from the beginning to page
+.I N.
+A final 
+.I N\-
+means from
+.I N
+to the end.
+.PP
+The
+.B \-s
+.I N
+flag means stop at every
+.I N
+pages.
+.PP
+A user-defined set of macros
+may be specified after the
+.B \-m
+option.
+There should be a space between the
+.B \-m
+and the macro filename.
+This set of macros will replace the ones
+defined in /usr/lib/tmac/tmac.bib.
+The
+.B \-V
+flag will send output to the Versatec; the
+.B \-Q
+flag will queue output for the phototypesetter.
+.PP
+Four command-line registers control formatting style
+of the bibliography, much like the number registers of
+ms(7).
+The command-line argument
+.BR \-r N1
+will number
+the references starting at one (1).
+The flag
+.BR \-r V2
+will double space the biblio\%graphy,
+while
+.BR \-r V1
+will double space references
+but single space annotation paragraphs.
+The line length can be changed from the default 6.5 inches
+to 6 inches with the
+.BR \-r L6i
+argument,
+and the page offset can be set from the default of 0
+to one inch by specifying
+.BR \-r O1i
+(capital O, not zero).
+Note: with the
+.B \-V
+and
+.B \-Q
+flags
+the default page offset is already one inch.
+.SH FILES
+.ta \w'/usr/lib/tmac/tmac.bib\0\0'u
+.nf
+/usr/lib/tmac/tmac.bib	file of macros used by \fInroff/troff\fP
+.fi
+.SH SEE ALSO
+addbib(1), indxbib(1), lookbib(1), refer(1), sortbib(1)

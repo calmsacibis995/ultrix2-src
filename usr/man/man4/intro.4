@@ -1,0 +1,31 @@
+.TH intro 4
+.SH NAME
+intro \- introduction to special files and hardware support
+.SH DESCRIPTION
+Section four describes the special files, related driver functions,
+and networking support available in the system.
+In this part of the manual, the SYNTAX heading of
+each configurable device gives a sample specification
+for use in constructing a system description for the
+config(8)
+program.
+The DIAGNOSTICS heading lists messages which may appear on the console
+and in the system error log 
+file /usr/adm/syserr/syserr.<hostname>
+due to errors in device operation.
+.PP
+This section four area contains descriptions of both 
+configurable devices, ``4'' entries,
+and network related ``device'' information,
+``4n'', ``4p'', and ``4f'' entries;
+The networking support is introduced in
+intro(4n).
+Software support for these devices comes in two forms.
+A hardware device may be supported with a character or block
+.IR "device driver" ,
+or it may be used within the networking subsystem and have a
+.IR "network interface driver" .
+.SH FILES
+/dev/*
+.SH SEE ALSO
+intro(4n), MAKEDEV(8)

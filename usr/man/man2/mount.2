@@ -1,0 +1,227 @@
+.TH mount 2
+.SH NAME
+mount, umount \- mount or remove a file system
+.SH SYNTAX
+.nf
+#include <sys/types.h>
+#include <sys/fs_types.h>
+.br
+.br
+.ft B
+mount(special, name, rwflag, type, options)
+char *special, *name;
+int rwflag, type;
+char *options;
+.PP
+.ft B
+umount(dev)
+dev_t dev;
+.fi
+.SH DESCRIPTION
+The
+.PN mount
+system call announces to the system that a removable file system has
+been mounted on
+special file,
+.I special.
+References to file
+.I name
+refer to
+the root file on the newly mounted file system.
+.PP
+The
+.PN mount
+system call returns 0 upon successful completion of a mount operation;
+it returns \-1 if the mount operation fails.
+The mount operation fails when:
+.IP \(bu
+The file 
+.I special
+is inaccessible or an inappropriate file.
+.IP \(bu
+The file
+.I special is already mounted.
+.IP \(bu
+The directory 
+.I name
+does not exist or is already in use.
+.IP \(bu
+There are too many file systems mounted.
+.PP
+The
+.PN umount
+system call
+announces to the system that the device
+.I dev
+no longer contains a removable file system.
+The associated directory reverts to its ordinary interpretation.
+.PP
+The
+.PN umount
+system call
+returns 0 if the dismount operation succeeds; \-1 if it fails.
+The file system dismount operation fails when:
+.IP \(bu
+The device
+.I dev
+is inaccessible or does not have a mounted file system.
+.IP \(bu
+There are active files in the mounted file system.
+.PP
+The 
+.I special
+argument is a pointer to a null-terminated string
+containing the path name of the file system being mounted.
+.PP
+The 
+.I name
+argument is a pointer to a null-terminated string containing the path name
+of the root file on the newly-mounted file system.  The
+.I name
+must already exist and must be a directory.
+Its old contents
+are inaccessible while the file system
+is mounted.
+.PP
+The
+.I rwflag
+argument is used to determine whether the file system can be written
+on; if it is 0, the file system is writable, if non-zero, the file
+system is write-protected.  Physically write-protected disks and
+magnetic tape file systems must be mounted read-only.
+Mount also detects devices that are offline at
+mount time and returns the appropriate error.
+.PP
+The type argument identifies the file system type that is being mounted.
+The file system types are defined in the <fs_types.h> file.
+.PP
+The 
+.I options 
+argument specifies certain parameters that can be used to define how
+the file system is to be mounted.
+.PP
+The 
+.I dev
+argument identifies the device that contains the file system which is to
+be unmounted.
+.SH ENVIRONMENT
+Programs compiled using the System V environment, cause
+.PN mount 
+and
+.PN umount
+to set errno to ENXIO rather than ENODEV, if \fIspecial\fP
+does not exist.
+.SH DIAGNOSTICS
+.TP 15
+[EPERM]
+The caller is not the super-user.
+.TP 15
+[ENODEV]
+A component
+of
+.I special
+does not exist or the device is offline.
+.TP 15
+[ENOTBLK]
+.I Special
+is not a block device.
+.TP 15
+[ENXIO]
+The major device number of 
+.I special
+is out of range (this indicates no device driver exists
+for the associated hardware).
+.TP 15
+[EINVAL]
+Either pathname contains a character with the high-order bit set
+or the file system type is out of range.
+.TP 15
+[EINVAL]
+The super block for the file system had a bad magic number or an
+out-or-range block size.
+.TP 15
+[EINVAL]
+The file system has not been unmounted cleanly and the force option 
+has not been set.
+.TP 15
+[ENOTDIR]
+A component of
+.I name
+is not a directory,
+or a path prefix of
+.I special
+is already mounted.
+.TP 15
+[EBUSY]
+Another process currently holds a reference to
+.IR name ,
+or
+.I special
+is already mounted.
+.TP 15
+[ENAMETOOLONG]
+A component of either pathname exceeded 255 characters,
+or the entire length of either pathname exceeded 1023
+characters.
+.TP 15
+[ELOOP]
+Too many symbolic links were encountered in translating
+either pathname.
+.TP 15
+[ENOENT]
+A component of
+.I name
+does not exist.
+.TP 15
+[EMFILE]
+No space remains in the mount table.
+.TP 15
+[ENOMEM]
+Not enough memory was available to read the cylinder
+group information for the file system.
+.TP 15
+[EIO]
+An I/O error occurred while reading the super block or
+cylinder group information.
+.TP 15
+[EFAULT]
+.I Special
+or
+.I name
+points outside the process's allocated address space space.
+.TP 15
+[EROFS]
+.I Special
+is a write-locked device and the user did not set the
+.I rwflag.
+.PP
+The
+.PN umount
+command may fail with one of the following errors:
+.TP 15
+[EPERM]
+The caller is not the super-user.
+.TP 15
+[EINVAL]
+The requested device is not in the mount table.
+.TP 15
+[EBUSY]
+A process is holding a reference to a file located
+on the file system.
+.TP 15
+[EIO]
+An I/O error occurred while writing the super block or other
+cached file system information.
+.TP 15
+[EREMOTE]
+An attempt has been made to mouunt an NFS remote file system that
+is not local to the specified server.  This cannot
+occur except in response to a failed mount(2).
+.TP
+[ETIMEDOUT]
+A "connect" request or remote file operation failed
+because the connected party
+did not properly respond after a period
+of time which is dependent on the communications protocol.
+.SH "SEE ALSO"
+mount(8), umount(8)

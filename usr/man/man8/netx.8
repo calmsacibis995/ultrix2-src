@@ -1,0 +1,79 @@
+.TH netx 8 
+.SH NAME
+netx \- TCP/IP net exerciser
+.SH SYNTAX
+.B /usr/field/netx
+[
+.B \-h
+.B ] [
+.BI \-t n
+B ] [
+.BI \-p m
+.B ]  
+.I nodename
+.SH DESCRIPTION
+The 
+.PN netx 
+exerciser sets up a stream socket connection to the
+.MS miscd 8c
+server in the TCP/IP internet domain. With connection
+made, the exerciser writes ramdom data to the 
+.PN miscd 
+server; the
+server loops the data back to 
+.PN netx ,
+and the data is read and
+verified against the data written out. 
+.PP
+The 
+.PN netx 
+exerciser runs
+in conjunction with the
+miscd(8c) server. 
+.PP
+The 
+.PN netx 
+exerciser by default
+will use the port number of the echo service in the /etc/services
+file. Make sure that the TCP echo service is enabled in the 
+/etc/inetd.conf file (no `#' in front of the service). The exerciser
+will run until
+.CT C
+or \fBkill -15 \fIpid\fR is sent
+to the process.
+The
+.I nodename
+is the remote or local system host name running the
+miscd(8c) server.
+.SH OPTIONS
+The \fInetx\fR options are:
+.IP \fB\-h\fR 1i
+Print the help message for the 
+.PN netx 
+command.
+.IP \fB\-t\fIn\fR
+Run time in minutes (\fIn\fR).
+The default is to run until the process
+receives
+.CT C
+or \fBkill -15 \fIpid\fR.
+.IP \fB\-p\fIm\fR
+Specify port number to use in internet domain (\fIm\fR < 32768).
+Note that this option is not used with the miscd(8c)
+server, so
+you should never have to use this option.
+.SH EXAMPLES
+The following example exercises the TCP/IP network from the local
+host to node \fBkeel\fR until a
+.CT C
+or \fBkill -15 \fIpid\fR is received.
+.EX
+% /usr/field/netx keel
+.EE
+The following example exercises the TCP/IP network from the local
+host to node \fBphoton\fR for 180 minutes in the background.
+.EX
+% /usr/field/netx -t180 photon &
+.EE
+.SH "SEE ALSO"
+System Management Guide

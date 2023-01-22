@@ -1,0 +1,171 @@
+.TH lpd 8
+.ad
+.SH NAME
+lpd \- line printer daemon
+.SH SYNTAX
+.B /usr/lib/lpd
+[ -l ] [ -L logfile ] [ port # ]
+.SH DESCRIPTION
+The
+.PN lpd
+line printer daemon (spool area handler) is normally invoked
+at boot time from the rc(8) 
+file.  It makes a single pass through the printcap(5) 
+file to find out about the existing printers and
+prints any files left after a crash. It then uses the system calls
+listen(2) and accept(2)
+to receive requests to print files in the queue,
+transfer files to the spooling area, display the queue,
+or remove jobs from the queue.  In each case, it forks a child to handle
+the request so the parent can continue to listen for more requests.
+The Internet port number used to rendezvous
+with other processes is normally obtained with
+getservbyname(3), (see getservent.3n), but can be changed with the
+.IR port #
+argument. The
+.B \-L
+option changes the file used for writing error conditions from the
+system console to
+.I logfile.
+The
+.B \-l
+flag causes
+.PN lpd
+to log valid requests received from the network. This can be useful
+for debugging purposes.
+.PP
+Access control is provided by two means.
+First, all requests must come from
+one of the machines listed in the files
+/etc/hosts.equiv or /etc/hosts.lpd.
+Second, if the ``rs'' capability is specified in the
+.PN printcap
+entry for the printer being accessed,
+.PN lpr
+requests will only be honored for those users with accounts on the
+machine with the printer.
+The format of /etc/hosts.lpd is a list of names consisting of
+one hostname per line.
+Note that ``*'' at the start of any line in /etc/hosts.lpd allows
+remote print requests from all systems.
+.PP
+The file
+.I lock
+in each spool directory is used to prevent multiple daemons from
+becoming active simultaneously, and to store information
+about the daemon process for
+lpr(1), lpq(1), and lprm(1).
+After the daemon has successfully set the lock, it scans the directory
+for files beginning with 
+.IR cf .
+Lines in each
+.I cf
+file specify files to be printed or non-printing actions to be
+performed.  Each such line begins with a key character
+to specify what to do with the remainder of the line.
+.in +3
+.IP J
+Job Name.  String to be used for the job name on the burst page.
+.IP C
+Classification.  String to be used for the classification line
+on the burst page.
+.IP L
+Literal.  The line contains identification info from
+the password file and causes the banner page to be printed.
+.IP T
+Title.  String to be used as the title for pr(1).
+.IP H
+Host Name.  Name of the machine where
+.PN lpr
+was invoked.
+.IP P
+Person.  Login name of the person who invoked
+.PN lpr.
+This is used to verify ownership by
+.PN lprm.
+.IP M
+Send mail to the specified user when the current print job completes.
+.IP f
+Formatted File.  Name of a file to print which is already formatted.
+.IP l
+Like ``f'' but passes control characters and does not make page breaks.
+.IP p
+Name of a file to print using pr(1) 
+as a filter.
+.IP t
+Troff File.  The file contains troff(1)
+output (cat phototypesetter commands).
+.IP d
+DVI File.  The file contains
+.IR TeX
+output (DVI format from Standford).
+.IP g
+Graph File.  The file contains data produced by plot(3x).
+.IP c
+Cifplot File. The file contains data produced by
+.IR cifplot .
+.IP v
+The file contains a raster image.
+.IP r
+The file contains text data with FORTRAN carriage control characters.
+.IP 1
+Troff Font R. Name of the font file to use instead of the default.
+.IP 2
+Troff Font I. Name of the font file to use instead of the default.
+.IP 3
+Troff Font B. Name of the font file to use instead of the default.
+.IP 4
+Troff Font S. Name of the font file to use instead of the default.
+.IP W
+Width. Changes the page width (in characters) used by
+pr(1) and the text filters.
+.IP I
+Indent.  The number of characters to indent the output by (in ascii).
+.IP U
+Unlink.  Name of file to remove upon completion of printing.
+.IP N
+File name.  The name of the file which is being printed, or a blank
+for the standard input (when 
+.PN lpr
+is invoked in a pipeline).
+.in -5
+.PP
+If a file can not be opened, a message will be placed
+in the log file (normally the console).
+The 
+.PN lpd
+command will try up to 20 times
+to reopen a file it expects to be there, after which it will
+skip the file to be printed.
+.PP
+The
+.PN lpd
+command uses flock(2)
+to provide exclusive access to the lock file and to prevent multiple
+daemons from becoming active simultaneously.
+If the daemon should be killed
+or die unexpectedly, the lock file need not be removed.
+The lock file is kept in a readable ASCII form
+and contains two lines.
+The first is the process id of the daemon and the second is the control
+file name of the current job being printed.
+The second line is updated to
+reflect the current status of
+.PN lpd
+for the programs lpq(1) and lprm(1).
+.SH FILES
+.nf
+.ta \w'/etc/printcap           'u
+/etc/printcap	printer description file
+/usr/spool/*	spool directories
+/dev/lp*	line printer devices
+/dev/printer	socket for local requests
+/etc/hosts.lpd	lists machine names allowed printer access
+/etc/hosts.equiv	lists machine names allowed printer access as trusted machines
+.fi
+.SH "SEE ALSO"
+lpq(1), lpr(1), lprm(1), printcap(5), lpc(8), pac(8)
+.br
+``4.2BSD Line Printer Spooler Manual''
+.I ULTRIX-32 Supplementary Documents
+Vol. II:Programmer

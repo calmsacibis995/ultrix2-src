@@ -1,0 +1,11 @@
+#!/bin/sh
+
+case "$ACT" in
+POST_[AL])
+	cd /sys/SAS.net
+	cat vm? > /usr/lib/dnet/vmunix.sys
+	rm -f vm?
+	;;
+POST_D)	rm -f /usr/lib/dnet/vmunix.sys
+	;;
+esac

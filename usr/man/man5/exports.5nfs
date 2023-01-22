@@ -1,0 +1,80 @@
+.TH exports 5nfs
+.SH NAME
+exports \- defines NFS file systems to be exported
+.SH SYNTAX
+.B /etc/exports
+.SH DESCRIPTION
+.IX  "NFS exported file systems"  ""  "NFS exported file systems \(em \fLexportfs\fP"
+The /etc/exports
+file describes the local file systems and directories
+that can be mounted by
+remote hosts through the use of the NFS protocol.
+The
+.PN exports 
+file can also be used to restrict access to a particular set of remote
+systems.
+The
+.PN mount
+request daemon mountd(8nfs) accesses the
+.PN exports
+file each time it receives a mount request from an NFS client.
+.PP
+Each entry in the /etc/exports 
+file consists of a file system or directory
+name followed by a list of identifiers
+that define which remote hosts can mount that particular file system
+or directory.
+.\" By convention,
+.\" each file system name must be explicitly defined starting
+.\" at the root directory of the file system.
+The identifiers listed beside each file system or directory name
+can be either netgroup names or host names.
+When the
+.PN mountd
+daemon receives a mount request from a client,
+it looks up each identifier,
+first in the /etc/netgroups file,
+and second in the /etc/hosts
+file.
+When it finds a match,
+.PN mountd
+makes that file system or directory available to the requesting client.
+.PP
+The 
+.PN exports
+file format is defined as left-justified file system names,
+followed by any amount of white space,
+followed by the list of identifiers,
+each separated by a space.
+A blank identifier list beside a file system or directory
+name tells the mount daemon
+.PN mountd
+to export that particular file system or directory
+to anyone requesting it.
+A number sign, '#',
+anywhere on a line specifies the beginning of a
+comment extending to the end of the line.
+White space in the left-most
+position of a line specifies a continuation line.
+.PP
+Each file system must be explicitly defined;
+exporting only the root, '/' will not allow
+clients to mount /usr.
+Exporting only /usr will not allow clients to
+mount /usr/local.
+In addition,
+you can export individual directories within a file system.
+.SH EXAMPLE
+.EX 0
+/usr      alpha beta gamma  # export /usr to these hosts
+/usr/staff/doe  beta        # export this directory to beta, only
+/usr      clients           # export to all hosts in netgroup 'clients'
+/usr/local                  # export to the world
+/usr2     erie suez grand   # export /usr2 to these hosts
+.EE
+.SH FILES
+/etc/exports
+.SH SEE ALSO
+hosts(5), mountd(8nfs), netgroup(5yp)
+.br
+Network Management Guide

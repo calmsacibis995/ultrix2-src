@@ -1,0 +1,144 @@
+.TH binmail 1
+.SH NAME
+binmail \- send or receive mail among users
+.SH SYNTAX
+.B /bin/mail
+[
+.B +
+] [
+.B \-i
+] [ person ] ...
+.br
+.B /bin/mail
+.B "[ + ]"
+[
+.B \-i
+]
+.B \-f
+file
+.LP
+.SH DESCRIPTION
+This is the old version 7 UNIX system mail program.  The default
+.PN mail
+command is described in mail(1),
+and its binary is in the directory /usr/ucb.
+The /bin/mail
+program is still used to actually deliver
+a mail message into the users system-wide mailbox (/usr/spool/mail/*),
+however, the reading of these messages has been replaced with
+the program /usr/ucb/mail.
+Do not remove /bin/mail
+from your system.
+.PP
+The
+.PN mail
+command
+with no argument prints a user's mail, message-by-message,
+in last-in, first-out order; the optional argument
+.B +
+displays the mail messages in first-in, first-out order.
+For each message, it reads a line from the standard input
+to direct the disposition of the message.
+.TP 17
+carriage return
+Go on to next message
+.TP 17
+d
+Delete message and go on to the next.
+.TP 17
+p
+Print message again.
+.TP 17
+\-
+Go back to previous message.
+.TP 17
+.RI "s [" " file " "] ..."
+Save the message in the named
+.I files
+(`mbox' default).
+.TP 17
+.RI "w [" " file " "] ..."
+Save the message, without a header, in the named
+.I files
+(`mbox' default).
+.TP 17
+.RI "m [" " person " "] ..."
+Mail the message to the named
+.I persons
+(yourself is default).
+.TP 17
+EOT (control-D)
+Put unexamined mail back in the mailbox and stop.
+.TP 17
+q
+Same as EOT.
+.TP 17
+.RI ! command
+Escape to the Shell to do
+.IR command .
+.TP 17
+*
+Print a command summary.
+.PP
+An interrupt normally terminates the 
+.PN mail
+command; the mail file is unchanged.  The optional argument
+.B \(mii
+tells
+.PN mail
+to continue after interrupts.
+.PP
+When
+.I persons
+are named,
+.PN mail
+takes the standard input up to an end-of-file (or a line with just `.')
+and adds it to each
+.I person's
+mail file.  The message is preceded by the sender's name and a postmark.
+Lines that look like postmarks are prepended with `>'.  A
+.I person
+is usually a user name recognized by login(1).
+To denote a recipient on a remote system, prefix 
+.I person
+by the system name and exclamation mark.  For further information, see
+uucp(1c).
+.PP
+The
+.B \-f
+option causes the named file, for example, mbox,
+to be printed as if it were the mail file.
+.PP
+When a user logs in he is informed of the presence of mail.
+.PP
+When /bin/mail
+is used to deliver mail, (usually sendmail(8)
+calls /bin/mail to do this), the users mailbox is created
+in the directory /usr/spool/mail if it doesn't already exist.  It
+is created with the mode 700 so that only the owner can read
+his mail.  In addition, the directory ``/usr/spool/mail'' has the
+mode 777 with the sticky bit set.  The mode is 777 so that
+other mail programs, notably
+.PN /usr/ucb/mail,
+can create the appropiate lock files to prevent another process from
+writing the mailbox at the same time.  The sticky bit set on the
+directory prevents one user from unlinking another users mailbox.
+.SH RESTRICTIONS
+Race conditions sometimes result in a failure to remove a lock file.
+.SH FILES
+.ta \w'/usr/spool/mail/*.lock 'u
+/etc/passwd	to identify sender and locate persons
+.br
+.li
+/usr/spool/mail/*	incoming mail for user *
+.br
+mbox		saved mail
+.br
+/tmp/ma*	temp file
+.br
+/usr/spool/mail/*.lock	lock for mail directory
+.br
+dead.letter	unmailable text
+.br
+.SH "SEE ALSO"
+mail(1), uucp(1c), uux(1c), write(1), sendmail(8)

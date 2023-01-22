@@ -1,0 +1,17 @@
+/*  sccsid  =  @(#)uerf.err	1.8   (ULTRIX)   12/16/86  */
+ 101  Unable to find binary file.		
+ 102  Unable to load binary file.		
+ 103  Unable to open system config file.	
+ 104  Error reading system config file.	
+ 201  Invalid option flag.			
+ 202  Duplicate option flag.		
+ 203  Invalid parameter.			
+ 204  Incompatible flag combination.	
+ 205  Incompatible parameter combination.	
+ 206  Error searching device table.	
+ 214  Error opening syserr file.		
+ 215  Error opening socket.		
+ 216  Error opening help file.		
+ 401  Unable to decode field.	
+ 402  Corrupted error entry.	
+   0  Invalid error code # 

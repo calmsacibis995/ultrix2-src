@@ -1,0 +1,29 @@
+.\" Last modified by MJT on 27-Aug-85  0815
+.\"  Brought in from 32 V1.1 Release Notes, put inot master library
+.TH doconfig 8
+.SH NAME
+doconfig \- a program to aid system configuration
+.SH SYNTAX
+\fB/etc/doconfig\fP
+.SH DESCRIPTION
+The
+.B doconfig
+shell script uses the 
+sizer(8)
+program to help the user generate a configuration file for a
+new ULTRIX system kernel.  The script will prompt the 
+user for a system name and will build a system configuration
+file with that system name (if the name does not already exist).
+.PP
+Whether the configuration file is built or not, the script then puts
+the user into an ``edit-configure-build'' loop until both the configuration
+and the kernel build run without errors. The user can then shut down 
+his system and reboot /newvmunix. Additional runs of
+.B doconfig
+can be made to further tune the configuration.
+.SH FILES
+/tmp/\fIsystemname\fP, /sys/\fIsystemname\fP, /sys/conf/\fIsystemname\fP
+.SH SEE ALSO
+ed(1), config(8), sizer(8) 
+.br
+Installation Guide

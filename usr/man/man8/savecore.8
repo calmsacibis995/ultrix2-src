@@ -1,0 +1,95 @@
+.TH savecore 8
+.SH NAME
+savecore \- save a core dump of the operating system
+.SH SYNTAX
+.B /etc/savecore
+[
+.B \-c
+]
+[
+.B \-e
+]
+.I dirname
+[
+.I system
+]
+.SH DESCRIPTION
+The 
+.PN savecore 
+command
+is meant to be called near the end of the /etc/rc.local  
+file.  The 
+.PN savecore
+command 
+saves the core dump of the system (assuming one was made) and
+writes a reboot message in the shutdown log.
+.PP
+The 
+.PN savecore
+command checks the core dump to be certain it corresponds with the
+current running ULTRIX.  If it does, it saves the core image in the file
+\fIdirname\f(TR/vmcore.\fIn\fR
+and saves the namelist in the file \fIdirname\f(TR/vmunix.\fIn\fR.
+The trailing \fI.n\fR in the pathnames is replaced by a number which
+increments each time
+.PN savecore
+is run in that directory.
+.PP
+After saving the core and namelist images, 
+.PN savecore
+will save the error logger buffer into a predetermined file.  The error
+logger buffer contains information about why the crash occurred.  After 
+.PN savecore
+completes, the elcsd daemon will extract the error logger file and
+translate its contents into a form familiar to the uerf(8)
+program.
+.PP
+Before 
+.PN savecore 
+writes out a core image, it reads a number from the file
+\fIdirname\f(TR/minfree\fR.
+If there are fewer free blocks on the filesystem
+that contains
+.I dirname
+than the number obtained from the \f(TRminfree\fR file, 
+no core dump is done.
+If the \f(TRminfree\fR
+file does not exist, savecore always writes out the core
+file (assuming that a core dump was taken).
+.PP
+The 
+.PN savecore 
+command
+also writes a reboot message in the shut down log.  If the system crashed
+as a result of a panic,
+.PN savecore
+also records the panic string in the shut down log.
+.PP
+The 
+.B -c 
+option is used to clear the core dump.  
+This option is useful when the core
+dump is corrupted in a way that will not allow
+.PN savecore
+to save it safely.  Use the 
+.B \-c
+option with caution, because once it 
+is used, there is no way to retrieve the core dump again.
+.PP
+The
+.B -e
+option is used to save only the error logger buffer into a file.  If
+used, no core or namelist images are saved.
+.PP
+If the core dump was from a system other than \f(TR/vmunix\fR, the name
+of that system must be supplied as
+.IR system .
+.PP
+After successful completion, the core dump is cleared.
+.SH FILES
+.IP /usr/adm/shutdownlog 1.5i
+Shut down log
+.IP /vmunix 1.5i
+Current ULTRIX
+.SH SEE ALSO
+uerf(8)

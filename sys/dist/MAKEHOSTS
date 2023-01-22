@@ -1,0 +1,22 @@
+#! /bin/sh
+# @(#)MAKEHOSTS	1.7 (ULTRIX) 9/16/86
+
+YPCAT=/usr/bin/ypcat
+CAT=/bin/cat
+HOSTS=/etc/hosts
+
+cd /usr/hosts
+if [ -r $YPCAT ]
+then
+	if test `ps agx|grep ypbind | wc -l` -eq 2
+	then
+		CAT=$YPCAT
+		HOSTS=hosts
+	fi
+fi
+
+rm -f [a-z0-9]*
+for i in `$CAT $HOSTS | grep -v -e '-' | sed -e '/localhost/d' -e '/^#/d' | awk '{print $2}'`
+    do
+    ln -s /usr/ucb/rsh $i
+    done

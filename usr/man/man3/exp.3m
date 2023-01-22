@@ -1,0 +1,144 @@
+.TH exp 3m 
+.SH NAME
+exp, expm1, log, log10, log1p, pow, sqrt \- exponential, logarithm, power, square root
+.SH SYNTAX
+.nf
+.B #include <math.h>
+.PP
+.B double exp(x)
+.B double x;
+.PP
+.B double expm1(x)
+.B double x;
+.PP
+.B double log(x)
+.B double x;
+.PP
+.B double log10(x)
+.B double x;
+.PP
+.B double log1p(x)
+.B double x;
+.PP
+.B double pow(x, y)
+.B double x, y;
+.PP
+.B double sqrt(x)
+.B double x;
+.fi
+.SH DESCRIPTION
+The 
+.PN exp
+function returns the exponential function of 
+.I x.
+.PP
+The
+.PN expm1 
+function
+returns exp(x)-1 accurately even for tiny 
+.IR x .
+.PP
+The
+.PN log
+function returns the natural logarithm of 
+.IR x ;
+.PN log10
+returns the base 10 logarithm.
+.PP
+The
+.PN log1p
+function returns log(1+x) accurately even for tiny
+.IR x .
+.PP
+The
+.PN pow
+function returns
+.I  x\u\s8y\s10\d.
+.PP
+The
+.PN sqrt
+function returns the square root of 
+.I x.
+.SH ENVIRONMENT
+When your program is compiled using the System V environment,
+.PN exp
+returns \fBHUGE\fP when the correct value would overflow, 
+and sets \fIerrno\fP to \fBERANGE\fP.
+.PP
+The
+.PN log 
+and 
+.PN log10
+functions return \fBHUGE\fP and set \fIerrno\fP to \fBEDOM\fP
+when 
+.I x
+is non-positive.  An error message is printed on the standard error output.
+.PP
+The
+.PN pow
+function returns 0 and sets \fIerrno\fP to EDOM when 
+.I x
+is non-positive and y is not an integer, or when
+.I x
+and
+.I y
+are both zero.  In these cases, a message indicating
+DOMAIN error is printed on the standard error output.
+When the correct value for 
+.PN pow
+would overflow, 
+.PN pow
+returns HUGE and sets \fIerrno\fP to ERANGE.
+.PP
+The
+.PN sqrt
+function returns 0 and sets \fIerrno\fP to \fBEDOM\fP when 
+.I x 
+is negative.  A message indicating DOMAIN error is 
+printed on the standard error output.
+.PP
+These error-handling procedures may be changed with 
+the function
+matherr(3m).
+.SH DIAGNOSTICS
+The
+.PN exp,
+.PN expm1,
+and
+.PN pow
+functions return a huge value when the correct value would overflow;
+.I errno
+is set to ERANGE.
+The function
+.PN pow
+returns 0 and sets
+.I errno
+to EDOM when the second argument is negative and non-integral and
+when both arguments are 0.
+.PP
+The
+.PN log
+function returns 0 
+when
+.I x
+is zero or negative;
+.I errno
+is set to EDOM.
+The
+.PN log1p
+function returns 0 
+when
+.I x
+is less than or equal to -1;
+.I errno 
+is set to EDOM.
+.PP
+The
+.PN sqrt
+function returns 0 when 
+.I x
+is negative;
+.I errno
+is set to EDOM.
+.SH SEE ALSO
+hypot(3m), intro(3m), sinh(3m)

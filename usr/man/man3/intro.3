@@ -1,0 +1,157 @@
+.TH intro 3
+.SH NAME
+intro \- introduction to library functions
+.SH DESCRIPTION
+This section describes functions that may be found
+in various libraries.  The library functions are those other than the
+functions that directly invoke ULTRIX system primitives,
+described in section 2.
+Section 3 has the libraries physically grouped together.  
+The functions described in this
+section are grouped into various libraries:
+.SH Sections 3 and 3s
+The (3) functions are the standard C library functions.  The
+C library also includes all the functions described in Section 2.  
+These routines are
+included for compatibility with other systems.  In particular,
+a number of system call interfaces provided in 
+4.2BSD have been included for source code compatibility.
+The (3s) functions comprise the standard I/O library.  Together with the
+(3n), (3x), and (3) routines, these functions constitute
+library \fIlibc\fP,
+which is automatically loaded by the C compiler
+(cc), the Pascal compiler (pc), and the Fortran compiler
+(f77).
+Declarations for these functions may be obtained from
+the include file, < stdio.h >.
+The link editor ld(1)
+searches this library under the \-lc option.
+Declarations for some of these functions may be obtained
+from include files indicated on the appropriate pages.
+.PP
+The GFLOAT version of
+.I libc
+is used when you use the cc(1) command with the
+.B \-Mg
+option, or you use the ld(1) command with the
+.B \-lcg
+option.  
+The GFLOAT version of
+.IR libc
+must be used with modules 
+compiled with cc(1)
+using the 
+.B \-Mg
+option. 
+.PP
+Note that neither the compiler nor the linker ld(1)
+can detect when mixed double floating point types are used,
+and your program may produce erroneous results if this occurs.  .\"End
+.SH Section 3f
+The 3f functions are all functions callable from Fortran.  These
+functions perform the same jobs as do the (3) functions.
+.SH Section 3m
+These functions constitute the math library,
+.IR libm .
+They are automatically loaded as needed by the Pascal
+compiler (pc)
+and the Fortran compiler (f77).
+The link editor searches this library under the 
+.B \-lm 
+option.  Declarations for these functions 
+may be obtained from the include file, < math.h >.
+.PP
+The GFLOAT version of
+.IR libm
+is used when you use the ld(1) command with the
+.B \-lcg
+option. Note that you must use
+the GFLOAT version of
+.IR libm
+with modules compiled using the cc(1)
+command with the
+.B \-Mg
+option. 
+.PP
+Note that neither the compiler nor the linker ld(1)
+can detect when mixed double floating point
+types are used, and the program may produce
+erroneous results if this occurs.	.\" End
+.SH Section 3n
+These functions constitute the internet network library,
+.SH Section 3x
+Various specialized libraries have not been given distinctive captions.
+Files in which such libraries are found are named on appropriate pages.
+.SH Section 3yp
+These functions are specific to the Yellow Pages (YP) service.
+.SH SYSTEM V COMPATIBILITY
+The libraries in Sections 3, 3m, and 3s contain System V
+compatibility features that are available to general ULTRIX
+programs.  This compatibility sometimes conflicts with
+features already present in ULTRIX.  That is, the function
+performed may be slightly different in the System V environment.
+These features are provided for applications that are being
+ported from System V.
+.PP
+The descriptions in these sections include an ENVIRONMENT
+section to describe any differences in function between
+System V and the standard C runtime library.
+.PP
+The System V compatibility features are not contained in the
+standard C runtime library.  To get System V-specific behavior,
+you must specify that the System V environment is to be used in
+compiling and linking programs.  You can do this in one of two
+ways:
+.IP 
+Using the \fB\-Y\fR option for the 
+.PN cc
+command.
+.IP 
+Globally setting the environment variable PROG_ENV to SYSTEM_FIVE.
+If you are using the C shell, you would execute the following line,
+or include it in your .login file:
+.EX
+setenv PROG_ENV SYSTEM_FIVE
+.EE
+If you are using the Bourne shell, you would execute the following
+line, or include it in your .profile file:
+.EX
+PROG_ENV=SYSTEM_FIVE ; export PROG_ENV
+.EE
+.PP
+In both cases, the cc(1)
+command defines the preprocessor symbol SYSTEM_FIVE, so that the
+C preprocessor, /lib/cpp, 
+will select the System V version of various data structures
+and symbol definitions.
+.PP
+In addition, if cc(1) invokes ld(1), the library libcV.a 
+(the System V version of the Standard C library) is searched before
+libc.a to resolve references to the
+System-V-specific routines.  Also, if
+\fB\-lm\fR is specified on either the cc(1) or the
+ld(1) command line, then the
+System V version of the math
+library will be used instead of the regular ULTRIX math library.
+.SH FILES
+.nf
+/lib/libc.a
+/usr/lib/lib_cg.a
+/usr/lib/libm.a 			.\" Begin
+/usr/lib/libc_p.a
+/usr/lib/m_g.a				.\" End
+/usr/lib/libm_p.a
+.fi
+.SH DIAGNOSTICS
+Functions in the math library (3m) may return
+conventional values when the function is undefined for the
+given arguments or when the value is not representable.
+In these cases the external variable
+.I errno
+is set to the value EDOM (domain error) or ERANGE (range error).
+For further information, see intro(2).
+The values of EDOM and ERANGE are defined in the include file
+< math.h >.
+.SH SEE ALSO
+cc(1), f77(1), ld(1), nm(1), intro(2)
+intro(3), intro(3s), intro(3f), intro(3m), intro(3n)

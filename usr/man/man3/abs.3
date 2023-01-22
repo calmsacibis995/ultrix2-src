@@ -1,0 +1,22 @@
+.TH abs 3
+.SH NAME
+abs \- integer absolute value
+.SH SYNTAX
+.nf
+.B abs(i)
+.B int i;
+.fi
+.SH DESCRIPTION
+The
+.PN abs
+function returns the absolute value of its integer operand.
+.SH RESTRICTIONS
+Applying the 
+.PN abs 
+function to the most negative integer generates a
+result which is the most negative integer.  That is, 
+.IP "abs(0x80000000)"
+.LP
+returns 0x80000000 as a result.
+.SH SEE ALSO
+floor(3m) 

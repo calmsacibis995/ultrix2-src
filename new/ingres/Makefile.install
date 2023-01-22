@@ -1,0 +1,24 @@
+#
+#		@(#)Makefile.install	1.1	(ULTRIX)	1/31/85
+#
+#	Makefile to install ingres images and libraries onto the system
+#	directories.  See README for details of use.
+#
+
+BIN	= /usr/new
+LIB	= /usr/lib
+ETC	= /usr/new
+COPY	= -c
+
+
+install:
+	for i in creatdb destroydb helpr printr purge restore sysmod ingres; \
+	do \
+		(install ${COPY} -m 4751 -o ingres bin/$${i} ${BIN}/$${i}) ;\
+	done
+	install ${COPY} -m 755 -o ingres bin/demodb ${BIN}/demodb
+	install ${COPY} -m 751 -o ingres bin/copydb ${BIN}/copydb
+	install ${COPY} -m 751 -o ingres bin/equel ${BIN}/equel
+	install ${COPY} -m 751 -o ingres bin/ingres_lock ${ETC}/ingres_lock
+	install ${COPY} -m 664 -o ingres lib/libq.a ${LIB}/libq.a
+	ranlib ${LIB}/libq.a

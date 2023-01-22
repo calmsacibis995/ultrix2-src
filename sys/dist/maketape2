@@ -1,0 +1,46 @@
+echo -n "Mount second tape and hit return when ready"; read x
+#
+echo "Adding on-line manuals."
+cd /Ultrix/usr ; tar cf /dev/rmt12 man
+#
+echo "Adding games."
+cd /Ultrix/usr ; tar cf /dev/rmt12 games
+#
+echo "Adding documentation."
+cd /Ultrix/usr ; tar cf /dev/rmt12 doc
+# #
+# # echo "Adding DEC contributed software."
+# # cd /Ultrix/usr ; tar cf /dev/rmt12 dec
+# #
+# echo "Adding USER contributed software."
+# cd /Ultrix/usr ; tar cf /dev/rmt12 contrib
+#
+# Note that the vfont is usually in /usr/lib but it is moved
+# out so as not to be picked up on first tape's tar of /usr/lib.
+echo "Adding varian fonts"
+cd /Ultrix/usr; tar cf /dev/rmt12 vfont
+# #
+# Note that the learn scripts are usually in /usr/lib/learn but it is moved 
+#out so as not to be picked up on the first tape's tar of /usr/lib.
+echo "Adding learn scripts."
+cd /Ultrix/usr ; tar cf /dev/rmt12 learn
+##
+#Note that the lisp manual is usually in /usr/lib but it is moved
+#out so as not to be picked up on the first tape's tar of /usr/lib.
+echo "adding the lisp manual"
+cd /Ultrix/usr; tar cf /dev/rmt12 lisp
+##
+# echo "Adding ingres source."
+# cd /Ultrix/usr/ingres; tar cf /dev/rmt12 .
+#
+cd /
+echo "Unmounting filesystems."
+sync
+# umount /dev/hk0c
+# umount /dev/hp1g
+# umount /dev/hp1a
+#
+echo  -n "Done, rewinding second tape "
+date
+echo "."
+mt offl

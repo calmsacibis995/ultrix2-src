@@ -1,0 +1,21 @@
+.TH uptime 1
+.SH NAME
+uptime \- show how long system has been up
+.SH SYNTAX
+.B uptime
+.SH DESCRIPTION
+The
+.B uptime 
+command
+prints the current time, the length of time the system has been up,
+the number of current users, 
+and the average number of jobs in the run queue over the last 1, 5 and
+15 minutes.
+It is, essentially, the first line of a w(1) command.
+The 
+.B \-w
+option gives the same output as the w(1) command.
+.SH FILES
+/vmunix	system name list
+.SH SEE ALSO
+w(1)

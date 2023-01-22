@@ -1,0 +1,24 @@
+.TH kUmem 4
+.SH NAME
+kUmem \- Unibus/Qbus virtual memory
+.SH DESCRIPTION
+The
+.PN kUmem
+character special file is an image of the Unibus/Qbus
+virtual memory of the computer.
+It may be used, for example, to examine/patch virtual addresses mapped
+to Unibus physical space.
+.PP
+Byte addresses in
+.PN kUmem
+are interpreted as virtual memory addresses.
+References to non-existent locations cause errors to be returned.
+.SH RESTRICTIONS
+The
+.PN kUmem
+memory file is accessed one byte
+at a time.
+.SH FILES
+/dev/kUmem
+.SH SEE ALSO
+MAKEDEV(8)

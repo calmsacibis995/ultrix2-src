@@ -1,0 +1,174 @@
+.\"	@(#)mailaddr.7	4.1		7/28/83
+.TH mailaddr 7
+.SH NAME
+mailaddr \- mail addressing description
+.SH DESCRIPTION
+.NXB "mailaddr macro package"
+Mail addresses are based on the ARPANET protocol
+listed at the end of this manual page.
+These addresses are in the general format
+.EX
+		user@domain
+.EE
+where a domain is a hierarchical dot separated list of subdomains.
+For example,
+the address
+.EX
+		eric@monet.Berkeley.ARPA
+.EE
+is normally interpreted from right to left:
+the message should go to the ARPA name tables
+(which do not correspond exactly to the physical ARPANET),
+then to the Berkeley gateway,
+after which it should go to the local host monet.
+When the message reaches monet it is delivered to the user ``eric''.
+.PP
+Unlike some other forms of addressing,
+this does not imply any routing.
+Thus,
+although this address is specified as an ARPA address,
+it might travel by an alternate route
+if that was more convenient or efficient.
+For example,
+at Berkeley the associated message
+would probably go directly to monet over the Ethernet
+rather than going via the Berkeley ARPANET gateway.
+.PP
+.B Abbreviation.
+Under certain circumstances
+it may not be necessary to type the entire domain name.
+In general anything following the first dot
+may be omitted
+if it is the same as the domain from which you are sending the message.
+For example,
+a user on
+``calder.Berkeley.ARPA''
+could send to
+``eric@monet''
+without adding the
+``.Berkeley.ARPA''
+since it is the same on both sending and receiving hosts.
+.PP
+Certain other abbreviations may be permitted
+as special cases.
+For example,
+at Berkeley ARPANET hosts can be referenced
+without adding the
+``.ARPA''
+as long as their names do not conflict
+with a local host name.
+.PP
+.B Compatibility.
+Certain old address formats
+are converted to the new format
+to provide compatibility with the previous mail system.
+In particular,
+.EX
+		host:user
+.EE
+is converted to
+.EX
+		user@host
+.EE
+to be consistent with the rcp(1c) command.
+.PP
+Also, the syntax:
+.EX
+		host!user
+.EE
+is converted to:
+.EX
+		user@host.UUCP
+.EE
+This is normally converted back to the
+``host!user''
+form
+before being sent on for compatibility with older UUCP hosts.
+.PP
+The current implementation is not able to route messages
+automatically through the UUCP network.
+Until that time you must explicitly tell the mail system
+which hosts to send your message through
+to get to your final destination.
+.PP
+.B Case Distinctions.
+Domain names (that is, anything after the ``@'' sign)
+may be given in any mixture of upper and lower case
+with the exception of UUCP hostnames.
+Most hosts accept any mixture of case in user names,
+with the notable exception of MULTICS sites.
+.PP
+.B Differences with ARPA Protocols.
+Although the UNIX addressing scheme
+is based on the ARPA mail addressing protocols,
+there are some significant differences.
+.PP
+At the time of this writing
+the only
+``top level''
+domain defined by ARPA is the
+``.ARPA''
+domain itself.
+This is further restricted to having only one level of host specifier.
+That is,
+the only addresses that ARPA accepts at this time must be in the format
+``user@host.ARPA''
+(where ``host'' is one word).
+In particular,
+addresses such as:
+.EX
+		eric@monet.Berkeley.ARPA
+.EE
+are not currently legal
+under the ARPA protocols.
+For this reason,
+these addresses are converted to a different format on output
+to the ARPANET,
+typically:
+.EX
+		eric%monet@Berkeley.ARPA
+.EE
+.B Route-addrs.
+Under some circumstances
+it may be necessary to route a message
+through several hosts
+to get it to the final destination.
+Normally this routing is done automatically,
+but sometimes it is desirable to route the message manually.
+An address that shows these relays are termed
+``route-addrs.''
+These use the syntax:
+.EX
+		<@hosta,@hostb:user@hostc>
+.EE
+This specifies that the message should be sent to hosta,
+from there to hostb,
+and finally to hostc.
+This path is forced
+even if there is a more efficient path
+to hostc.
+.PP
+Route-addrs
+occur frequently on return addresses,
+since these are generally augmented by the software
+at each host.
+It is generally possible to ignore all but the
+``user@host''
+part of the address to determine the actual sender.
+.PP
+.B Postmaster.
+Every site is required to have a user or user alias
+designated
+``postmaster''
+to which problems with the mail system may be addressed.
+.PP
+.I CSNET.
+Messages to CSNET sites can be sent to
+``user.host@UDel-Relay''.
+.SH SEE ALSO
+mail(1), sendmail(8)
+.br
+Crocker, D. H.,
+Standard for the Format of Arpa Internet Text Messages, RFC822
+.\"This cross-reference is valid and should stay in manual page.
+.NXE "mailaddr macro package"

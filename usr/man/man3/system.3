@@ -1,0 +1,23 @@
+.TH system 3
+.SH NAME
+system \- issue a shell command
+.SH SYNTAX
+.nf
+.B system(string)
+.B char *string;
+.fi
+.SH DESCRIPTION
+The
+.PN system
+routine causes the
+.I string
+to be given to 
+.PN sh(1)
+as input as if the string had been typed as a command
+at a terminal.
+The current process waits until the shell has
+completed, then returns the exit status of the shell.
+.SH DIAGNOSTICS
+Exit status 127 indicates the shell couldn't be executed.
+.SH "SEE ALSO"
+execve(2), wait(2) popen(3)

@@ -1,0 +1,343 @@
+.TH ps 1
+.SH NAME
+ps \- process status
+.SH SYNTAX
+.B ps
+[ 
+.I options 
+] [
+.I namelist
+] [
+.I core
+] 
+.SH DESCRIPTION
+The
+.PN ps
+command
+prints information about processes.
+Without the
+.B \-a
+option,
+only your processes are candidates to be printed by
+.B ps . 
+Specifying the
+.B \-a
+option
+causes other user's processes to be printed and
+specifying the
+.B \-x
+option
+includes processes without control terminals.
+.PP
+The optional 
+.I namelist
+argument indicates that information is to be gathered
+using the specified system 
+.I namelist
+file.
+If not specified, use /vmunix.
+The 
+.I core
+argument indicates that 
+information is to be gathered using
+the specified
+corefile.
+If not specified, uses /dev/mem.
+.SH OPTIONS
+.TP 5
+.B a
+Displays information about all processes with terminals.
+.TP 5
+.B c
+Displays the command name, as stored internally 
+in the system for purposes
+of accounting, rather than the command arguments, which are kept
+in the process's address space.  This is more reliable, 
+if less informative,
+since the process is free to destroy the latter information.
+.TP 5
+.B e
+Displays the environment as well as the arguments to the command.
+.TP 5
+.B g
+Displays all processes.
+Without this option,
+.PN ps
+only prints ``interesting'' processes.
+Processes are deemed to be 
+uninteresting if they are process group leaders.
+This normally eliminates top-level command interpreters and processes
+waiting for users to login on free terminals.
+.TP 5
+.B k
+The
+.I arg2
+argument tells
+.PN ps
+where to look for
+.I core
+if the
+.B k
+option is given.  Otherwise, /vmcore is used.
+Indicates that the specified core file (next argument) is to 
+be used in place of /dev/kmen and /dev/mem.  If
+.B k 
+option is used, but no corefile
+is specified, uses /vmcore.
+.TP 5
+.B l
+Displays a long listing, with fields PPID, CP, PRI, 
+NI, ADDR, SIZE, RSS, and
+WCHAN as described under OUTPUT FIELDS.
+.TP 5
+.B s
+Adds the size SSIZ of the kernel stack of each process to
+the basic output format for use by system
+maintainers.
+.TP 5
+\fBt\fIx\fR
+Restricts output to processes whose controlling tty is \fIx\fR.
+The argument \fIx\fR should be specified as printed by
+.PN ps. 
+For example,
+.I t3
+for tty3,
+.I tco
+for console,
+.I td0
+for ttyd0,
+.I t?
+for processes with no tty,
+.I t
+for processes at the current tty,
+and so forth, are proper specifications for \fIx\fR.
+This option must be the last one given.
+.TP 5
+.B u
+Displays user-oriented output.
+This includes fields USER, %CPU, and
+%MEM, SIZE as described under OUTPUT FIELDS.
+It also displays SZ and
+RSS which are computed differently than for the
+.B \-l
+and
+.B \-v
+options.
+The SZ field is computed as SIZE + TSIZ (virtual size
+plus size of text).  The TRS field is computed as
+RSS + (TRS/xccount) where xccount is the number of
+processes currently sharing the text.
+.TP 5
+.B v
+Displays virtual memory statistics. 
+This includes fields RE, SL, PAGEIN, SIZE, RSS, LIM, TSIZ, TRS, %CPU
+and %MEM, described under OUTPUT FIELDS.
+.TP 5
+.B w
+Use a wide output format (132 columns rather than 80). If repeated,
+as \fBww\fR, use arbitrarily wide output.
+This information is used to decide how much to print
+for long commands.
+.TP 5
+.B x
+Displays information about processes with no terminal.
+.TP 5
+.B #
+A process number may be given,
+(indicated here by #),
+in which case the output
+is restricted to that process.
+This option must also be last.
+When used together with \fBa\fR or \fBt\fIx\fR,
+this option overrides the \fBa\fR option, but the
+\fBt\fIx\fR option overrides this one.
+.SH OUTPUT FIELDS
+All output formats include, for each process:
+.IP PID 10
+the process
+identification (PID) number
+.IP TT 10
+control terminal of the process 
+.IP TIME 10
+Includes both user and system time
+.IP STAT 10
+the state of the process, given by a sequence of four
+letters, for example, RWNA.
+.IP ""
+The first letter indicates the run status of the process:
+.RS
+.IP R 
+Running processes 
+.IP T 
+Stopped processes 
+.IP P 
+Processes
+in page wait 
+.IP D 
+Processes in disk (or other short-term) waits
+.IP S 
+Processes sleeping for less than about 20 seconds
+.IP I
+Idle processes (sleeping longer than about 20 seconds)
+.RE
+.IP ""
+The second letter indicates whether a process is swapped out:
+.RS
+.IP W
+Processes which are swapped out
+.IP (blank)
+Processes which are in core
+.IP >
+for processes which have specified a soft limit on memory
+requirements and which are exceeding that limit.  Such
+a process is not swapped.
+.RE
+.IP ""
+The third letter indicates whether a process is running
+with altered CPU scheduling priority, using 
+nice(1).
+.RS
+.IP N
+The process priority is reduced
+.IP <
+The process priority has been artificially raised
+.IP (blank)
+Processes running without special treatment
+.RE
+.IP ""
+The fourth letter indicates any special treatment of the
+process for virtual memory. 
+The possibilities are:
+.RS
+.IP A
+Stands for VA_ANOM.  Typically represents a lisp(1)
+making disk usage more efficient by removing gaps caused
+by deletes and collecting the remaining data. 
+.IP S
+Stands for VA_SEQL.  Typical of large image processing
+programs that are using virtual memory to sequentially
+address voluminous data.
+.IP (blank)
+Stands for VA_NORM.
+.RE
+.PP
+Fields which are not common to all output formats:
+.IP USER 10
+name of the owner of the process
+.IP %CPU 10
+cpu utilization of the process.  This is a decaying average over 
+a minute or less of previous (real) time. 
+Since the time base over which this
+is computed varies since processes may be very young,
+it is possible
+for the sum of all %CPU fields to exceed 100%.
+.IP NICE 10
+(or NI) process scheduling increment.  For further information, see
+setpriority(2).
+.IP SIZE 10
+(or SZ) virtual size of the process (in 1024-byte units)
+.IP RSS 10
+real memory (resident set) size of the process (in 1024-byte units)
+.IP LIM 10
+soft limit on memory used, specified via a call to
+setrlimit(2).
+If no limit has been specified, then shown as \fIxx\fR
+.IP TSIZ 10
+size of text (shared program) image
+.IP TRS 10
+size of resident (real memory) set of text
+.IP %MEM 10
+percentage of real memory used by this process.
+.IP RE 10
+residency time of the process (seconds in core)
+.IP SL 10
+sleep time of the process (seconds blocked)
+.IP PAGEIN 10
+number of disk I/O operations resulting from references by the process
+to pages not loaded in core
+.IP UID 10
+numerical user identification number of process owner
+.IP PPID 10
+numerical identification number of parent of process
+.IP CP 10
+short-term cpu utilization factor used in scheduling
+.IP PRI 10
+process priority (non-positive when in non-interruptible wait)
+.IP ADDR 10
+swap address of the process or page frame of the
+beginning of the user page table entries
+.IP WCHAN 10
+event on which process is waiting (an address in the system), with
+the initial part of the address trimmed off.  For example,
+80004000 prints
+as 4000.
+.sp
+.IP F 10
+flags associated with process as in
+< sys/proc.h >:
+.br
+.PP
+.sp
+.nf
+.ta 6n 18n 26n
+SLOAD	000001		in core
+SSYS	000002		swapper or pager process
+SLOCK	000004		process being swapped out
+SSWAP	000008		save area flag
+STRC	000010		process is being traced
+SWTED	000020		another tracing flag
+SULOCK	000040		user settable lock in core
+SPAGE	000080		process in page wait state
+SKEEP	000100		another flag to prevent swap out
+SDLYU	000200		delayed unlock of pages
+SWEXIT	000400		working on exiting
+SPHYSIO	000800		doing physical i/o (bio.c)
+SVFORK	001000		process resulted from vfork()
+SVFDONE	002000		another vfork flag
+SNOVM	004000		  no vm, parent in a vfork()
+SPAGI	008000		  init data space on demand from inode
+SANOM	010000		  system detected anomalous vm behavior
+SUANOM	020000		  user warned of anomalous vm behavior
+STIMO	040000		  timing out during sleep
+SDETACH	080000		  detached inherited by init
+SOUSIG	100000		  using old signal mechanism
+SOWEUPC	200000		  owe process an addupc() call at next ast
+SSEL	400000		  selecting; wakeup/waiting danger
+SLOGIN	800000		  a login process (legit child of init)
+SPTECHG	1000000		  pte's for process have changed
+SMASTER	2000000		  need service by master processor
+.fi
+.PD
+.PP
+A process that has a parent and has exited, but for which
+the parent has not yet waited
+is marked <defunct>.  A process
+which is blocked trying to exit is marked <exiting>;
+The 
+.PN ps
+command makes an educated guess as to the file name
+and arguments given when the process was created
+by examining memory or the swap area.
+The method is inherently somewhat unreliable and in any event
+a process is entitled to destroy this information,
+so the names cannot be counted on too much.
+.SH RESTRICTIONS
+Information on processes can change while
+.PN ps
+is running.  The picture it gives is a snapshot taken
+at a given time.
+.SH FILES
+.ta \w'/usr/sys/core 'u
+/vmunix	System namelist
+.br
+/dev/kmem	Kernel memory
+.br
+/dev/mem	User process info
+.br
+/dev/drum	Swap device
+.br
+/vmcore	Core file
+.br
+/dev	Searched to find swap device and tty names
+.SH SEE ALSO
+kill(1), w(1)

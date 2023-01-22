@@ -1,0 +1,96 @@
+#!/bin/sh
+#
+#	genset -
+#		copy rx50 subset images to diskettes.
+#
+#*
+#*			Copyright (c) 1985 by
+#*		Digital Equipment Corporation, Maynard, MA
+#*			All rights reserved.
+#*								
+#*	This software is furnished under a license and may be used and
+#*	copied  only  in accordance with the terms of such license and
+#*	with the  inclusion  of  the  above  copyright  notice.   This
+#*	software  or  any  other copies thereof may not be provided or
+#*	otherwise made available to any other person.  No title to and
+#*	ownership of the software is hereby transferred.		
+#*								
+#*								
+#*	The information in this software is subject to change  without
+#*	notice  and should not be construed as a commitment by Digital
+#*	Equipment Corporation.					
+#*								
+#*	Digital assumes no responsibility for the use  or  reliability
+#*	of its software on equipment which is not supplied by Digital.
+#/
+#
+#	000	ccb	8-nov-1986
+
+SCCSID="@(#)genset	1.1 (ULTRIX-32) 12/8/86"
+
+case "$#" in
+2)	_S=$1	# subset name
+	_D=$2	# device name
+	;;
+*)	echo "Usage: genset subset device"
+	;;
+esac
+PCODE=`expr $_S : '\(...\).*'`
+
+set x $_S*
+shift
+VOL=0
+NVOLS=$#
+while :
+do
+	case "$VOL" in
+	$NVOLS)	break
+		;;
+	esac
+	VOL=`expr $VOL + 1`
+	while :
+	do
+		RTY=0
+		while :	# write
+		do
+			echo -n "Insert diskette $_S Volume $VOL: "
+			read X
+			echo -n "Writing..."
+			dd if=$_S$VOL of=$_D bs=40k count=10 2> /dev/null ||
+			{
+				echo "Write error. Retrying..."
+				dd if=$_S$VOL of=$_D bs=40k count=10 2>/dev/null ||
+				{
+					case "$RTY" in
+					1)	echo "
+Write error, try a new diskette."
+						continue
+					esac
+					RTY=1
+					continue
+				}
+			}
+			echo done.
+			break
+		done
+		SUMDATA=`grep $_S$VOL $PCODE.floppies` &&
+		{
+			# verify
+			set $SUMDATA
+			SUM=$1 COUNT=`expr $2 / 10`
+			MSUM=`dd if=$_D bs=10k count=$COUNT 2>/dev/null|sum`
+			set $MSUM
+			case "$1" in
+			$SUM)	echo "done"
+				;;
+			*)	echo "error. Discard the diskette"
+				continue
+			esac
+		}
+		echo "Remove $_S Volume $VOL$NL"
+		sleep 5
+		break
+	done
+done
+exit 0
+

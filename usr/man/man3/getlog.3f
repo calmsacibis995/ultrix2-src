@@ -1,0 +1,20 @@
+.TH getlog 3f
+.SH NAME
+getlog \- get user's login name
+.SH SYNTAX
+.B subroutine getlog (name)
+.br
+.B character*(*) name
+.sp 1
+.B character*(*) function getlog()
+.SH DESCRIPTION
+The
+.PN getlog
+subroutine
+will return the user's login name or all blanks if
+the process is running detached from a terminal.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+getlogin(3)

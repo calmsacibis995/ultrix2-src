@@ -1,0 +1,61 @@
+.TH quotaon 8 
+.SH NAME
+quotaon, quotaoff \- turn file system quotas on and off
+.SH SYNTAX
+/etc/quotaon
+[ option... ] [ filesystem ]
+.PP
+/etc/quotaoff
+[ option... ] [ filesystem ]
+.SH DESCRIPTION
+The
+.B quotaon
+command
+informs the system that disc quotas should be enabled
+on one or more file systems.
+Specified file systems must have entries
+in 
+/etc/fstab 
+and be mounted.
+Quota files must be present in the root
+directory of the specified file systems and be named
+.I quotas .
+.PP
+The optional argument
+.B \-v
+causes
+.B quotaon
+to print a message for each file system whose quotas are enabled.
+The
+.B \-a
+argument may be used in stead of a list of file systems. It 
+causes
+.B quotaon
+to enable quotas on all
+file systems in /etc/fstab marked read-write. 
+This option is normally used at
+boot time to enable quotas.
+.PP
+The
+.B quotaoff
+command
+informs the system that disc quotas should be disabled on one or more
+file systems.
+The
+.B \-v
+option forces a verbose message for each file system affected. 
+The 
+.B \-a
+option forces all file systems in 
+/etc/fstab 
+to have their quotas disabled.
+.SH FILES
+.TP 15
+/etc/fstab
+file system table
+.SH "SEE ALSO"
+setquota(2), fstab(5), edquota(8)
+.br
+"Disk Quotas in a UNIX Environment",
+.I Supplementary Documentation, 
+Vol. III: System Manager 

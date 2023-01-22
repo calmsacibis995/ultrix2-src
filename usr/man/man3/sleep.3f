@@ -1,0 +1,20 @@
+.TH sleep 3f
+.SH NAME
+sleep \- suspend execution for an interval
+.SH SYNTAX
+.B subroutine sleep (itime)
+.SH DESCRIPTION
+The
+.PN sleep
+subroutine
+causes the calling process to be suspended for
+.I itime
+seconds.
+The actual time can be up to 1 second less than
+.I itime
+due to granularity in system timekeeping.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+sleep(3)

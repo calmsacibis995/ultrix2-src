@@ -1,0 +1,42 @@
+#! /bin/sh
+#
+#	@(#)SHELL	1.5	(Berkeley)	4/9/83
+#
+L=/usr/lib/lint/lint T=/usr/tmp/lint.$$ PATH=/bin:/usr/bin O="-C -Dlint"
+X= LL=/usr/lib/lint C=
+case $PROG_ENV in
+	SYSTEM_FIVE) P=sysV ;;
+	*) P=unix ;;
+esac
+trap "rm -f $T; exit" 1 2 15
+for A in $*
+do
+	case $A in
+	-[IDOU]*) ;;
+	-*n*)	P= ;;
+	-*p*)	P=port ;;
+	esac
+	case $A in
+	*.ln)	cat $A >>$T ;;
+	-l*)	cat $LL/llib$A.ln >>$T ;;
+	-Y)	P=sysV ;;
+	-X)	LL=/usr/src/usr.bin/lint L=/usr/src/usr.bin/lint/lpass ;;
+	-C?*)	C=`echo $A | sed -e s/-C/llib-l/` ; X="$X -L -C$C" ;;
+	-[IDOU]*)	O="$O $A" ;;
+	-*)	X="$X $A" ;;
+	*)	echo "$A:" ; (/lib/cpp $O $A | ${L}1 $X >>$T)2>&1
+	esac
+	done
+case $P in
+	sysV)	cat $LL/llib-lcV.ln >>$T ;;
+	unix)	cat $LL/llib-lc.ln >>$T ;;
+	port)	cat $LL/llib-port.ln >>$T ;;
+	"")	cat /dev/null >>$T ;;
+	esac
+
+${L}2 $T $X
+case $C in
+	"")	;;
+	*)	cp $T $C.ln ;;
+	esac
+rm -f $T

@@ -1,0 +1,300 @@
+.TH NEWCSH 1 local
+.SH NAME
+newcsh \- New C shell with TOPS20-like command line completion
+.SH DESCRIPTION
+.I Newcsh
+(1) is an enhanced version of the 
+.I csh
+(1) that allows you to access interactively information that will greatly
+reduce your typing and memorization.
+.I newcsh
+provides a TOPS20-like recognition feature that allows you to complete
+and list full command names, file names, directory path names, variable
+names, and history keyword names with a single keystroke.
+
+In addition,
+.I newcsh
+allows you to prefix a defined string to your background process
+completion messages, to set a timer for automatic logout after a
+designated idle time, and to save command history between login
+sessions.
+
+.SH "COMMAND NAME RECOGNITION"
+Command names can be completed or listed by typing either an <ESC> or a
+<CTRL/D> when entering a command string.  For example, typing:
+.sp
+		% for<ESC>
+.sp
+will result in
+.sp
+		% foreach
+.sp
+being filled in on the terminal line, if there is only one command
+in your path that has the prefix ``for''.  Notice that command typing
+resumes at the point where the <CTRL/D> was typed.
+.PP
+If there is more than one possible completion for a command, then
+completion will occur for all characters that are common to the set
+of possible
+completions and the terminal bell will be enunciated.  The list of
+possible completions can then be listed on the terminal by typing a
+<CTRL/D>.  
+.PP
+The listing feature can be used to show all commands beginning with a
+certain letter, as above, or even all commands (those appearing in
+more than one directory will be listed only once), by typing
+a space or semi-colon followed by a <CTRL/D>.
+The extra character is necessary because typing <CTRL/D> alone
+will log you out.
+.PP
+A final note here.  It is possible to have command listing include a
+notataion indicating where in the command path the various commands are
+by setting the variable
+.I listpathnum.
+For example, 
+.sp
+	% n<CTRL/D>
+.br
+	neqn 4     new 2      ngrep 1    nm 3       notify -
+.br
+	netstat 2  newalias 2 nice -     nohup -    nroff 4
+.br
+	nettest +  newcsh .   nice 7     nohup 4
+.sp
+In this example, the dash (`-') indicates that the command is built into
+the shell, the plus-sign (`+') indicates that the command is a
+user-defined alias, the dot `.', indicates that the command comes from
+the local directory and the number indicates what path directory the
+command was found in (0 being the first position, 1 the second, etc.).
+Commands are listed once for each place they exist, hence nohup is
+listed as being builtin and being in path position 4.  Only the builtin
+versions are listed if
+.I listpathnum
+is not set.
+
+.SH "FILE NAME DIRECTORY PATH RECOGNITION"
+File names and directory paths can be completed or listed by
+typing either an <ESC> or a
+<CTRL/D> when entering a command string.  For example,
+.sp
+	% ed Ma<ESC>
+.sp
+results in
+.sp
+	% ed Makefile
+.sp
+being filled in on the terminal line, if there is only one file
+in the current directory that has the prefix ``Ma''.
+.PP
+If there is more than one possible completion for a file name, then
+completion will occur for all characters that are common to the set of
+possible
+completions and the terminal bell will be enunciated.  The list of
+possible completions can then be listed on the terminal by typing a
+<CTRL/D>.  
+For example, suppose a directory has in it five files with the names
+patrec.c, program.c, program.orig, program.test and ptest.sh.
+If you typed a `p' followed by a <CTRL/D> the following would print:
+.sp
+	% cat p<CTRL/D>
+.br
+	patrec.c      program.c     program.orig
+.br
+	program.test  ptest.sh
+.br
+	% cat p
+.sp
+showing the five possible completions and preserving the command input
+that you typed.  Now if you then type <ESC>:
+.sp
+		% cat p<ESC>
+.sp
+the shell would respond with:
+.sp
+		% cat program.
+.sp
+and a terminal beep.  Typing <CTRL/D> at this point will show
+the three possible completions:
+.sp
+	% cat program.<CTRL/D>
+.br
+	program.c     program.orig  program.test
+.br
+	% cat program.
+.sp
+to which you can then type `c', ``orig'', or ``test'' to get the full
+file name.  You can also type `o' or `t' followed by an <ESC> to
+get the full file name.
+
+.PP
+Using <ESC> and <CTRL/D> can greatly reduce the amount of
+effort involved in remembering the names of the files in a directory
+since <CTRL/D> can show all files beginning with a
+certain prefix, as above, or even the set of all files.  For instance,
+.sp
+		% cp <CTRL/D>
+.sp
+might list the following:
+.sp
+		Admin/    Makefile  a.out*
+.br
+		acctng.c  prog.c    tmp
+.sp
+Now you can choose the file that you wish to copy from the set of
+possible files.  (Notice that the shell suffixes a `/' to directory
+files and a `*' to files that are executable.)
+
+.PP
+With this listing feature you are now able to preview the set of files
+that will be acted upon before you take any action and
+.I without
+having to run the argument though
+.I echo(1)
+first.
+
+Directories are also recognized in a manner similar to files.  The
+tilde convention is also understood by the shell.  That is,
+.sp
+		% ~demo/data/for<ESC>
+.sp
+will be expanded to:
+.sp
+		% ~demo/data/fortran77
+.sp
+if the user demo exists on the system and has a directory containing
+the file fortran77.
+.PP
+An interesting side effect of tilde expansion in directory paths
+is that:
+.sp
+		% ~<CTRL/D>
+.sp
+will produce a list of all of the login directories on the system.
+
+.SH "VARIABLE NAME RECOGNITION"
+Variable names can be completed or listed by typing either an <ESC> or a
+<CTRL/D> whenever the first character of the name is a dollar sign
+(`$').
+For example
+.sp
+		% echo ``$not<ESC>
+.sp
+might expand to
+.sp
+		% echo ``$notify
+.sp
+if the notify variable was set.  Also,
+.sp
+		% echo ``$n<CTRL/D>
+.sp
+will list all variable names starting with `n'.
+.PP
+Note that it is not possible to recognize or list variables that are not
+going to be expanded, that is, that do not begin with a dollar sign.
+
+.SH "HISTORY KEYWORD RECOGNITION"
+History keywords can be completed or listed by typing either an <ESC> or
+a <CTRL/D> whenever the first character of the word is the history
+character (usually an exclamation point, `!'). Output is similar to that of 
+file, directory, and variable name recognition, but the output of the
+list is always two columns, the first column being the history keyword
+that would be recognized, the second being the contents
+of that history event in parentheses.
+For example
+.sp
+		% !gr<ESC>
+.sp
+might expand to
+.sp
+		% !grep
+.sp
+But,
+.sp
+		% !gr<CTRL/D>
+.sp
+would list as:
+.sp
+		grep  (func *(.*) prog.c) 
+.sp
+The listings of those history events containing more than 80 characters
+will be truncated and suffixed by ``...''.
+
+.SH "NOTIFICATION PREFIX"
+The value of the notify variable is no longer ignored, rather, it is now
+prepended to the notification message
+that the shell prints whenever a child process completes.  For
+instance, if the user does a
+.sp
+		set notify = `^G'
+.sp
+then there will be an terminal beep prior to any subprocess completion
+message being
+displayed.  It is sometimes useful to put strings of dashes or other
+characters into this prefix, so that the subprocess status will stand
+out on the terminal screen.
+
+.SH "AUTO-LOGOUT"
+A new shell variable has been added called \fIautologout\fR.
+If the terminal remains idle (no character input) at the shell's
+top level for the number of minutes greater than the autologout
+value, you are automatically logged off.
+This feature was added because often people
+forget to log off when they leave, permitting anyone access to the
+system.
+.PP
+The autologout feature is temporarily disabled while a command is executing.
+The initial value of \fIautologout\fR is 60.
+If unset or set to 0, autologout is entirely disabled.
+.PP
+.SH "SAVING HISTORY"
+The shell now has the facility to save your history list between login session.
+If the shell variable \fIsavehist\fR is set to a number
+then that number of commands from your history list is saved.
+For example, placing the line
+.sp
+.ce
+set history=50 savehist=50
+.sp
+in your .cshrc file maintains a history list of length 50 and 
+saves the entire list when
+you logout, to be retored when you login next.
+The commands are saved in the file \fB.history\fR in your login directory.
+
+.SH "NOTES"
+This shell does not incur the overhead of raw or CBREAK mode, but works
+by (temporarily) setting the ``additional'' tty break character to ESC.
+.PP
+If you select ESC as your default additonal break character, then
+you will be able to do recognition on typeahead. 
+.PP
+The ``vb'' (visible bell) may be used in place of the terminal bell if
+it exists in the termcap entry for your terminal and your version of
+newcsh has been compiled with the TCAPS symbol defined.  See your system
+manager to determine if this feature has been included.
+
+.SH "FILES"
+/etc/termcap - to discover vb (visible bell)
+
+.SH "SEE ALSO"
+csh (1)
+
+.SH "RESTRICTIONS"
+A <CTRL/D> as the first character of a line (a degenerate case of the
+list commands function) logs you out.  The workaround is to type a <SPACE> or a
+semicolon before the <CTRL/D>.  The effect is to list all commands that
+appear along your command path, plus builtin and aliases commands.
+.PP
+It is not currently possible to change the command and listing
+characters to something else and not just have to use <ESC> and <CTRL/D>.
+.PP
+Typing \fIimmediately\fR after hitting <ESC>, before recognition expansion
+completes, can result in character juxtaposition or loss.
+.PP
+Your terminal type is examined the first time you attempt recognition only.
+If you change terminals, or terminal modes, then you will have to logout
+and log back in, or exec a new copy of the shell.
+.PP
+ULTRIX systems: this shell is usually available in /usr/new/csh on all
+machines.  ULTRIX versions do not take advantage of the visible bell
+feature.  Send your comments to decvax!tarsa.
+

@@ -1,0 +1,109 @@
+.TH gethostent 3n
+.SH NAME
+gethostent, gethostbyaddr, gethostbyname, sethostent, endhostent \- get network host entry
+.SH SYNTAX
+.B "#include <netdb.h>
+.PP
+.B "struct hostent *gethostent()
+.PP
+.B "struct hostent *gethostbyname(name)
+.br
+.B "char *name;
+.PP
+.B "struct hostent *gethostbyaddr(addr, len, type)
+.br
+.B "char *addr; int len, type;
+.PP
+.B "sethostent(stayopen)
+.br
+.B "int stayopen
+.PP
+.B "endhostent()
+.SH DESCRIPTION
+The
+.PN gethostent ,
+.PN gethostbyname ,
+and
+.PN gethostbyaddr
+subroutines
+each return a pointer to an object with the
+following structure
+containing the broken-out
+fields of a line in the network host data base, /etc/hosts.
+.EX
+struct	hostent {
+	char	*h_name;	/* official name of host */
+	char	**h_aliases;	/* alias list */
+	int	h_addrtype;	/* address type */
+	int	h_length;	/* length of address */
+	char	*h_addr;	/* address */
+};
+.EE
+.PP
+The members of this structure are:
+.TP \w'h_addrtype'u+2n
+h_name
+Official name of the host.
+.TP \w'h_addrtype'u+2n
+h_aliases
+A zero terminated array of alternate names for the host.
+.TP \w'h_addrtype'u+2n
+h_addrtype
+The type of address being returned; currently always AF_INET.
+.TP \w'h_addrtype'u+2n
+h_length
+The length, in bytes, of the address.
+.TP \w'h_addrtype'u+2n
+h_addr
+A pointer to the network address for the host.
+Host addresses are returned
+in network byte order.
+.PP
+The
+.PN gethostent
+subroutine
+reads the next line of the file, opening the file if necessary.
+.PP
+The
+.PN sethostent
+subroutine
+opens and rewinds the file.  If the
+.I stayopen
+flag is non-zero,
+the host data base will not be closed after each call to 
+.PN gethostent
+(either directly, or indirectly through one of the other
+\*(lqgethost\*(rq calls).
+.PP
+The
+.PN endhostent
+subroutine closes the file.
+.PP
+The
+.PN gethostbyname
+and
+.PN gethostbyaddr
+subroutines
+sequentially search from the beginning
+of the file until a matching
+host name or
+host address is found,
+or until EOF is encountered.
+Host addresses are supplied in network order.
+.SH RESTRICTIONS
+All information
+is contained in a static area
+so it must be copied if it is
+to be saved.  Only the Internet
+address format is currently understood.
+.PP
+If YP is running, 
+.PN getgrent
+does not return the entries in any particular order.
+.SH DIAGNOSTICS
+Null pointer
+(0) returned on EOF or error.
+.SH FILES
+/etc/hosts
+.SH "SEE ALSO"
+ypclnt(3yp), hosts(5)

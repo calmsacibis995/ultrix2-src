@@ -1,0 +1,41 @@
+.TH dgateway 5
+.SH NAME
+dgateway \- name of the intermediate host (DECnet gateway)
+.SH DESCRIPTION
+The
+.PN dgateway
+file contains the ASCII name of the ULTRIX system serving as
+the intermediate host (gateway system) used by
+dgate(1c)
+to connect to the DECnet network.  This gateway system
+must be connected to the local system through a local area
+(TCP/IP) network, and to DECnet systems through the DECnet
+network.
+.PP
+The dgate(1c) command first looks in your home
+directory for a file named .dgateway.
+The .dgateway file should contain one
+(and only one) system, followed by a newline.  In this case,
+you must have an account on the gateway system, as the
+dgate(1c) command will log in to this account to
+do its work there.
+.PP
+If there is no .dgateway file in your home directory,
+the dgate(1c) command looks for the file /etc/gateway,
+which has some optional additional fields, separated by spaces:
+.EX
+gateway [ account ] [ path-to-dgated ]
+.EE
+.PP
+In this case, the dgate(1c) command logs into
+the gateway machine using 
+.PN setuid 
+to the \fIaccount\fR
+specified.  If none is specified, the default of the
+\fIguest\fR account is used.  The last optional field
+specifies the pathname for the dgated(8) daemon.
+The default is /etc/dgated.
+.SH FILES
+/etc/dgateway
+.SH SEE ALSO 
+dgate(1c), dgated(8) 

@@ -1,0 +1,65 @@
+.TH se 4 
+.SH NAME
+se \- DESVA 10 Mb/s Ethernet interface
+.SH SYNTAX
+.B "device se0 at uba0 csr 0x200e0000 vector seintr"
+.SH DESCRIPTION
+The
+.PN se
+interface provides access to a 10 Mb/s Ethernet network through
+the DEC DESVA controller.
+The DESVA controller is used with the busless small VAX processors.
+.PP
+The host's Internet address is specified at boot time with
+an SIOCSIFADDR ioctl.
+The
+.PN se
+interface employs the address resolution protocol described in
+arp(4p)
+to map dynamically between Internet and Ethernet addresses on the local
+network.
+.PP
+The interface normally tries to use a ``trailer'' encapsulation
+to minimize copying data on input and output.  This can be
+disabled for an interface by setting the IFF_NOTRAILERS
+flag with an SIOCSIFFLAGS ioctl.
+Trailers are only used for packets destined for Internet hosts.
+.PP
+The SIOCSPHYSADDR ioctl can be used to change 
+the physical address of the DESVA.  The
+SIOCRPHYSADDR ioctl can
+be used to read the physical address of the DESVA.
+.PP
+The SIOCADDMULTI and SIOCDELMULTI ioctls can be used to add or delete
+multicast addresses.  
+The DESVA currently recognizes a maximum of 12 multicast addresses.
+.PP
+The SIOCRDCTRS and SIOCRDZCTRS ioctls can be used to read or 
+"read and clear" the Ethernet driver counters.
+The argument to these two ioctls is a pointer to a counter
+structure, ctrreq, found in <net/if.h>.
+.PP
+The SIOCENABLBACK and SIOCDISABLBACK ioctls can be used to enable
+and disable the interface loopback mode respectively.
+.SH DIAGNOSTICS
+The diagnostic error messages contain relevant information provided
+by the DESVA.  For example,
+.EX
+se: can't handle af%d
+.EE
+.PP
+The interface was handed
+a message with addresses formatted in an unsuitable address
+family, and the packet was dropped.
+.EX
+se: memory error (MERR)
+mser = nnnn
+mear = nnnn
+.EE
+A memory parity error has occurred. 
+The memory system error register (mser) and
+memory error address register (mear) are printed.
+The mear contains the page number of the physical address
+of the failing byte when the parity error occurred.
+.SH SEE ALSO
+arp(4p), inet(4f), intro(4n)

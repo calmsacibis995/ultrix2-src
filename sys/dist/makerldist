@@ -1,0 +1,30 @@
+
+#!/bin/csh
+# Script to create TAR format floppies.
+# invoke as makedist
+
+
+# Parameters.
+# The following is the destination disk drive name.
+set DEST = "/dev/rrb0c"
+# The following is the flag arguments to the tar commands.
+set TARG = "kbf"
+# The following is the block size for tar to use.
+set TBLOCK = "80"
+
+echo ""
+echo "Building the main distribution disks."
+echo ""
+echo "Insert disk 1 in RL drive 0."
+disk1:
+echo -n "Type a return when ready.   "
+set xxx = $<
+
+echo ""
+tar c$TARG $TBLOCK $DEST
+echo "disk 1 completed"
+
+echo ""
+echo "All disks completed."
+
+# end

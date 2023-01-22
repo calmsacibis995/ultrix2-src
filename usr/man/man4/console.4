@@ -1,0 +1,81 @@
+.TH console 4
+.SH NAME
+console \- console interface
+.SH DESCRIPTION
+On all but the busless small VAX processors,
+the console is available to the processor through the console registers.
+It acts like a normal terminal, except that when the local functions are
+not disabled, CTRL/P puts the console in local console mode (where
+the prompt is ``>>>'').  This is true for all processors except the
+Microvax line and busless small VAX processors (see below).
+The operation of the console in this mode varies
+slightly for each processor.
+.PP
+On an 11/780 (or 11/785),
+if you press the BREAK key on the console,
+the console will go into ODT (console debugger mode).  
+Press P (upper-case letter p) to return from this mode.
+.PP
+On an 11/750 or an 11/730 (11/725),
+the processor is halted whenever the console is not 
+in conversational mode, 
+and typing ``C'' returns to conversational mode.
+When in console mode on an 11/750 which has a remote diagnosis module,
+a CTRL/D will put you in remote diagnosis mode,
+where the prompt will be ``RDM>''.
+The command ``ret'' will return from remote diagnosis
+mode to local console mode.
+.PP
+On any Microvax, halt the processor by depressing the HALT 
+button on the front panel. 
+Typing CTRL/P has no effect on either the Microvax-I or the
+Microvax-II.  Return to the running system by pressing ``c''
+on the console terminal after the HALT button is released.
+.PP
+On the busless small VAX processor, halt the 
+processor by depressing the HALT button
+on the rear panel (located next to the printer port connector).
+If the diagnostic console terminal is attached (see ss(4)),
+halt the processor by depressing the BREAK key.
+Typing CTRL/P has no effect on the busless small VAX processor.
+Return to the running system by typing ``c''
+on the console terminal.
+.PP
+On an 8800 (8700, 8500, 8550),
+you can return to the conversational mode using the command
+``set t p'' (set terminal program) if the processor is still
+running, or ``continue'' if it is halted.
+The latter command may be abbreviated ``c''.
+Halt the processor by typing CTRL/P.  Restart the processor 
+by typing ``c''.
+.PP
+On an 8600 (8650), halt the processor by typing CTRL/P when the
+terminal control switch on the front panel is in the LOCAL or 
+REMOTE position.  When this switch is in the LOCAL position,
+pressing CTRL/P at the console terminal is the only way to halt
+the processor. 
+When the switch is in the REMOTE position, both the
+console terminal and the remote terminal (if present) can halt the
+processor.  When the terminal control switch is in either LOCAL
+position only the console terminal will operate as any other ULTRIX
+terminal.  When the terminal control switch is in either REMOTE
+position both the console terminal and the remote terminal will
+operate as any other ULTRIX terminal.
+.PP
+On an 8100 (8200, 8300),
+halt the processor by typing CTRL/P when the console is
+ENABLED.  Return to the running system by typing ``c'' to continue.
+.SH RESTRICTIONS
+On all but the busless small VAX processors,
+the console serial line should be used at a relatively low baud rate
+(2400 BPS or less) as it generally interrupts the CPU for each
+character received or transmitted. Higher baud rates are permitted
+but generally impede system performance so much as to warrant using
+a lower baud rate.
+On the small VAX, the console operates at 9600 BPS for a terminal
+or 4800 BPS for a graphics device.  For further information,
+see ss(4).
+.SH FILES
+/dev/console
+.SH SEE ALSO
+cty(4), ss(4), tty(4), MAKEDEV(8)

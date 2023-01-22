@@ -1,0 +1,110 @@
+.TH prof 1 
+.SH NAME
+prof \- display profile data
+.SH SYNTAX
+.B prof
+[
+.B \-a
+] [
+.B \-l
+] [
+.B \-n
+] [
+.B \-z
+] [
+.B \-s
+] [
+.B \-v
+[
+.BI \- "low\fR [ \fB\-\fIhigh\fR ]"
+] ]
+[ file1
+[ file2... ] ]
+.SH DESCRIPTION
+The
+.PN prof
+command interprets the file produced by the
+.PN monitor(3)
+subroutine.
+Under default modes,
+the symbol table in the
+named object file
+(a.out
+default)
+is read and correlated with the
+profile file
+(mon.out
+default).
+For each external symbol, the percentage
+of time spent executing between that symbol
+and the next
+is printed (in decreasing order),
+together with the number of times that routine was called
+and the number of milliseconds per call.
+If more than one profile file is specified,
+the output represents the sum of the profiles.
+.PP
+In order for the number of calls to a routine to be tallied,
+the
+.B \-p
+option of
+.PN cc(1),
+.PN f77(1)
+or
+.PN pc(1)
+must have been given when the file containing the
+routine was compiled.
+This option also arranges for the
+profile file to be produced automatically.
+.PP
+Options are:
+.TP
+.B \-a
+all symbols are reported rather than
+just external symbols.
+.TP
+.B \-l
+the output is sorted by symbol value.
+.TP
+.B \-n
+the output is sorted by number of calls
+.TP
+.B \-s
+a summary profile file is produced in mon.sum.
+This is useful only
+when more than one profile file is specified.
+.TP
+.B \-v
+all printing is suppressed
+and a graphic version of the profile
+is produced
+on the standard output for display by the
+.PN plot(1g) 
+filters.
+When plotting, the numbers
+.I low
+and 
+.I high,
+by default 0 and 100, may be given, which causes a selected
+percentage of the profile to be plotted
+with accordingly higher resolution.
+.TP
+.B \-z
+routines which have zero usage, as indicated by call counts
+and accumulated time, are printed in the output.
+.SH RESTRICTIONS
+Beware of quantization errors.
+.PP
+The
+.PN f77
+command causes confusion because the entry points are 
+at the bottom of subroutines and functions.
+.SH FILES
+.ta \w'mon.out  'u
+mon.out	for profile
+.br
+a.out		for namelist
+.br
+mon.sum	for summary profile
+.SH "SEE ALSO"
+cc(1), plot(1g), profil(2), monitor(3)

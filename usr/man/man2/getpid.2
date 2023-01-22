@@ -1,0 +1,37 @@
+.\" Last modified by BAM on 4-Dec-1985 1300.
+.\"
+.\" Last modified by BAM on 2-Aug-85  1000  
+.\"
+.TH getpid 2
+.SH NAME
+getpid, getppid \- get process identification
+.SH SYNTAX
+.ft B
+.nf
+pid = getpid()
+long pid;
+.sp
+ppid = getppid()
+long ppid;
+.fi
+.ft R
+.SH DESCRIPTION
+The
+.PN getpid
+system call returns the process ID of the current process.
+Most often it is used with the host identifier gethostid(2)
+to generate uniquely-named temporary files.
+.PP
+The
+.PN getppid
+system call returns the process ID of the parent
+of the current process. 
+.SH ENVIRONMENT
+Differs from the System V definition in that the return
+values 
+.PN getpid
+and 
+.PN getppid
+are longs instead of ints.  
+.SH "SEE ALSO
+gethostid(2)

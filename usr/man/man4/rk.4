@@ -1,0 +1,122 @@
+.TH rk 4
+.SH NAME
+rk \- RK711/RK07 disk controller interface
+.SH SYNTAX
+.B "controller hk0 at uba? csr 0177440 vector rkintr"
+.br
+.B "disk rk0 at hk0 drive 0"
+.SH DESCRIPTION
+Files with minor device numbers 0 through 7 refer to various portions
+of drive 0;
+minor devices 8 through 15 refer to drive 1, and so forth.
+The standard device names begin with ``hk'' followed by
+the drive number and then a letter a through h for
+partitions 0 through 7 respectively.
+The character ? stands here for a drive number in the range
+0 through 7.
+.PP
+The block files access the disk using the system's normal
+buffering mechanism and can be read and written without regard to
+physical disk records.	There is also a raw interface
+that provides for direct transmission between the disk
+and the user's read or write buffer.
+A single read or write call results in exactly one I/O operation
+and therefore raw I/O is considerably more efficient when
+many words are transmitted.  The names of the raw files
+conventionally begin with an extra "r".
+.PP
+In raw I/O, counts should be a multiple of 512 bytes (a disk sector).
+Likewise
+.I seek
+calls should specify a multiple of 512 bytes.
+.PP
+The origin and size (in sectors) of the
+pseudodisks on each drive are as follows:
+.PP
+.nf
+.ta .5i +\w'000000    'u +\w'000000    'u +\w'000000	'u
+RK07 partitions:
+	disk	start	length	cyl
+
+	hk?a	0	15884	0-240
+	hk?b	15906	10032	241-392
+	hk?c	0	53790	0-814
+	hk?g	26004	27786	393-813
+.DT
+.fi
+.PP
+.SH RESTRICTIONS
+In raw I/O
+.I read
+and
+write(2)
+truncate file offsets to 512-byte block boundaries,
+and
+.I write
+scribbles on the tail of incomplete blocks.
+Thus,
+in programs that are likely to access raw devices,
+.I read, write
+and
+lseek(2)
+should always deal in 512-byte multiples.
+.SH DIAGNOSTICS
+The following messages are printed at the console:
+.PP
+\fBrk%d%c: hard error sn%d\fR.
+.br
+An unrecoverable error occurred during transfer of the
+specified sector of the specified disk partition.
+Either the error was unrecoverable, or a large number of retry attempts
+(including offset positioning and drive recalibration) could not
+recover the error.  Additional register information may be
+gathered from the system error log file,
+/usr/adm/syserr/syserr.<hostname> .
+.PP
+\fBrk%d: write locked\fR.
+.br
+The write protect switch was set on the drive when
+a write was attempted.
+The write operation is not recoverable.
+.PP
+\fBrk%d: not ready\fR.
+.br
+The drive was spun down or off line when it was
+accessed.
+The I/O operation is not recoverable.
+.PP
+\fBrk%d: not ready (came back!)\fR.
+.br
+The drive was not ready.
+But after printing this message (which takes a fraction
+of a second), it was ready.
+The operation is recovered if no further errors occur.
+.PP
+\fBhk%d: lost interrupt\fR
+.br
+A timer watching the controller detected no interrupt for
+an extended period while an operation was outstanding.
+This indicates a hardware or software failure.
+There is currently a hardware/software problem with spinning
+down drives while they are being accessed which causes this
+error to occur.
+The error causes a UNIBUS reset, and retry of the pending operations.
+If the controller continues to lose interrupts, this error will recur
+a few seconds later.
+.PP
+\fBrk%d%c: soft ecc sn%d\fR
+.br
+This message is written to the system error log file only:
+A recoverable ECC error occurred on the specified sector
+in the specified disk partition.
+This happens normally a few times a week.
+If it happens more frequently than this,
+the sectors where the errors are occurring should be checked to see
+if certain cylinders on the pack, spots on the carriage of the drive
+or heads are indicated.
+.SH FILES
+/dev/hk???
+.br
+/dev/rhk???
+.SH SEE ALSO
+dkio(4), nbuf(4), MAKEDEV(8), uerf(8)

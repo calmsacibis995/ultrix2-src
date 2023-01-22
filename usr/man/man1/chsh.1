@@ -1,0 +1,33 @@
+.TH chsh 1
+.SH NAME
+chsh \- change default login shell
+.SH SYNTAX
+.B chsh
+name
+[
+shell
+]
+.SH DESCRIPTION
+The
+.PN chsh
+command is a command similar to
+.PN passwd(1),
+except that it is used to change the login shell field of the password
+file rather than the password entry.
+If no shell is specified
+then the shell reverts to the default login shell
+.PN /bin/sh.
+Otherwise only
+.PN /bin/csh,
+.PN /bin/oldcsh,
+or
+.PN /usr/new/csh
+can be specified as the shell unless you are the superuser.
+.PP
+An example use of this command is:
+.PP
+.EX
+	chsh bill /bin/csh
+.EE
+.SH "SEE ALSO"
+csh(1), passwd(1), yppasswd(1yp), passwd(5yp)

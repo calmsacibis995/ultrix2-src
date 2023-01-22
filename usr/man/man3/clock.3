@@ -1,0 +1,30 @@
+.TH clock 3 
+.SH NAME
+clock \- report CPU time used
+.SH SYNTAX
+.B long clock ( )
+.SH DESCRIPTION
+The
+.PN clock
+routine returns the amount of CPU time 
+(in microseconds) used since the
+first call to
+.PN clock.
+The time reported is the sum of the user and system times of the
+calling process and its terminated child processes 
+for which it has executed wait(2)
+or system(3).
+.PP
+The resolution of the clock is 10 milliseconds on Western Electric 3B
+processors,
+16.667 milliseconds on Digital Equipment Corporation processors.
+.SH RESTRICTIONS
+The value returned by
+.PN clock
+is defined in microseconds for compatibility with systems that have
+CPU clocks with much higher resolution.
+Because of this, the value returned
+will wrap around after accumulating
+only 2147 seconds of CPU time (about 36 minutes).
+.SH SEE ALSO
+wait(2), times(3), system(3)

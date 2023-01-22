@@ -1,0 +1,34 @@
+.TH nfsd 8nfs
+.SH NAME
+nfsd \- NFS server daemon
+.SH SYNTAX
+.nf
+.B /etc/nfsd [nservers]
+.fi
+.SH DESCRIPTION
+.IX  "network file system"  "nfsd daemon"  ""  "\fLnfsd\fP daemon"
+.IX  "nfsd daemon"  ""  "\fLnfsd\fP daemon"
+.IX  "daemons"  "nfsd daemon"  ""  "\fLnfsd\fP daemon"
+The
+.B nfsd
+daemon starts the specified number of
+NFS
+server daemons which handle file system requests from clients.
+The 
+.B nservers
+argument tells
+.B nfsd
+how many file system server daemons to start.  This
+number should be based on the load expected on this server.
+The 
+.B nfsd
+daemon is normally invoked at boot time via the
+/etc/rc.local
+file.
+.SH EXAMPLE
+.EX
+/etc/nfsd 4    /* Start four daemons on a large machine /*  
+/etc/nfsd 2    /* Start two daemons on a MicroVAX /*      
+.EE
+.SH SEE ALSO
+exports(5nfs), mountd(8nfs)

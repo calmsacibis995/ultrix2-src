@@ -1,0 +1,43 @@
+.TH tftpd 8c
+.SH NAME
+tftpd \- DARPA Trivial File Transfer Protocol server
+.SH SYNTAX
+.B /etc/tftpd
+.SH DESCRIPTION
+The server,
+.PN tftpd,
+supports the DARPA Trivial File Transfer
+Protocol.  The TFTP server is invoked when
+.PN inetd(8c)
+receives a packet on
+the port indicated in the ``tftp'' service description;
+see
+.PN services(5).
+.PP
+The use of
+.PN tftp
+does not require an account or password on the remote system.
+Due to the lack of authentication information, 
+.PN tftpd
+will allow only publicly readable files to be
+accessed.
+Note that this extends the concept of ``public'' to include
+all users on all hosts that can be reached through the network;
+this may not be appropriate on all systems, and its implications
+should be considered before enabling tftp service.
+.SH RESTRICTIONS
+This server is known only to be self consistent
+(i.e. it operates with the user TFTP program,
+.PN tftp(1c)).
+Due to the unreliability of the transport protocol
+(UDP) and the scarcity of TFTP implementations,
+it is uncertain whether it really works.
+.PP
+The search permissions of the directories leading to the files accessed
+are not checked.
+.PP
+Due to the lack of an authentication strategy, it is suggested that
+.PN tftpd
+only be run in those environments that require this service.
+.SH "SEE ALSO"
+tftp(1c), inetd(8c)

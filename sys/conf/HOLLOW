@@ -1,0 +1,86 @@
+# @(#)HOLLOW	1.10	(ULTRIX)	6/5/86
+#
+# HOLLOW
+# Digital VAX 11/8650 (Morningstar) standalone developement machine
+#
+machine 	vax
+cpu		"VAX8650"
+ident		HOLLOW
+timezone	5 dst
+maxusers	256
+maxuprc 	25
+physmem 	68
+processors	1
+options 	QUOTA
+options 	INET
+options 	LAT
+options 	DLI
+
+config		vmunix		root on ra0 swap on ra0
+
+adapter		uba0	at nexus ?
+adapter		uba1	at nexus ?
+adapter		uba2	at nexus ?
+adapter		uba3	at nexus ?
+adapter		uba4	at nexus ?
+adapter		uba5	at nexus ?
+adapter		uba6	at nexus ?
+controller	uda0	at uba?
+controller	uq0	at uda0 csr 0172150		vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+disk		ra2	at uq0 drive 2
+disk		ra3	at uq0 drive 3
+controller	uda1	at uba?
+controller	uq1	at uda1 csr 0172150		vector uqintr
+disk		ra4	at uq1 drive 0
+disk		ra5	at uq1 drive 1
+disk		ra6	at uq1 drive 2
+disk		ra7	at uq1 drive 3
+controller	uda2	at uba?
+controller	uq2	at uda2 csr 0172150		vector uqintr
+disk		ra8	at uq2 drive 0
+disk		ra9	at uq2 drive 1
+disk		ra10	at uq2 drive 2
+disk		ra11	at uq2 drive 3
+controller	mba0	at nexus ?
+disk		hp0	at mba0 drive 0
+disk		hp1	at mba0 drive 1
+disk		hp2	at mba0 drive 2
+disk		hp3	at mba0 drive 3
+disk		hp4	at mba0 drive 4
+disk		hp5	at mba0 drive 5
+disk		hp6	at mba0 drive 6
+master		ht0	at mba0 drive 7
+tape		tu0	at ht0 slave 0
+master		mt0	at mba0 drive 2
+tape		mu0	at mt0 slave 0
+controller	klesiu0 at uba?
+controller	tmscp0	at klesiu0 csr 0174500		vector tmscpintr
+tape		tms0	at tmscp0 drive 0
+
+device		dmf0	at uba? csr 0160340		flags 0xff
+	vector dmfsrint dmfsxint dmfdaint dmfdbint dmfrint dmfxint dmflint
+device		dmz0	at uba? csr 0160540 flags 0xffffff
+	vector dmzrinta dmzxinta dmzrintb dmzxintb dmzrintc dmzxintc
+device		dmz1	at uba? csr 0160600 flags 0xffffff
+	vector dmzrinta dmzxinta dmzrintb dmzxintb dmzrintc dmzxintc
+device		dmz2	at uba? csr 0160640 flags 0xffffff
+	vector dmzrinta dmzxinta dmzrintb dmzxintb dmzrintc dmzxintc
+device		dmz3	at uba? csr 0160700 flags 0xffffff
+	vector dmzrinta dmzxinta dmzrintb dmzxintb dmzrintc dmzxintc
+device		de1	at uba? csr 0174510		vector deintr
+device		lp0	at uba? csr 0177514	vector lpintr
+
+pseudo-device	ether
+pseudo-device	loop
+
+pseudo-device	inet
+pseudo-device	pty	16
+
+pseudo-device	lat
+pseudo-device	lta	16
+
+pseudo-device	dli
+
+

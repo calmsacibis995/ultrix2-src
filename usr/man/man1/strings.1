@@ -1,0 +1,38 @@
+.TH strings 1
+.SH NAME
+strings \- find the printable strings in a object, or other binary, file
+.SH SYNTAX
+.B strings
+[
+.B \-
+] [
+.B \-o
+] [
+\fB\-\fInumber\fR
+] file ...
+.SH DESCRIPTION
+The
+.B strings
+command looks for ascii strings in a binary file.
+A string is any sequence of 4 or more printing characters ending with
+a newline or a null.
+Unless the
+.B \-
+flag is given,
+.B strings
+only looks in the initialized data space of object files.
+If the
+.B \-o
+flag is given, then each string is preceded by its offset in the
+file (in octal).
+If the
+\fB\-\fInumber\fR
+flag is given then number is used as the minimum string length
+rather than 4.
+.PP
+The
+.B strings
+command
+is useful for identifying random object files and many other things.
+.SH "SEE ALSO"
+od(1)

@@ -1,0 +1,25 @@
+
+This directory contains the tools to build the RL02 distribution kit.
+
+getstat
+	- program to get file sizes and types.
+
+ifempty.sh
+	- shell script to find empty directories.
+
+createmd
+	- program to create shell script which will build tar format disks.
+
+rldist.sh
+	- shell script to run getstat, ifempty.sh and createmd.
+
+TO RUN IT DO THE FOLLOWING:
+
+su
+	- become super user so that getstat can stat all of the files.
+
+rldist.sh [/path]
+	- Where /path is the path where the master pack is mounted.
+
+cd /path
+makerldist

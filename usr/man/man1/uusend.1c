@@ -1,0 +1,49 @@
+.TH uusend 1c
+.SH NAME
+uusend \- send a file to a remote host
+.SH SYNTAX
+.B uusend
+[
+.B -m
+mode
+]
+sourcefile
+sys1!sys2!..!remotefile
+.SH DESCRIPTION
+The
+.PN uusend
+command sends a file to a given location on a remote system.
+The system need not be directly connected to the local
+system, but a chain of 
+.PN uucp(1c)
+links needs to connect the two systems.
+.PP
+If the
+.B -m
+option is specified, the mode of the file on the remote
+end is taken from the octal number given.
+Otherwise, the mode of the input file is used.
+.PP
+The sourcefile
+can be ``-'',
+meaning to use the standard input.
+Both of these options are primarily intended for internal use of uusend.
+.PP
+The remotefile can include the ~userid syntax.
+.SH RESTRICTIONS
+All systems along the line must have the
+.PN uusend
+command available and allow remote execution of it.
+.PP
+Some uucp systems have a
+restriction where binary files cannot be the
+input to a 
+.PN uux(1c)
+command.
+If this exists in any system along the line,
+the file will show up severly distorted.
+.SH DIAGNOSTICS
+If anything goes wrong any further away than the first system down
+the line, you will never hear about it.
+.SH SEE ALSO
+uucp(1c), uuencode(1c), uux(1c)

@@ -1,0 +1,40 @@
+.TH floor 3m  "September 11, 1985"
+.SH NAME
+fabs, floor, ceil, rint \- absolute value, floor, ceiling, and
+round-to-nearest functions
+.SH SYNTAX 
+.nf
+.B #include <math.h>
+.PP
+.B double floor(x)
+.B double x;
+.PP
+.B double ceil(x)
+.B double x;
+.PP
+.B double fabs(x)
+.B double x;
+.PP
+.B double rint(x)
+.B double x;
+.fi
+.SH DESCRIPTION
+The
+.PN fabs 
+routine returns the absolute value |\|x\||.
+.PP
+The
+.PN floor 
+routine returns the largest integer no greater than x.
+.PP
+The
+.PN ceil
+routine returns the smallest integer no less than x.
+.PP
+The
+.PN rint 
+routine
+returns the integer (represented as a double precision number)
+nearest x in the direction of the prevailing rounding mode.
+.SH SEE ALSO
+abs(3), intro(3m)

@@ -1,0 +1,49 @@
+.TH ruptime 1c
+.SH NAME
+ruptime \- show host status of local machines
+.SH SYNTAX
+.B ruptime
+[ fB\-a\fR ] [ \fB\-l\fR ] [ \fB\-t\fR ] [ \fB\-u\fR ]
+.SH DESCRIPTION
+The
+.B ruptime
+command
+gives a status line like uptime(1)
+for each machine on the local network.
+These status lines are formed from packets broadcast by each host
+on the network once a minute.
+.PP
+Machines for which no
+status report has been received for 5 minutes are shown as being down.
+.SH OPTIONS
+.IP \fB\-a\fR .5i
+Users idle an hour or more are not counted unless this
+option is specified.
+.IP \fB\-d\fR .5i
+Display only those hosts that are considered down.
+.IP \fB\-l\fR .5i
+Sort the status list by load average.  If more than one sort
+option is given, 
+.B ruptime
+uses the last one.
+.IP \fB\-r\fR .5i
+Show only hosts that are up and running.
+.IP \fB\-t\fR .5i 
+Sort the status list by uptime.  If more than one sort option
+is given,
+.B ruptime
+uses the last one.
+.IP \fB\-u\fR .5i
+Sort the status list by number of users.  If more than one sort
+option is given,
+.B ruptime 
+uses the last one.
+.IP \fB\-\fInn\fR .5i
+Show only those hosts with
+.I nn
+or more users.
+.SH FILES
+.DT
+/usr/spool/rwho/whod.*	data files
+.SH SEE ALSO
+rwho(1c)

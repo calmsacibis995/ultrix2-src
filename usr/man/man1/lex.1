@@ -1,0 +1,74 @@
+.TH lex 1
+.SH NAME
+lex \- generator of lexical analysis programs
+.SH SYNTAX
+.B lex
+[
+.B \-tvfn
+] [ file ] ...
+.SH DESCRIPTION
+The 
+.B lex
+command
+generates programs to be used in simple lexical analysis of text.
+The input
+.I files
+(standard input default) contain regular expressions
+to be searched for, and actions written in C to be executed when
+expressions are found.
+.PP
+A C source program, 'lex.yy.c' is generated, to be compiled thus:
+.IP
+cc lex.yy.c \-ll
+.LP
+This program, when run, copies unrecognized portions of
+the input to the output, and executes the associated
+C action for each regular expression that is recognized.
+.SH OPTIONS
+.TP
+.B \-t
+Place the result on the standard output instead of in file "lex.yy.c".
+.TP
+.B \-v
+Print a one-line summary of statistics of the generated analyzer.
+.TP
+.B \-n
+Opposite of
+.BR \-v ;
+.B \-n
+is default.
+.TP
+.B \-f
+"Faster" compilation: don't bother to pack
+the resulting tables; limited to small programs.
+.SH EXAMPLE
+In the following example, the command
+.EX
+lex lexcommands
+.EE
+would draw
+.B lex
+instructions from the file
+.I lexcommands,
+and place the output in lex.yy.c.
+The command
+.EX
+%%
+[A\-Z]	putchar(yytext[0]+\'a\'\-\'A\');
+[ ]+$
+[ ]+	putchar(\' \');
+.EE
+.PP
+is an example of a
+.B lex
+program that would be put into a
+.B lex
+command file.  This program converts upper case to lower,
+removes blanks at the end of lines,
+and replaces multiple blanks by single blanks.
+.SH "SEE ALSO"
+sed(1), yacc(1)
+.br
+``LEX \- Lexical Analyzer Generator,''
+.I ULTRIX-32 Supplementary Documents,
+Vol. II:Programmer

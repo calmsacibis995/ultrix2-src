@@ -1,0 +1,59 @@
+/usr/newcsh is an enhanced version of the csh(1) that allows you to
+access interactively information that will greatly reduce your typing
+and memorization.  Newcsh provides a TOPS20-like recognition feature
+that allows you to complete and list full command names, file names,
+directory path names, variable names, and history keyword names with
+a single keystroke.
+
+In addition, newcsh allows you to prefix a defined string to your
+background process completion messages, to set a timer for automatic
+logout after a designated idle time, and to save command history between
+login sessions.
+
+RECOGNITION FEATURE
+~~~~~~~~~~~~~~~~~~~
+The recognition feature is invoked by typing the escape key, <ESC>,
+after command input that you want recognized.  For instance, if you have
+only one command with the first characters ``for'' in your command search
+path, say ``foreach'', then typing:
+
+		% for<ESC>
+will result in
+		% foreach
+
+being filled in on the terminal line.  Notice that command input
+resumes at the point where the <CTRL/D> was typed.
+
+If there is more than one possible completion for a command, then
+completion will occur for all characters that are common to the set of
+possible completions and the terminal bell will be rung.  The list of
+possible completions can then be listed on the terminal by typing a
+<CTRL/D>.  For instance, suppose that in addition to the above ``foreach''
+command you also had an alias called ``forth''. You would get a beep when
+you hit <ESC>, indicating that there is no unique completion for ``for''.
+Typing <CTRL/D> at this point will show:
+
+		%for<CTRL/D>
+		foreach   forth
+		%for
+
+Recognition and listing can be performed for various items.  The source
+for the recognition depends on the word being recognized.  If a word
+starts with a dollar signs (`$') it is assumed to be a variable, a
+history character (usually `!') as the first character makes it a history
+keyword, a tilde (`~') is a login name--unless explicitly shown to be a
+directory.
+
+OTHER FEATURES
+~~~~~~~~~~~~~~
+The contents of your notify variable will be prepended to subprocess
+completion messages.  For instance, setting notify to be <CTRL/G>
+causes the terminal to beep when background processes change state.
+
+A new shell variable, autologout, has been implemented.  If your
+terminal is idle for a greater number of minutes than indicated in
+this variable, then it will be logged off.  Unset autologout, to disable
+this feature.
+
+If the shell variable savehist is defined, then that number of commands
+will be saved in a file, .history, for later restoration.

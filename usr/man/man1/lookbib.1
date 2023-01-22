@@ -1,0 +1,83 @@
+.TH lookbib 1
+.SH NAME
+indxbib, lookbib \- build inverted index for a bibliography, find references in a bibliography
+.SH SYNTAX
+.B indxbib
+database  ...
+.br
+.B lookbib
+database
+.SH DESCRIPTION
+The
+.B indxbib
+makes an inverted index to the named
+.I databases
+(or files) for use by
+lookbib(1) and refer(1).
+These files contain bibliographic references
+(or other kinds of information) separated by blank lines.
+.PP
+A bibliographic reference is a set of lines,
+constituting fields of bibliographic information.
+Each field starts on a line beginning with a ``%'',
+followed by a key-letter, then a blank,
+and finally the contents of the field,
+which may continue until the next line starting with ``%''.
+.PP
+The
+.B Indxbib 
+command is a shell script that calls
+/usr/lib/refer/mkey and /usr/lib/refer/inv.
+The first program,
+.I mkey,
+truncates words to 6 characters,
+and maps upper case to lower case.
+It also discards words shorter than 3 characters,
+words among the 100 most common English words,
+and numbers (dates) < 1900 or > 2000.
+These parameters can be changed. 
+The second program,
+.I inv,
+creates an entry file (.ia),
+a posting file (.ib), and a tag file (.ic),
+all in the working directory.
+.PP
+The
+.B lookbib
+command uses an inverted index made by
+.B indxbib
+to find sets of bibliographic references.
+It reads keywords typed after the ``>'' prompt on the terminal,
+and retrieves records containing all these keywords.
+If nothing matches, nothing is returned except another ``>'' prompt.
+.PP
+It is possible to search multiple databases,
+as long as they have a common index made by
+.B indxbib.
+In that case, only the first argument given to
+.B indxbib
+is specified to
+.B lookbib.
+.PP
+If
+.B lookbib
+does not find the index files (the .i[abc] files),
+it looks for a reference file with the same name as the argument,
+without the suffixes.
+It creates a file with a '.ig' suffix, suitable for use with
+.B fgrep.
+It then uses this fgrep file to find references.
+This method is simpler to use, but the .ig file is slower to use
+than the .i[abc] files,
+and does not allow the use of multiple reference files.
+.SH FILES
+.IR x .ia,
+.IR x .ib,
+.IR x .ic,
+where 
+.I x
+is the first argument, or if these are not present, then
+.IR x .ig,
+.IR x
+.SH SEE ALSO
+addbib(1), lookbib(1), refer(1), roffbib(1), sortbib(1),

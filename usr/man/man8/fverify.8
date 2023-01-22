@@ -1,0 +1,39 @@
+.TH  fverify 8 
+.SH NAME
+fverify \- verify software subsets
+.SH SYNTAX
+.B fverify [\-yn]
+.br
+.SH DESCRIPTION
+The
+.B fverify
+command
+insures the correctness of installed software and report
+inconsistencies in file size, checksum, user id, group id, mode,
+and file type. File user id, group id, and mode inconsistencies
+may be optionally corrected.
+.PP
+The
+.B fverify
+command
+reads software subset inventory records from
+standard input and verifies that the files on the system match the
+corresponding records. 
+Invoking
+.B fverify
+with no arguments will cause it report errors to
+the standard output and prompt the user before making repairs.
+Use of the \-n switch causes
+.B fverify
+to report errors only. Use of the \-y switch causes fverify to
+silently correct all minor errors.
+.PP
+The
+.B fverify
+command logs all of it's findings on the file
+/verify.log for later inspection.
+.PP
+.SH FILES
+/usr/adm/subsets/*.inv
+.br
+/verify.log

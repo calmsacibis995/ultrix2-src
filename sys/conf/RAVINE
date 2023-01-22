@@ -1,0 +1,57 @@
+# @(#)RAVINE	1.6	(ULTRIX)	6/5/86
+#
+# RAVINE
+# Digital VAX 11/785 (SuperStar) developement machine
+#
+machine		vax
+cpu		"VAX785"
+ident		RAVINE
+timezone	5 dst
+maxusers	80
+physmem		24
+options		INET
+options		QUOTA
+options		LAT
+options		DECNET
+options		DLI
+
+config		vmunix		root on ra0 swap on ra0 and ra1
+
+adapter		mba0	at nexus ?
+adapter		mba1	at nexus ?
+adapter		uba0	at nexus ?
+adapter		uba1	at nexus ?
+disk		hp0	at mba? drive 0
+disk		hp1	at mba? drive 1
+disk		hp2	at mba? drive 2
+disk		hp3	at mba? drive 3
+master		ht0	at mba? drive ?
+tape		tu0	at ht0 slave 0
+tape		tu1	at ht0 slave 1
+master		mt0	at mba? drive ?
+tape		mu0	at mt0 slave 0
+tape		mu1	at mt0 slave 1
+controller	uda0	at uba?
+controller	uq0	at uda0 csr 0172150	vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+disk		ra2	at uq0 drive 2
+disk		ra3	at uq0 drive 3
+device		lp0	at uba? csr 0177514	vector lpintr
+device		de0	at uba? csr 0174510		vector deintr
+device		dz0	at uba? csr 0160100 flags 0x00	vector dzrint dzxint
+device		dz1	at uba? csr 0160110 flags 0x00	vector dzrint dzxint
+device		dmf0	at uba? csr 0160400 flags 0xfc
+	vector dmfsrint dmfsxint dmfdaint dmfdbint dmfrint dmfxint dmflint
+device		dhu0	at uba? csr 0160540 flags 0x00ff vector dhurint dhuxint
+device		dmz0	at uba? csr 0160600 flags 0xff00ff
+	vector dmzrinta dmzxinta dmzrintb dmzxintb dmzrintc dmzxintc
+
+pseudo-device	pty
+pseudo-device	inet
+pseudo-device	loop
+pseudo-device	ether
+pseudo-device	lat
+pseudo-device	lta
+pseudo-device	decnet
+pseudo-device	dli

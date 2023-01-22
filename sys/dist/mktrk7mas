@@ -1,0 +1,10 @@
+echo "Makeing a pack for the tape and rk07 building procedures"
+echo "Mount a working master system in hp1 on /Ultrix and /Ultrix/usr"
+echo "This will change the filesystem layout some."
+#
+#
+#
+mv ${MASTER}/usr/lib/learn ${MASTER}/usr/learn
+mv ${MASTER}/usr/lib/vfont ${MASTER}/usr/vfont
+mv ${MASTER}/usr/lib/lisp ${MASTER}/usr/lisp
+echo "Done"

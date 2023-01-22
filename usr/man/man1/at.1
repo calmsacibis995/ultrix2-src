@@ -1,0 +1,88 @@
+.TH at 1
+.SH NAME
+at \- execute commands at a later time
+.SH SYNTAX
+.B at
+time
+[
+day
+]
+[
+file
+]
+.SH DESCRIPTION
+The
+.B at
+command
+uses a copy of the named
+.I file
+(standard input default)
+as input to
+sh(1)
+(or
+csh(1)
+if you normally use it)
+at a specified later time.
+A
+.B cd
+command to the current directory is inserted
+at the beginning,
+followed by assignments to all environment variables.
+When the script is run, it uses the user and group ID
+of the creator of the copy file.
+.PP
+The
+.I time
+is 1 to 4 digits, with an optional following
+`A', `P', `N' or `M' for
+AM, PM, noon or midnight.
+One and two digit numbers are taken to be hours, three and four digits
+to be hours and minutes.
+If no letters follow the digits, a 24 hour clock time is understood.
+.PP
+The optional
+.I day
+is either
+a month name followed by a day number,
+or
+a day of the week.  If the word `week' follows
+invocation is moved seven days further off.
+Names of months and days may be recognizably truncated.
+Examples of legitimate commands are
+.IP
+at 8am jan 24
+.br
+at 1530 fr week
+.PP
+The
+.B at
+programs are executed by periodic execution
+of the command /usr/lib/atrun from cron(8).
+The granularity of
+.B at
+depends upon how often
+.I atrun
+is executed.
+.PP
+Standard output or error output is lost unless redirected.
+.SH RESTRICTIONS
+Due to the granularity of the execution of /usr/lib/atrun,
+there may be bugs in scheduling things almost
+exactly 24 hours into the future.
+.SH DIAGNOSTICS
+Complains about various syntax errors and times out of range.
+.SH FILES
+.ta 2i
+/usr/lib/atrun	executor run by 
+cron(8).
+.sp
+in /usr/spool/at:
+.ta .5i 2i
+.br
+\&	yy.ddd.hhhh.*	activity for year yy, day dd, hour hhhh.
+.br
+\&	lasttimedone	last \fIhhhh\fR
+.br
+\&	past	activities in progress
+.SH "SEE ALSO"
+calendar(1), pwd(1), sleep(1), cron(8)

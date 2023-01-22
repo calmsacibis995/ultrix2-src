@@ -1,0 +1,110 @@
+.TH uustat 1c
+.SH NAME
+uustat \- uucp status inquiry and job control
+.SH SYNTAX
+.B uustat
+[ options ] 
+.SH DESCRIPTION
+The
+.B uustat
+command either displays the status of or cancels previously specified
+.B uucp
+commands, or it provides general status on 
+.B uucp
+connections to other systems.
+.SH OPTIONS
+.IP -\fBm\fP\fImch\fP
+Report the status of accessibility of machine \fImch\fP.
+If \fImch\fP is specified as \fBall\fP, then the status of all
+machines known to the local \fIuucp\fP are provided.
+.IP -\fBk\fP\fIjobn\fP
+Kill the \fIuucp\fP request whose job number is \fIjobn\fP.
+The killed \fIuucp\fP request must belong to the person issuing 
+the \fIuustat\fP command unless that person has "super-user"
+privilege.
+.IP -\fBc\fP\fIhour\fP
+Remove the status entries which are older than \fIhour\fP hours.
+This option can only be executed by the user \fBuucp\fP
+or the super-user.
+.IP -\fBu\fP\fIuser\fP
+Report the status of all \fIuucp\fP requests issued by \fIuser\fP.
+.IP -\fBs\fP\fIsys\fP
+Report the status of all \fIuucp\fP requests which are destined for
+remote system \fIsys\fP.
+.IP -\fBo\fP\fIhour\fP
+Report the status of all \fIuucp\fP requests which are older than 
+\fIhour\fP hours.
+.IP -\fBy\fP\fIhour\fP
+Report the status of all \fIuucp\fP requests which are younger than
+\fIhour\fP hours.
+.IP -\fBj\fP\fIall\fP
+Report the status of \fBall\fP \fIuucp\fP requests or the
+specified job (request) number.
+.IP -\fBv\fP 
+Report \fIuucp\fP status verbosely.  
+If this option is not specified, a status code is printed with each
+\fIuucp\fP request.
+.PP
+When no options are given, \fIuustat\fP outputs the status of all
+\fIuucp\fP requests issued by the current user.
+Note that only one of the options \fB-j, -m, -k, -c, \fP  
+can be used with the other options.
+For example, the command
+.IP
+uustat -usteve -slimbo -y63 -v
+.PP
+will print the verbose status of all \fIuucp\fP jobs
+that were issued by user \fIsteve\fP destined for system
+\fIlimbo\fP within the last 63 hours.
+The format of each job status entry is:
+.sp
+job# user destination spool_time status_time status
+.sp
+where the \fIstatus\fP may be either an octal number or a verbose
+description.
+The octal code corresponds to the following description:
+.nf 
+
+OCTAL	STATUS
+00001	the copy failed for unknown reasons.
+00002	permission to access local file is denied.
+00004	permission to access remote file is denied.
+00010	bad \fIuucp\fP command is generated.
+00020	remote system cannot create temporary file.
+00040	cannot copy to remote directory.
+00100	cannot copy to local directory.
+00200	local system cannot create temporary file.
+00400	cannot execute \fIuucp\fP.
+01000	copy succeeded.
+02000	copy finished, job deleted.
+04000	job is queued.
+.fi
+.PP
+The format for the machine accessibility status entries is:
+.sp
+system  status_time   last_success_time   status
+.sp
+where
+.IP \fBsystem\fP
+is the system in question
+.IP \fBstatus_time\fP
+is the time the last status entry was made.
+.IP \fBlast_success_time\fP
+is the last time a connection was successfully made to
+this system.
+A conversation could be ended prematurely after a 
+successful connection.
+.IP \fBstatus\fP
+is a self-explanatory description of the machine status.
+.sp
+.PP
+In the current implementation \fIuux\fP requests are not
+recorded in the \fIuustat\fP logging files.
+This implies that \fImail\fP and \fInews\fP requests are not recorded
+by \fIuustat\fP.
+.SH FILES
+/usr/spool/uucp/	spool directory (top level)
+/usr/lib/uucp/L_stat	system status file
+/usr/lib/uucp/R_stat	request status file
+.SH SEE ALSO
+uucp(1c)

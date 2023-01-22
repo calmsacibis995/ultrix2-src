@@ -1,0 +1,52 @@
+#
+#	11/3/84	(Ultrix)	@(#)rk07root	1.1
+#
+#  This file is a script to build a subset of a root to stick on
+#  the front of a rk07.  The intent is that this contain just enough
+# to do maintaince and back up of the pack to another rk07.  This
+# should make the rk07 distrabution usable.
+#
+#
+#
+#
+# set things up.
+newfs rhk0a rk07
+mount /dev/hk0a ${DEST}
+cd ${DEST}
+# create some directorys
+mkdir etc bin tmp mnt
+cp ${MASTER}/vmunix ${DEST}/vmunix
+cp ${MASTER}/genvmunix ${DEST}/genvmunix
+cp ${MASTER}/.profile ${DEST}/.
+cp ${MASTER}/boot ${DEST}/boot
+cp ${MASTER}/pcs750.bin ${DEST}/pcs750.bin
+cp ${MASTER}/etc/dumpdates ${DEST}/etc/dumpdates
+cp ${MASTER}/etc/fstab ${DEST}/etc/fstab
+# create a mdec dir so newfs can build bootable packs
+mkdir ${DEST}/usr
+mkdir ${DEST}/usr/mdec
+cp ${MASTER}/usr/mdec/hkboot ${DEST}/usr/mdec
+cp ${MASTER}/usr/mdec/boothk ${DEST}/usr/mdec
+cp ${MASTER}/usr/mdec/installboot ${DEST}/usr/mdec
+#
+#
+cd ${MASTER}/bin
+#
+tar ckf - awk cat chgrp chmod cmp cp csh date dd df diff du echo ed \
+expr false grep kill ln login ls mkdir mv nice nm od \
+ps pwd rm rmdir sed sh size strip stty su sync tar tee test \[ true \
+| ( cd ${DEST}/bin;tar xpf - )
+cd ${MASTER}/etc
+tar ckf -  fsck dump restore config bad144 badsect chown dcheck diskpart \
+disktab dmesg dump fsck halt icheck init mkfs \
+mklost+found mknod mkproto motd mount ncheck newfs passwd \
+pstat reboot restore shutdown termcap ttys ttytype tunefs umount update \
+| ( cd ${DEST}/etc;tar xpf - )
+cd /
+sync
+mkdir ${DEST}/dev
+cd ${DEST}/dev
+cp /dev/MAKEDEV .
+MAKEDEV std hk0 hk1
+cd /
+umount /dev/hk0a

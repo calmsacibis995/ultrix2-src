@@ -1,0 +1,86 @@
+.TH yppush 8yp
+./" Last edited by Jeff J. 6/24/86
+.SH NAME
+yppush \- force propagation of a changed YP map
+.SH SYNTAX
+.B yppush
+[
+.B \-d
+.I domain 
+] 
+[
+.B \-v
+]
+.I mapname
+.SH DESCRIPTION
+The 
+.B yppush
+command copies a new version of a Yellow Pages (YP) 
+map from the master YP server to the
+slave YP servers.
+It is normally run only on the master YP server by the 
+.B make
+utility accessing the
+/usr/etc/yp/Makefile
+after the master YP databases have been changed.
+When invoked,
+.B yppush 
+first constructs a list of YP server hosts by reading the YP map 
+\fIypservers\fR within the 
+.I domain.  
+Keys within the map
+.I ypservers
+are the ASCII names of the machines on which the YP servers
+run.  
+.LP
+A transfer map request is sent to the YP server at each host, 
+along with the information needed by the transfer agent (the program
+which actually moves the map) to call back the 
+.B yppush
+command.
+When the
+attempt has completed (successfully or not), and the transfer agent has sent
+.B yppush 
+a status message, the results can be printed to stdout.  Messages
+are also printed when a transfer is not possible, for
+instance when the request message is undeliverable, or when the timeout period
+on responses has expired.
+.LP
+Refer to 
+ypfiles(5yp) 
+and 
+ypserv(8yp) 
+for an overview of the yellow
+pages.
+.SH OPTIONS
+.TP
+.B \-d
+Specify a 
+.I domain.
+.TP
+.B \-v
+Verbose.  
+This causes messages to be printed when each server is called, and for
+each response.
+Without this flag, only error messages are printed.
+.SH RESTRICTIONS
+.LP
+In the current implementation (version 2 YP protocol), the transfer agent is
+\fIypxfr\fR\|, which is started by the 
+.I ypserv 
+program.  If 
+.B yppush
+detects that it is speaking to a version 1 YP protocol 
+server, it uses the older protocol, sending a version 1 YPPROC_GET
+request and issues a message to that effect.  
+Unfortunately, there is no way of knowing 
+if or when the map transfer was performed for version 1 servers.
+The
+.B yppush 
+command prints a message saying that an old-style message has been sent.
+The system administrator should later check to see that the
+transfer has actually taken place.
+.SH FILES
+/etc/yp/\fIdomainname\fR/ypservers.{dir, pag}
+.SH SEE ALSO
+ypfiles(5yp), ypserv(8yp), ypxfr(8yp)

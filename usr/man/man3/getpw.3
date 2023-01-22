@@ -1,0 +1,34 @@
+.TH getpw 3 
+.SH NAME
+getpw \- get name from uid
+.SH SYNTAX
+.nf
+.B getpw(uid, buf)
+.B char *buf;
+.fi
+.SH DESCRIPTION
+The 
+.PN getpw 
+routine has been superseded by 
+.PN getpwuid, 
+see 
+getpwent(3).
+.PP
+The
+.PN getpw
+routine searches the password file for
+the (numerical)
+.IR uid ", and fills in " "buf"
+with the corresponding line;
+it returns non-zero if
+.IR uid ""
+could not
+be found.
+The line is null-terminated.
+.SH DIAGNOSTICS
+Non-zero
+return on error.
+.SH FILES
+/etc/passwd
+.SH "SEE ALSO"
+getpwent(3), passwd(5yp)

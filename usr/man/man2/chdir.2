@@ -1,0 +1,79 @@
+.\" Last modified by Michaud on 16-Sept-1986 1000.
+.\" Last modified by BAM on 27-Nov-1985 1300.
+.\"
+.TH chdir 2
+.SH NAME
+chdir \- change current working directory
+.SH SYNTAX
+.nf
+.ft B
+chdir(path)
+char *path;
+.ft R
+.fi
+.SH DESCRIPTION
+The
+.I path
+is the pathname of a directory.  The
+.PN chdir
+system call causes this directory
+to become the current working directory,
+the starting point for path names not beginning with ``/''.
+.PP
+In order for a directory to become the current directory,
+a process must have execute (search) access to the directory.
+.PP
+Upon successful completion, a value of 0 is returned.
+Otherwise, a value of \-1 is returned and \fIerrno\fP is set to indicate
+the error.
+.SH ENVIRONMENT
+Differs from the System V definition in that \fBELOOP\fP is a 
+possible error condition.
+.SH DIAGNOSTICS
+The
+.PN chdir
+system call
+will fail and the current working directory will be unchanged if
+one or more of the following are true:
+.TP 15
+[ENOTDIR]
+A component of the pathname is not a directory.
+.TP 15
+[EINVAL]
+The pathname contains a character with the high-order bit
+set.
+.TP 15
+[ENAMETOOLONG]
+A component of a pathname exceeds 255 characters, or
+an entire path name exceeds 1023 characters.
+.TP 15
+[ENOENT]
+The named directory does not exist.
+.TP 15
+[EACCES]
+Search permission is denied for any component of
+the path name.
+.TP 15
+[EFAULT]
+.I Path
+points outside the process's allocated address space.
+.TP 15
+[ELOOP]
+Too many symbolic links were encountered in translating
+the pathname.
+.TP 15
+[EIO]
+An I/O error occurred while reading from or writing to the file
+system.
+.TP 15
+[ESTALE]
+The file handle given in the argument was invalid.  The file 
+referred to by that file handle no longer exists or has been revoked.
+.TP 15
+[ETIMEDOUT]
+A "connect" request or remote file operation failed
+because the connected party
+did not properly respond after a period
+of time which is dependent on the communications protocol.
+.SH "SEE ALSO"
+chroot(2)

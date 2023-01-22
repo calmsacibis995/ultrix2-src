@@ -1,0 +1,149 @@
+From wla Tue Mar  6 12:01:08 1984
+Received: by decvax.UUCP (4.12/4.13)
+	id AA21293; Tue, 6 Mar 84 11:58:50 est
+Date: Tue, 6 Mar 84 11:58:50 est
+From: wla (Bill Andrus)
+Message-Id: <8403061658.AA21293@decvax.UUCP>
+To: uegc
+Subject: unassigned commands
+Cc: daw
+Status: RO
+
+i grepped the file ~ultrix/adm/owner.commands to see who owned what and
+it appears out of date.  i sent ray, miriam, steve, gregt, and alan lists of
+their entries.  there are none for gregf, bob, and brian.  what follows is
+a list of "unowned" commands.  please volunteer for more stuff and/or trade
+responsibilities for current assignments.  let's try to make the list current
+at thursday's staff meeting.
+
+thanks,
+wa
+
+???	usr/bin/cal:	demand paged pure executable
+???	usr/bin/calendar:	commands text
+???	usr/bin/checkeq:	demand paged pure executable
+???	usr/bin/col:	demand paged pure executable
+???	usr/bin/deroff:	demand paged pure executable
+???	usr/bin/eqn:	demand paged pure executable
+???	usr/bin/graph:	demand paged pure executable
+???	usr/bin/indxbib:	commands text
+???	usr/bin/join:	demand paged pure executable
+???	usr/bin/learn:	demand paged pure executable
+???	usr/bin/look:	demand paged pure executable
+???	usr/bin/lookbib:	demand paged pure executable
+???	usr/bin/neqn:	demand paged pure executable
+???	usr/bin/nroff:	demand paged pure executable
+???	usr/bin/plot:	commands text
+???	usr/bin/prof:	demand paged pure executable
+???	usr/bin/ptx:	demand paged pure executable
+???	usr/bin/refer:	demand paged pure executable
+???	usr/bin/rev:	demand paged pure executable
+???	usr/bin/sortbib:	demand paged pure executable
+???	usr/bin/spell:	commands text
+???	usr/bin/spellin:	demand paged pure executable
+???	usr/bin/spellout:	demand paged pure executable
+???	usr/bin/spline:	demand paged pure executable
+???	usr/bin/split:	demand paged pure executable
+???	usr/bin/struct:	commands text
+???	usr/bin/style:	commands text
+???	usr/bin/sum:	demand paged pure executable
+???	usr/bin/t300:	demand paged pure executable
+???	usr/bin/t300s:	demand paged pure executable
+???	usr/bin/t450:	demand paged pure executable
+???	usr/bin/tabs:	demand paged pure executable
+???	usr/bin/tbl:	demand paged pure executable
+???	usr/bin/tc:	demand paged pure executable
+???	usr/bin/tek:	demand paged pure executable
+???	usr/bin/tk:	demand paged pure executable
+???	usr/bin/troff:	demand paged pure executable
+???	usr/bin/tsort:	demand paged pure executable
+???	usr/bin/uniq:	demand paged pure executable
+???	usr/bin/units:	demand paged pure executable
+???	usr/bin/vplot:	demand paged pure executable
+???	usr/lib/atrun:	demand paged pure executable not stripped
+???	usr/lib/bugfiler:	demand paged pure executable
+???	usr/lib/calendar:	demand paged pure executable
+???	usr/lib/dprog:	demand paged pure executable
+???	usr/lib/eign:	English text
+???	usr/lib/ex3.7preserve:	demand paged pure executable not stripped
+???	usr/lib/ex3.7recover:	demand paged pure executable not stripped
+???	usr/lib/explain.d:	commands text
+???	usr/lib/getNAME:	demand paged pure executable not stripped
+???	usr/lib/icat:	commands text
+???	usr/lib/ipf:	commands text
+???	usr/lib/learn:	directory
+???	usr/lib/lib2648.a:	archive random library
+???	usr/lib/lib300.a:	archive random library
+???	usr/lib/lib300s.a:	archive random library
+???	usr/lib/lib4014.a:	archive random library
+???	usr/lib/lib450.a:	archive random library
+???	usr/lib/libdbm.a:	executable not stripped
+???	usr/lib/libg.a:	executable not stripped
+???	usr/lib/libl.a:	archive random library
+???	usr/lib/libln.a:	archive random library
+???	usr/lib/libm.a:	archive random library
+???	usr/lib/libm_p.a:	archive random library
+???	usr/lib/libmp.a:	archive random library
+???	usr/lib/libnm.a:	archive random library
+???	usr/lib/libnm_p.a:	archive random library
+???	usr/lib/libplot.a:	archive random library
+???	usr/lib/libt300.a:	archive random library
+???	usr/lib/libt300s.a:	archive random library
+???	usr/lib/libt4014.a:	archive random library
+???	usr/lib/libt450.a:	archive random library
+???	usr/lib/libvt0.a:	archive random library
+???	usr/lib/makekey:	demand paged pure executable not stripped
+???	usr/lib/makewhatis:	commands text
+???	usr/lib/me:	directory
+???	usr/lib/ms:	directory
+???	usr/lib/necf:	demand paged pure executable
+???	usr/lib/refer:	directory
+???	usr/lib/rvsort:	demand paged pure executable
+???	usr/lib/sidebyside:	demand paged pure executable
+???	usr/lib/spell:	demand paged pure executable
+???	usr/lib/struct:	directory
+???	usr/lib/style1:	demand paged pure executable
+???	usr/lib/style2:	demand paged pure executable
+???	usr/lib/style3:	demand paged pure executable
+???	usr/lib/tmac:	directory
+???	usr/lib/units:	commands text
+???	usr/lib/vfontedpr:	demand paged pure executable
+???	usr/lib/vfontinfo:	demand paged pure executable
+???	usr/lib/vgrindefs:	commands text
+???	usr/lib/vlpmacs:	roff, nroff, or eqn input text
+???	usr/lib/vsort:	demand paged pure executable
+???	usr/lib/vwidth:	demand paged pure executable
+???	usr/lib/w2006:	English text
+???	usr/lib/whatis:	ascii text
+???	usr/ucb/apply:	demand paged pure executable
+???	usr/ucb/apropos:	demand paged pure executable
+???	usr/ucb/arcv:	demand paged pure executable
+???	usr/ucb/at:	demand paged pure executable not stripped
+???	usr/ucb/checknr:	demand paged pure executable
+???	usr/ucb/colcrt:	demand paged pure executable
+???	usr/ucb/colrm:	demand paged pure executable
+???	usr/ucb/compact:	demand paged pure executable
+???	usr/ucb/ctags:	demand paged pure executable
+???	usr/ucb/dbx:	demand paged pure executable not stripped
+???	usr/ucb/fed:	demand paged pure executable
+???	usr/ucb/fmt:	demand paged pure executable
+???	usr/ucb/fold:	demand paged pure executable
+???	usr/ucb/fsplit:	demand paged pure executable
+???	usr/ucb/gcore:	demand paged pure executable
+???	usr/ucb/gprof:	demand paged pure executable not stripped
+???	usr/ucb/indent:	demand paged pure executable
+???	usr/ucb/lock:	demand paged pure executable
+???	usr/ucb/man:	demand paged pure executable
+???	usr/ucb/script:	demand paged pure executable
+???	usr/ucb/soelim:	demand paged pure executable
+???	usr/ucb/ul:	demand paged pure executable
+???	usr/ucb/uncompact:	demand paged pure executable
+???	usr/ucb/unexpand:	demand paged pure executable
+???	usr/ucb/unifdef:	demand paged pure executable
+???	usr/ucb/vgrind:	commands text
+???	usr/ucb/vtroff:	commands text
+???	usr/ucb/whatis:	demand paged pure executable
+???	usr/ucb/whereis:	demand paged pure executable not stripped
+???	usr/ucb/xstr:	demand paged pure executable
+???	usr/ucb/yes:	demand paged pure executable
+

@@ -1,0 +1,111 @@
+.TH mt 1
+.SH NAME
+mt \- magnetic tape operation 
+.SH SYNTAX
+.B mt
+[
+.B \-f
+.I tapename
+]
+.I command
+[
+.I count
+]
+.SH DESCRIPTION
+The
+.B mt
+command
+permits the operation of a magnetic tape drive.
+.PP
+The \fB\-f\fR flag 
+option uses the specified tape device (next argument) in
+place of either that tape device defined by your TAPE
+environment variable (.login or .profile) or /dev/nrmtoh.
+.PP
+Some operations
+may be performed multiple times by specifying
+.IR count .
+By default,
+.B mt
+performs the requested operation once.
+.PP
+The \fIcommand\fR argument defines the operation to be performed.
+Only as many characters as are required to uniquely identify
+a command need be specified.  The choices are:
+.IP \fBbsf\fR .5i
+Backspace \fIcount\fR files.
+.IP \fBbsr\fR .5i
+Backspace \fIcount\fR records.
+.IP \fBcache\fR .5i
+Allows 
+.B mt
+to use the cache buffer on a tape drive that has the cache
+buffer feature.
+.IP \fBclhrdsf\fR .5i
+Clear hardware/software problem.  Works with TU81, TU81E,
+and TK50 tape drives.
+.IP \fBclserex\fR .5i
+Clear serious exception.  Works with TU81, TU81E, and TK50
+tape drives.
+.IP \fBclsub\fR .5i
+Clear subsystem.  Works with TU81, TU81E, and TK50 tape
+drives.
+.IP "\fBeof, weof\fR" .5i
+Write \fIcount\fR end-of-file marks at the current position on
+the tape.
+.IP \fBeotdis\fR .5i
+Disable end-of-tape detection.  When the end of tape
+is reached, the tape will run off the reel.  Only the superuser 
+can issue this command.  The command remains in effect 
+for the device until end-of-tape detection is enabled
+with the \fBeoten\fR command.
+.IP \fBeoten\fR .5i
+Enable end-of-tape detection.  When the end-of-tape
+markers are reached, the tape is halted on the reel,
+between the two end-of-tape markers.
+Only the superuser can issue this command.  The command remains
+in effect for the device until end-of-tape detection is disabled
+with the \fBeotdis\fR command.
+This is the default mode after a system boot.
+.IP \fBfsf\fR .5i
+Forward-space \fIcount\fR files.
+.IP \fBfsr\fR .5i
+Forward-space \fIcount\fR records.
+.IP \fBnocache\fR .5i
+Disables the use of the cache buffer for any 
+tape drive that has the cache buffer feature.
+.IP "\fBoffline, rewoffl\fR" .5i
+Rewind the tape and place the tape unit off-line.
+.IP \fBrewind\fR .5i
+Rewind the tape.
+.IP \fBstatus\fR .5i
+Print status information about the tape unit.
+.SH EXAMPLES
+.PP
+This example shows how to rewind the tape 
+.PN rmt0l :
+.EX
+mt -f /dev/rmt0l rewind
+.EE
+This example shows how to backspace the tape nmt1h 
+three files:
+.EX
+mt -f /dev/nmt1h bsf 3
+.EE
+This example shows how to write two end-of-file marks at the
+current position on tape nmt6h:
+.EX
+mt -f /dev/nmt6h eof 2
+.EE
+.SH RETURN VALUE
+In shell scripts,
+.PN mt
+returns a 0 exit status when the operation(s) were successful,
+1 if the command was unrecognized, and 2 if an operation failed.
+.SH FILES
+.IP "/dev/rmt?h or /dev/rmt?l" 1i
+Raw magnetic tape interface with rewind when closed
+.IP "/dev/nmt?h or /dev/nmt?l" 1i
+Raw magnetic tape interface with no rewind when closed
+.SH "SEE ALSO"
+dd(1), tar(1), ioctl(2), mtio(4), environ(7)

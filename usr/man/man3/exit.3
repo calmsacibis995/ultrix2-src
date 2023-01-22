@@ -1,0 +1,21 @@
+.TH exit 3
+.SH NAME
+exit \- terminate a process after flushing any pending output
+.SH SYNTAX
+.nf
+.ft B
+exit(status)
+int status;
+.fi
+.SH DESCRIPTION
+The
+.PN exit
+function terminates a process after calling the Standard I/O library
+function,
+.I _cleanup,
+to flush any buffered output.
+The
+.PN exit
+function never returns.
+.SH "SEE ALSO"
+exit(2), intro(3s)

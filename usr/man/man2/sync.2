@@ -1,0 +1,29 @@
+.TH sync 2
+.SH NAME
+sync \- update super-block
+.SH SYNTAX
+.B sync()
+.SH DESCRIPTION
+The
+.PN sync
+system call causes all information in core
+memory that should be on disk to be written out.
+This includes modified super blocks,
+modified i-nodes, and delayed block I/O.
+.PP
+Programs which examine a file system,
+for example,
+.PN "fsck"
+or
+.PN "df,"
+use the 
+.PN sync
+system call.
+Using
+.PN sync
+is mandatory before a boot.
+The writing, although scheduled, is not necessarily
+complete upon return from 
+.PN sync.
+.SH "SEE ALSO"
+sync(1), fsync(2), update(8)

@@ -1,0 +1,70 @@
+.TH uuclean 8c
+.SH NAME
+uuclean \- uucp spool directory clean-up
+.SH SYNTAX
+.B uuclean
+[ option ] ...
+.SH DESCRIPTION
+The
+.PN uuclean
+command scans the spool directory for files with the
+specified prefix and deletes all those which are
+older than the specified number of hours.
+.SH OPTIONS
+.TP 8
+\fB-p\fIpre\fP
+Scan for files with
+.I pre
+as the file prefix.
+Up to 10
+.B -p
+arguments may be specified.
+A
+.B -p
+without any
+.I pre
+following will cause all files older than the
+specified time to be deleted.
+.TP
+\fB-n\fItime\fP
+Delete all files whose age is more than 
+.I time
+(default is 72 hours)
+and that have the specified
+.I pre 
+as their file prefix.	
+.TP 8
+.B -m
+Send mail to the owner of the file
+when it is deleted.
+.TP
+\fB-s\fIsystem\fP
+Delete files in all directories that are subdirectories
+of the per system spool directory that exists for  
+.I system.
+If \fBALL\fP is specified, then all system directories are processed.
+.TP
+\fB-d\fIdirectory\fP
+Delete files that reside in the named 
+.I directory.
+The 
+.B -s 
+option over rides the
+.B -d 
+option.
+.PP
+This program will typically be started by cron(8).
+In earlier versions, a deleted work file (C.file) would 
+result in mail to the owner of the work file, regardless of the 
+.B -m 
+option.
+Now, notification of deleted work files is sent to the user id "uucp".
+If the 
+.B -m 
+option is used, mail is also sent to the owner.
+.SH FILES
+.TP 22
+/usr/lib/uucp
+directory with commands used by uuclean internally
+.SH SEE ALSO
+uucp(1c), uux(1c)

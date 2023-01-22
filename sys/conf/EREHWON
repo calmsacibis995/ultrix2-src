@@ -1,0 +1,55 @@
+# @(#)EREHWON	1.5	(ULTRIX)	6/5/86
+#
+# EREHWON
+# Digital VAX 11/730 (Nebula) standalone development machine
+#
+machine		vax
+cpu		"VAX730"
+ident		EREHWON
+timezone	5 dst
+maxusers	16
+physmem		2
+options		INET
+options		MRSP
+options		QUOTA
+options		LAT
+
+config		vmunix		root on rb0 swap on rb0
+config		vmunix_usr	root on rb0g swap on rb0b
+config		rkvmunix	root on rk0 swap on rk0
+
+adapter		uba0	at nexus ?
+controller	hk0	at uba0 csr 0177440 		vector rkintr
+disk		rk0	at hk0 drive 0
+disk		rk1	at hk0 drive 1
+controller	uda0	at uba0
+controller	uq0	at uda0 csr 0172150		vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+disk		ra2	at uq0 drive 2
+controller	idc0	at uba0 csr 0175606		vector idcintr
+disk		rb0	at idc0 drive 0
+disk		rb1	at idc0 drive 1
+disk		rb2	at idc0 drive 2
+disk		rb3	at idc0 drive 3
+controller	hl0	at uba? csr 0174400		vector rlintr
+disk		rl0	at hl0 drive 0
+disk		rl1	at hl0 drive 1
+disk		rl2	at hl0 drive 2
+controller	zs0	at uba? csr 0172520		vector tsintr
+device		ts0	at zs0 drive 0
+controller	zs1	at uba? csr 0172524		vector tsintr
+device		ts1	at zs1 drive 0
+device		dmf0	at uba? csr 0160400 flags 0xff
+	vector dmfsrint dmfsxint dmfdaint dmfdbint dmfrint dmfxint dmflint
+device		dz0	at uba0 csr 0160110 flags 0xff	vector dzrint dzxint
+device		dz1	at uba0 csr 0160120 flags 0xff	vector dzrint dzxint
+device		dhu0	at uba0 csr 0160440 flags 0xff	vector dhurint dhuxint
+device		de0	at uba0	csr 0174510		vector deintr
+device		dmc0	at uba0	csr 0160100		vector dmcrint dmcxint
+pseudo-device	pty
+pseudo-device	loop
+pseudo-device	inet
+pseudo-device	ether
+pseudo-device	lat
+pseudo-device	lta

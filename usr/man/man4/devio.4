@@ -1,0 +1,32 @@
+.TH devio 4
+.SH NAME
+devio \- Ultrix device interface
+.SH SYNTAX
+\fB#include <sys/ioctl.h>\fR
+.br
+\fB#include <sys/devio.h>\fR
+.SH DESCRIPTION
+The file
+< sys/devio.h >
+contains the needed structure and definitions to use the
+.RI DEVIOCGET
+ioctl request. The basic structure used by this request is shown below:
+.EX 0
+/* Structure for DEVIOCGET ioctl - device get status command */
+struct devget  {
+       short   category;             /* Category                     */
+       short   bus;                  /* Bus                          */
+       char    interface[DEV_SIZE];  /* Interface (string)           */
+       char    device[DEV_SIZE];     /* Device (string)              */
+       short   adpt_num;             /* Adapter number               */
+       short   nexus_num;            /* Nexus or node on adapter no. */
+       short   bus_num;              /* Bus number                   */
+       short   ctlr_num;             /* Controller number            */
+       short   slave_num;            /* Plug or line number          */
+       char    dev_name[DEV_SIZE];   /* Ultrix device mnemonic       */
+       short   unit_num;             /* Ultrix device unit number    */
+       unsigned soft_count;          /* Driver soft error count      */
+       unsigned hard_count;          /* Driver hard error count      */
+       long    stat;                 /* Generic status mask          */
+       long    category_stat;        /* Category specific mask       */
+};

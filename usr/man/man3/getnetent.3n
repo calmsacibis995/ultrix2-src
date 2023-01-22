@@ -1,0 +1,111 @@
+.TH getnetent 3n
+.SH NAME
+getnetent, getnetbyaddr, getnetbyname, setnetent, endnetent \- get network entry
+.SH SYNTAX
+.nf
+.ft B
+#include <netdb.h>
+.PP
+.ft B
+struct netent *getnetent()
+.PP
+.ft B
+struct netent *getnetbyname(name)
+char *name;
+.PP
+.ft B
+struct netent *getnetbyaddr(net, type)
+long net; int type;
+.PP
+.ft B
+setnetent(stayopen)
+int stayopen
+.PP
+.ft B
+endnetent()
+.fi
+.SH DESCRIPTION
+The
+.PN getnetent ,
+.PN getnetbyname ,
+and
+.PN getnetbyaddr
+subroutines
+each return a pointer to an object with the
+following structure
+containing the broken-out
+fields of a line in the network data base, /etc/networks.
+.EX
+struct	netent {
+	char	*n_name;	/* official name of net */
+	char	**n_aliases;	/* alias list */
+	int	n_addrtype;	/* net number type */
+	long	n_net;		/* net number */
+};
+.EE
+.PP
+The members of this structure are:
+.TP \w'n_addrtype'u+2n
+n_name
+The official name of the network.
+.TP \w'n_addrtype'u+2n
+n_aliases
+A zero terminated list of alternate names for the network.
+.TP \w'n_addrtype'u+2n
+n_addrtype
+The type of the network number returned: AF_INET.
+.TP \w'n_addrtype'u+2n
+n_net
+The network number.  Network numbers are returned in machine byte
+order.
+.PP
+The
+.PN getnetent
+subroutine
+reads the next line of the file, opening the file if necessary.
+.PP
+The
+.PN setnetent
+subroutine
+opens and rewinds the file.  If the
+.I stayopen
+flag is non-zero,
+the net data base will not be closed after each call to 
+.PN getnetent
+(either directly, or indirectly through one of
+the other \*(lqgetnet\*(rq calls).
+.PP
+The
+.PN endnetent
+subroutine closes the file.
+.PP
+The
+.PN getnetbyname
+subroutine
+sequentially searches from the beginning
+of the file until a matching
+net name 
+is found,
+or until EOF is encountered.
+.PP
+The
+.PN getnetbyaddr
+subroutine
+sequentially searches from the beginning of the
+file until a matching net number is found.  The
+type must be AF_INET.
+.PP
+Network numbers are supplied in host order.
+.SH RESTRICTIONS
+All information
+is contained in a static area
+so it must be copied if it is
+to be saved.  Only Internet network
+numbers are currently understood.
+.SH DIAGNOSTICS
+Null pointer
+(0) returned on EOF or error.
+.SH FILES
+/etc/networks
+.SH "SEE ALSO"
+networks(5)

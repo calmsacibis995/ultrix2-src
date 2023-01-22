@@ -1,0 +1,193 @@
+.TH acucap 5 
+.SH NAME
+acucap \- Automatic call unit capabilities file
+.SH DESCRIPTION
+The \fBacucap\fR file lists the types of autodial modems 
+and describes their attributes. 
+.PP
+The tip(1c) program searches the
+.PN acucap 
+file when it encounters an \fBat\fR field in the remote(5)
+file description. If the \fBat\fR string matches a name
+entry in 
+the 
+.PN acucap
+file,
+then the \fBtip\fR and \fBuucp\fR generic dialing routines 
+are used to place an outgoing 
+call, according to the attributes specified for the modem in
+the \fBacucap\fR file.
+.PP
+The uucp(1c) program uses the same procedure for deciding how to
+activate an autodialer modem, except that \fBuucp\fR searches for
+the brand
+name field of the /usr/lib/uucp/L-devices file 
+in the
+.PN acucap
+database.
+.PP
+Each line in the file describes how to
+dial a given
+type of modem. This description consists of strings, time delays,
+and flags that are used 
+to control the action of any modem.
+Fields are separated by a colon (:).
+Entries ending in a backslash character (\e) followed by a newline are
+continued on the next line.
+.PP
+The first entry is the name(s) of the modem.  If there is more
+than one name for a modem, the names are separated by vertical bars
+(|).
+.PP
+The fields of the description follow the name.  A
+field name followed by an equal sign (=) indicates 
+that a string value follows.  A field
+name followed by a pound sign (#) indicates that a numeric value
+follows. A field
+name followed by the separating colon (:) represents a boolean.
+.SH CAPABILITIES
+The fields following the name of the modem define the capabilities
+of the modem.  Capabilities are either 
+strings (str), numbers (num), or boolean
+flags (bool).  A string capability is specified by
+.IR capability = value ;
+e.g. ``ss=^A^B''.  A numeric capability is specified by
+.IR capability # value ;
+e.g. ``sd#1''.  A boolean capability is specified by simply listing
+the capability. Strings not specified cause nothing to be issued.
+.TP 0.5i
+.B ab
+(str)
+Abort string.  This string is sent to the
+modem if tip(1c) is aborted.
+.TP 0.5i
+.B cd
+(num)
+Completion delay.  This number gives the time to wait 
+between completion string
+characters (in seconds, unless the \fBls\fR boolean is specified).
+.TP 0.5i
+.B cr
+(bool)
+Setting this boolean causes the program to 
+wait in the generic dial routine until the modem senses 
+a carrier.
+.TP 0.5i
+.B cs
+(str)
+Completion string.  The modem issues this string after 
+receiving and responding to synchronization
+and dial strings.
+.TP 0.5i
+.B da
+(num)
+Dial acknowledge.  This number gives the time 
+to wait before looking for a dial
+response (in seconds).
+.TP 0.5i
+.B db
+(bool)
+Debug mode.  Setting this boolean causes the generic 
+dialer to give more information
+as it dials.
+.TP 0.5i
+.B dd
+(num)
+Dial delay.  This number gives the time 
+between dial characters (in seconds unless
+\fBls\fR boolean is specified.
+.TP 0.5i
+.B di
+(str)
+Dial initialization.  This string is used to start a dialing sequence
+(placed just before the number to dial.)
+.TP 0.5i
+.B dr 
+(str)
+Dial response.  The modem sends this string
+if a dialing sequence
+that was just issued is successful.
+.TP 0.5i
+.B ds
+(str)
+Disconnect string.  This string is sent to 
+the modem when tip(1c) is
+finally disconnected.
+.TP 0.5i
+.B dt
+(str)
+Dial termination.  This string is used to terminate a dialing
+sequence (placed just after the number to dial.)
+.TP 0.5i
+.B fd
+(num)
+Full delay.  This number is the time 
+to wait for a carrier to be detected
+(in seconds).  If the call is not completed in this time,
+than an error is returned.
+.TP 0.5i
+.B hu
+(bool)
+This boolean causes the modem to hang up the phone if 
+the line goes away.
+.TP 0.5i
+.B ls
+(bool)
+Use an internal sleep routine
+rather than sleep(3) for
+delays.  Thus, all delays are given in microseconds rather
+than seconds.
+.TP 0.5i
+.B os
+(str) 
+Online string.  The modem sends this string after carrier has been
+detected.
+.TP 0.5i
+.B re
+(bool)
+This boolean causes the modem to toggle dtr (data terminal ready)
+before beginning synchronization. 
+Used to reset modem if its present condition is unknown. 
+.TP 0.5i
+.B rs
+(str)
+Replacement string.  This string is a single character that will be
+substituted for an equal sign
+(=) or dash (-) in the number to be dialed.  Used so
+that delay characters can be represented uniformly, but
+allowing the correct delay character to be passed to
+a given modem.
+.TP 0.5i
+.B sd
+(num)
+Synchronization delay.  This number gives the time 
+between synchronization
+characters (in seconds unless the \fBls\fR boolean is specified.)
+.TP 0.5i
+.B si
+(bool)
+This modem is attached to an interface that cannot return
+any characters until carrier is detected.  DIGITAL's
+DMF32 interface acts in this way.
+.TP 0.5i
+.B sr
+(str)
+Synchronization response.  What the modem sends in response
+to a synchronization string.
+.TP 0.5i
+.B ss
+(str)
+Synchronization string. 
+The first string the modem expects to receive; a check to 
+see if the modem is operating.
+.SH EXAMPLE
+The following example shows an entry for a DIGITAL DF03
+modem.
+.EX
+df03|DF03|dec df03:\e
+	:cr:hu:re:di=^A^B:dd#1:os=A:ds=^A:fd#40:
+.EE
+.SH FILES
+/etc/acucap - shared autodial modem database
+.SH "SEE ALSO"
+tip(1c),  uucp(1c)

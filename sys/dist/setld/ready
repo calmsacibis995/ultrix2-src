@@ -1,0 +1,12 @@
+#!/bin/sh
+while :
+do
+	sleep 2
+	echo -n "
+Ready (y/n)? "
+	read X
+	case "$X" in
+	[yY]*)	break
+		;;
+	esac
+done

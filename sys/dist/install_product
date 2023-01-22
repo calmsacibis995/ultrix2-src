@@ -1,0 +1,403 @@
+
+#! /bin/sh
+#
+#	Program Name:	install_product  
+#	Author:		Lu Anne Van de Pas 
+#	Date Written:	07-Dec-85
+#	SCCS ID:	@(#)install_product	1.1 (Ultrix) 6/28/85
+#	Last Edit:	6/28/85
+#
+# This shell script is used to as a startup procedure for layered product 
+# installations.  
+#
+# USAGE: sh install_product   
+#
+#
+#The layered product installation scripts must conform to these rules in order
+#for the install_product procedure to run correctly: 
+#
+# * The name of the installation scripts must be all lowercase 
+#    and be the product name, dot, "ctrl". 
+#    For example, fortult010.ctrl
+#	
+# * The installation script must be on the first tar set and the tar
+#   set must be the first thing on the distribution media. 
+#
+#	        
+# The layered product installation scripts can expect these conditions 
+# when they are invoked:   
+#
+# The install_product procedure invokes the installation's script
+# with two arguments; the media type and device special file.
+# These arguments are the user's responses to the questions in 
+# Step 6.  A typical invocation looks like :
+#
+#	foo010.ctrl tape /dev/rmt9      
+#		
+# In the Bourne shell, tape and /dev/rmt9 can be accessed 
+# with variables $1 and $2, respectively. 
+#
+# If the media type is a tape, after the installation script
+# is copied off the tape, the tape  is rewound before 
+# the script is invoked. 
+#
+# The current working directory is undefined.   Installation
+# scripts are responsible for putting themselves in the 
+# proper working directories. 
+#
+# The install_product procedure checks the return code from
+# the layered product script.  A nonzero return code signals
+# an error condition and the procedure exits.  A zero 
+# return code prompts the user if they care to install
+# another product. 
+#	
+#************************************************************************
+#*									*
+#*			Copyright (c) 1985 by				*
+#*		Digital Equipment Corporation, Maynard, MA		*
+#*			All rights reserved.				*
+#*									*
+#*   This software is furnished under a license and may be used and	*
+#*   copied  only  in accordance with the terms of such license and	*
+#*   with the  inclusion  of  the  above  copyright  notice.   This	*
+#*   software  or  any  other copies thereof may not be provided or	*
+#*   otherwise made available to any other person.  No title to and	*
+#*   ownership of the software is hereby transferred.			*
+#*									*
+#*   This software is  derived  from  software  received  from  the	*
+#*   University    of   California,   Berkeley,   and   from   Bell	*
+#*   Laboratories.  Use, duplication, or disclosure is  subject  to	*
+#*   restrictions  under  license  agreements  with  University  of	*
+#*   California and with AT&T.						*
+#*									*
+#*   The information in this software is subject to change  without	*
+#*   notice  and should not be construed as a commitment by Digital	*
+#*   Equipment Corporation.						*
+#*									*
+#*   Digital assumes no responsibility for the use  or  reliability	*
+#*   of its software on equipment which is not supplied by Digital.	*
+#*									*
+#************************************************************************
+#
+# Modification History
+# ~~~~~~~~~~~~~~~~~~~~
+#
+# 01	07-May-85, Lu Anne Van de Pas
+#	Wrote Original code.
+#
+
+PWD=`pwd` 
+cd /
+PATH=${PATH}:/bin:/usr/bin:/etc 
+
+# Ask Installation questions.  Each question is in a loop that we don't
+# 'break' from until we have a reasonable answer. 
+
+echo " Ultrix  V1.2 Software Product Installation Procedure 
+
+
+ Enter 'h' or 'help' at anytime for help."
+echo; 
+
+while : 
+do
+  echo " You should back up your system disk before installing any layered" 
+  echo " products.  If you answer No to the next question the procedure "
+  echo -n  " will exit.  Would you like to continue (y/n) [y] ? "
+  read YESNO 
+  YESNO=`echo $YESNO | dd conv=lcase 2>/dev/null`  
+  case $YESNO in 
+    h|help) echo  
+ 	    echo " It is recommended that you back up your system disk before"
+	    echo " installing any new products.  A No answer causes this "
+	    echo " procedure to exit so you can back up your system."; echo;  
+             ;; 
+       n|no) 
+	     exit 0 
+	     ;;
+    y|yes|"") 
+	     break 
+ esac 
+done 
+
+while : 
+   do   
+
+     DEFAULT=$MEDIA 
+     while : 
+       do 
+       echo 
+       echo -n " Which type of distribution media do you have (tape, disk) [$DEFAULT] ? "
+       read MEDIA 
+       MEDIA=`echo $MEDIA | dd conv=lcase 2>/dev/null` 
+       case $MEDIA in
+              h|help)
+		      echo  
+	       	      echo " Software products are usually distributed on two"
+		      echo " different types of media, tapes (magnetic tape"
+		      echo " reels, TK50 cartridges,...etc) or disks (rx50, "
+		      echo " rl02, rk07, ra60,...etc). " ; echo  
+		      ;; 
+	    tape|disk) 
+		      break 1  
+		      ;; 
+		   "")
+		      case $DEFAULT in
+			tape|disk) 
+				       MEDIA=$DEFAULT
+				       break 1 
+		      esac 
+        esac 
+     done; 
+ 
+     DEFAULT=$DEVFILE 
+     while : 
+	do 
+	echo 
+        echo -n " What is the device special file for the installation device [$DEFAULT]? " 
+	read DEVFILE 
+        case $DEVFILE in 
+	       "") 
+		  case $DEFAULT in 
+		    "")    ;; 
+		     *) DEVFILE=$DEFAULT 
+		        break 
+		  esac 
+		  ;; 
+	   [hH]|[hH][eE][lL][pP]) echo  
+		   echo " Special files are associated with an I/O device, "
+	           echo " and reside in the directory /dev.  Some examples"
+		   echo " of special files are: /dev/rmt9, /dev/ra1a and "
+		   echo " /dev/hpa0." ; echo  
+		   ;; 
+	        *)
+		  if test -f $DEVFILE 
+		     then 
+			break 
+		     else 
+			echo; echo " $DEVFILE does not exist. " ; echo 
+	          fi  
+        esac
+     done; 
+
+     while : 
+  	do
+	echo 
+	echo " Mount volume 1 of the installation kit on the device"  
+        echo -n " Press the RETURN key when ready. "
+	read CONT 
+ 	CONT=`echo $CONT | dd conv=lcase 2>/dev/null` 
+        case $CONT in 
+	   v) 
+	      v=v 
+	      set -x  
+	      break 
+	      ;;    
+      h|help) echo 
+	      echo " If there is anything preventing you from mounting the " 
+	      echo " first volume on the device, answer 'quit' to this "
+	      echo " question, and the procedure exits. " ; echo 
+	      ;; 
+	   "") 
+	      break  
+	      ;; 
+
+	 quit)
+	      cd / 
+	      rm -rf /tmp/instdir 2>/dev/null 
+	      exit  
+	      ;; 
+        esac 
+     done; 
+
+# This procedure  
+#	1. Creates /tmp/instdir as a working directory
+#	2. Checks the installation media for the files ending with '.ctrl' 
+#	3. executes the .ctrl file the user wants 
+#	4. checks for valid return code 
+ 
+     trap ' cd / ; 
+	    rm -fr /tmp/instdir 2>/dev/null ; 
+	    exit 				
+	  ' 2 1 
+
+     cd / 
+     rm -fr /tmp/instdir 2>/dev/null  
+     mkdir /tmp/instdir 2>/dev/null
+     if test $? -ne 0  
+     	then 
+	   mkdir /tmp/instdir 2>/dev/null 
+	   if test $? -ne 0 
+	      then
+          	    echo; echo "Error in creating directory /tmp/instdir.  " 
+		    exit 1  
+	   fi 
+     fi   
+
+     cd /tmp/instdir  
+
+     # filelist.media = a list of what on the first tar set 
+     tar -tf $DEVFILE >filelist.media 2>/dev/null  
+
+     if test $? -ne 0 
+	then
+	echo; echo " Error while executing 'tar -tf $DEVFILE '  " 
+	while : 
+	  do 
+	  echo " Please check that the $MEDIA is correctly mounted on the device "
+	  echo -n " Press the RETURN key when ready. " 
+	  read CONT
+	  CONT=`echo $CONT | dd conv=lcase 2>/dev/null`   
+	  case $CONT in 
+		quit) cd /
+		      rm -fr /tmp/instdir 2>/dev/null  
+		      exit   
+		     ;; 
+	        h|help) echo 
+		     echo " There was an error in trying to execute the "
+		     echo " command, 'tar -tf $DEVFILE '.  Please check " 
+		     echo " to see if the first volume of the media is "
+		     echo " correctly mounted on the device.  If there is "
+		     echo " anything preventing you from preceding, answer "
+  		     echo " 'quit' to this question, and the procedure exits."
+ 	     	     echo 
+		     ;; 
+		  "") break 
+		     ;;
+	  esac 
+	done 
+ 
+        tar -tf $DEVFILE >filelist.media 2>/dev/null  # try again 
+	if test $? -ne 0 
+	    then 
+	    echo; echo " Error in command : tar -tf $DEVFILE " 
+	    echo " Procedure exiting. " 
+	    cd /
+	    rm -fr /tmp/instdir 2>/dev/null
+	    exit 1      
+	fi 
+     fi 
+		      
+	
+     case $MEDIA in 
+        tape) mt -f $DEVFILE rew
+     esac 
+
+     #ctrl.list = list of all the .ctrl files on the first tar set 
+     cat filelist.media | grep '^[a-z0-9]*.ctrl' > ctrl.list
+     if test $? -eq 0 
+        then 
+        while : 
+	 do 
+	  echo 
+          echo " The following products are on this $MEDIA:"; echo 
+          cat ctrl.list | sed s/.ctrl//  ; echo  
+	  echo -n " Enter the name of the product you would like to install: "
+          read PRODUCT
+          PRODUCT=`echo $PRODUCT | dd conv=lcase 2>/dev/null` 
+	  case $PRODUCT in 
+	        h|help) echo 
+	                echo " The product names are usually denoted by a"
+			echo " three- or four-character product name followed"
+                 	echo " by a two-digit release number and a one-digit"
+			echo " update number.  If you do not want to continue"
+			echo " with the installation at this point, answer "
+			echo " 'quit' to this question and the prcedure" 
+			echo " exits. " ; echo   
+			 ;;
+		   quit)
+		         cd /
+		         rm -rf /tmp/instdir 2>/dev/null
+		         exit 1  
+		         ;; 
+		     "") ;; 
+		      *)
+			 grep $PRODUCT.ctrl ctrl.list > /dev/null 
+			 if test $? -eq 0 
+			    then 
+			       break 
+			    else
+                               echo; echo " $PRODUCT is not on this volume."
+ 			       echo; 
+			 fi       
+	    esac  
+	  done  
+      else 
+	  echo; echo " There are no .ctrl files on the $MEDIA" 
+	  echo " Check to see you have Volume 1 of the kit mounted." 
+	  echo " Procedure exiting. " 
+	  cd / 
+	  rm -fr /tmp/instdir 2>/dev/null 
+	  exit 1  
+      fi 
+
+     # tar off correct .ctrl file from media and execute 
+     tar -x${v}pf $DEVFILE ${PRODUCT}.ctrl 2>/dev/null 
+     case $MEDIA in 
+	tape)
+	     mt -f $DEVFILE rew 
+     esac 
+     if test -f ${PRODUCT}.ctrl 
+	then 
+           chmod +x ${PRODUCT}.ctrl 
+           /tmp/instdir/${PRODUCT}.ctrl $MEDIA $DEVFILE 
+           if test $? -ne 0 
+	      then
+		cd / 
+		rm -fr /tmp/instdir 2>/dev/null  
+	        exit 
+           fi 
+	else 
+	   case $MEDIA in 
+		tape) mt -f $DEVFILE rew 
+	   esac 
+	   tar -x${v}pf $DEVFILE ${PRODUCT}.ctrl 2>/dev/null 
+	   if test -f ${PRODUCT}.ctrl 
+	      then 
+		 chmod +x ${PRODUCT}.ctrl 
+		 /tmp/instdir/${PRODUCT}.ctrl $MEDIA $DEVFILE 
+		 if test $? -ne 0
+		     then 
+			cd /
+			rm -fr /tmp/instdir 2>/dev/null     
+			exit
+                 fi 
+               else 
+	         echo; echo "Error in extracting ${PRODUCT}.ctrl from $MEDIA" 
+		 cd / 
+		 rm -fr /tmp/instdir 2>/dev/null 
+		 exit 1 
+	   fi 
+       fi 
+
+
+     cd /
+     rm -rf /tmp/instdir 2>/dev/null 
+
+     while : 
+        do
+	echo; echo -n " Do you want to install another product (y/n) [n]? ";
+        read YESNO   
+        YESNO=`echo $YESNO | dd conv=lcase 2>/dev/null` 
+	case $YESNO in 
+          h|help) echo;  
+     	  	  echo " If there is another product you want to install"
+		  echo " answer Yes and the procedure continues, otherwise,"  
+		  echo " answer No to exit this procedure."; echo 
+		  ;; 
+	    y*|Y*) 
+		  break 1 
+		  ;; 
+	 n*|N*|""|quit)
+		  exit 0
+		
+        esac   
+     done 
+done 
+
+
+
+
+
+
+

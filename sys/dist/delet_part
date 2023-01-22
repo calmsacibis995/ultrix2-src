@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# Usage: sh delet_part $1 $2 
+#   	  	$1: deleted partitions
+#		$2: available partitions
+#
+# Description:  To delete the patitions whcih is not allowed in the
+#			available partitions
+#
+# 000 - June, 1986 - Tungning Cherng created.
+#
+partition=$2
+for i in $1
+do
+	valid=
+	for k in $partition
+	do 
+		case $k in
+		$i )
+			;;
+		* )
+			valid="$valid $k"
+				;;
+		esac
+	done
+	partition=$valid
+done
+echo $partition

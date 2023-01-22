@@ -1,0 +1,34 @@
+.TH from 1
+.SH NAME
+from \- identifies sender of mail 
+.SH SYNTAX
+.B from
+[
+.B \-f
+.I mailbox
+]
+[
+.B \-s
+.I sender
+]
+.SH DESCRIPTION
+The
+.B from
+command prints out the mail header lines in a mailbox file
+to show you who has send mail to you.
+The
+.B \-f
+option causes
+.B from
+to examine the mail header lines in your mbox or
+a specified file.
+If the 
+.B \-s 
+option is given, then only headers for mail sent by
+a specified 
+.I sender
+are printed.
+.SH FILES
+/usr/spool/mail/*
+.SH SEE ALSO
+mail(1) 

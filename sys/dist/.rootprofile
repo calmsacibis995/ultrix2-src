@@ -1,0 +1,1344 @@
+#!/bin/sh
+# 
+# SCCSID= @(#).rootprofile	1.17	3/3/87
+#
+# .rootprofile : This script is built in the root file system and is
+# 	called ".profile".  After the genric root file system is installed 
+#	in the system disk, the system is booted and started to execute 
+#	this ".profile".
+#-------------------------------------------------------------------
+# 	Modification History
+#
+# 002 - August 6, 1986 - Bob Fontaine
+#	Added console update functionality for 730, 780, and 8600.
+#
+# 001 - June, 1986     - John William & Tungning Cherng
+#		Added the network installation.
+#
+# 000 - April 11, 1986 - Tungning Cherng created
+#
+#       Prompt edits - September 16, 1986, by Al Wojtas
+
+stty dec new prterase
+PATH=.:/install.tmp:/bin:/etc:/usr/bin:/usr/ucb
+HOME=/
+export PATH TERM HOME
+
+#List of prompt variables and error message variables
+LL="
+"
+MSG1="${LL} *** SPECIFY TYPE OF INSTALLATION *** ${LL}
+Do you need to perform the advanced installation?
+Type y or n [n]: "
+
+MSG2="${LL}You have chosen not to perform the advanced installation. 
+Is this correct? Type y or n [n]: "
+
+MSG3="${LL}You have chosen to perform the advanced installation. Is this
+correct? Type y or n [n]: "
+
+MSG4="
+The installation software successfully installed the mandatory software 
+subsets. However, it failed to install other parts of the supported 
+software subsets. You can continue with the installation and install the
+other supported software subsets at a later time, using the setld utility.
+Or, you can request that the installation software again try to 
+install these supported software subsets. 
+
+Your choices are:
+
+	1) Continue with the installation
+	2) Try to install again
+
+Type 1 or 2 [1]: "
+ 
+MSG5="
+The installation software failed to install the unsupported software subsets.
+The installation will continue with the next task. You can install the
+unsupported software subsets at a later time, using the setld utility."
+
+
+ERMSG2="${LL}This error causes the installation procedure to stop. 
+One possible cause for the error is a corrupt system disk. You
+may want to replace or use another system disk, and begin the installation
+again. If this error message appears a second time, contact
+a DIGITAL representative."
+
+trap '
+while :
+do	
+	echo -n "
+Do you want to stop the installation? Type y 
+or n [no default]: "
+	read ans 
+	case $ans in
+	[yY]*)
+		echo "
+Restart your installation by following the instructions provided
+in Chapter 2 of your installation booklet."
+		trap '' 1 2 3
+		exit 1
+		;;
+	[nN]* )
+		break 
+		;;
+	* )
+		continue
+		;;
+	esac
+done ' 1 2 3
+
+remoteflag=n
+[ -s /netstart ] &&
+{
+	remoteflag=y
+	chmod +x netstart
+	netstart
+	chmod 644 /etc/hosts
+}
+
+cp /install.tmp/sizer /etc   ### take out from next version
+
+cputype=`sizer -c` #what type cpu
+
+# setnametime
+# Get the system name, loop until a correct one is entered.
+# sysname holds that name.
+#
+case $remoteflag in
+y )
+    realsysname=`/bin/hostname`
+    sysname=`echo ${realsysname} | dd conv=ucase 2>/dev/null`
+    echo "
+The system name assigned to your processor by your system
+manager is $realsysname."
+	;;
+*)
+	echo "${LL} *** SPECIFY THE SYSTEM NAME *** "
+	while : true
+	do
+	    echo -n "
+Type the name of your system using alphanumeric characters. 
+The first character must be a letter.   For example, tinker.${LL} 
+Type your system name:  "
+	    read realsysname
+	    check=`expr $realsysname : '\([a-zA-Z][a-zA-Z0-9]*\)' 2> /dev/null`
+	    case $realsysname in
+	    "" )
+			continue
+			;;
+	    $check  ) 
+			;;
+	    * )
+			echo "
+You specified $realsysname as your system name, which is not valid. 
+Read the following prompt and this time type a valid system name:"
+			continue ;;
+	    esac
+	    sysname=`echo ${realsysname} | dd conv=ucase 2>/dev/null`
+	
+	    echo -n "
+You typed ${realsysname} as the name of your system.  Is this
+correct? Type y or n [y]: "
+	    read resp
+	    case $resp in
+		y* | Y* | "")
+			break
+	    		;;
+		*)
+			;;
+    		esac
+	done
+	;;
+esac
+
+/install.tmp/eli -f -q > /dev/null 2>&1
+
+#
+# This next if is for the "user" call to doconfig.  It
+# allows the user to use this script to edit and configure
+# an existing configuration file, rather than have to create
+# it from scratch everytime.
+# This sequence of code should never be seen during the
+# installation. Thus, no edits will be made to the prompts at this
+# time.
+
+newconfig="false"
+if test -s /sys/conf/$sysname
+then
+    echo -n "
+A system with that name already exists. ${LL}
+Replace it? (y/n) [n]? "
+    read resp
+    case $resp in
+	y* | Y* )
+	    newconfig="true"
+	    ;;
+
+	*)
+	    echo "Using existing /sys/conf/$sysname file. . ."
+	    cp /sys/conf/$sysname /tmp/$sysname
+	    ;;
+    esac
+else
+    newconfig="true"
+fi
+
+case ${newconfig} in
+true)
+	# Set the system date
+	echo "${LL}*** SPECIFY THE DATE AND TIME *** "
+
+# Read a date until a valid date is read
+
+	while : true
+	do
+    		echo -n "
+Enter the current date and time in this format:
+yymmddhhmm. Use two digits for year (yy), 
+month (mm), day (dd), hour (hh), and minute (mm).
+You type the time in 24-hour format. For example,
+for 11:30 p.m. on May 14, 1987, the response
+would be: ${LL}
+	8705142330 ${LL}
+Type the date and time [no default]: "
+    	read resp
+    	case $resp in
+	T)		#testing only
+	    break
+	    ;;
+	"")
+	    echo "You must specify a date and time. ${LL}"
+	    ;;
+	*)
+		/bin/date $resp > /dev/null
+	    case $? in 
+	    0 )	break ;;
+	    * )	;;
+	    esac
+	    ;;
+    	esac
+    	echo ${LL}
+	done
+
+	while : true
+	do
+		echo "${LL}*** SPECIFY THE TIME ZONE INFORMATION ***"
+		echo "
+Enter the time zone for your area, using the options
+listed in this table:
+
+   Time Zone           Options
+---------------------------------
+    Eastern		e
+    Central		c
+    Mountain		m
+    Pacific		p
+    Greenwich		g
+---------------------------------
+
+You can also enter the number of hours (-12 to 12) in time
+west of Greenwich. ${LL} "
+
+		echo -n "Type the time zone [no default]: "
+		read zone
+		case ${zone} in
+		e*|E*)
+		    hourswest=5 ;;
+
+		c*|C*)
+		    hourswest=6 ;;
+
+		m*|M*)
+		    hourswest=7 ;;
+
+		p*|P*)
+		    hourswest=8 ;;
+
+		g*|G*)
+		    hourswest=0 ;;
+
+		"")
+		    echo ""
+		    continue
+		    ;;
+		*)
+		    hourswest=${zone}
+
+		    case ${hourswest} in
+			[0-9] | 1[0-2] | -[1-9] | -1[0-2] )
+			    ;;
+			*)
+			    echo "
+The time zone you typed, ${hourswest}, is not valid. To correct the error, 
+read the following prompt and this time type a valid time zone:"
+			    continue
+			    ;;
+		    esac
+		esac
+		break
+	done
+
+	while : true
+	do
+	    echo -n "
+Does your area alternate between Daylight Savings
+and Standard time? Type y or n [y]: "
+	    read dst
+	    case ${dst} in
+	    [yY]*|"")
+		    echo "
+
+Enter the geographic area for Daylight Savings Time,
+using the options listed in this table:
+
+   Geographic Area    Options
+--------------------------------
+    USA 		u
+    Australia	 	a
+    Eastern Europe 	e
+    Central Europe 	c
+    Western Europe 	w
+--------------------------------
+"
+		    while : true
+		    do
+			echo -n \
+"Type the geographic area [u]: "
+			read dst
+			case ${dst} in
+			    u|U|"") dst=1; geog=u ;;
+			    a|A) dst=2 ; geog=a;;
+			    w|W) dst=3; geog=w ;;
+			    c|C) dst=4; geog=c ;;
+			    e|E) dst=5; geog=e ;;
+			    *)
+				echo ""
+				echo "
+You typed an invalid geographic area. Please type u for USA,
+a for Australia, e for Eastern Europe, c for Central Europe,
+or w for Western Europe.
+
+"
+				continue
+				;;
+			esac
+
+			break
+		    done
+		    ;;
+
+		[nN]*)
+		    dst=n; geog=n
+		    ;;
+
+		*)
+		    echo ""
+		    continue
+		    ;;
+	    esac
+
+	    break
+	done
+
+	timezone="$hourswest"
+
+	case ${dst} in
+	    "" | n) ;;
+	    *)  timezone="$timezone dst ${dst}" ;;
+	esac
+	;;
+esac
+
+# 
+# set the Super User's password
+# 
+echo "${LL}*** SPECIFY THE SUPERUSER PASSWORD *** ${LL}
+The installation booklet for your processor instructs
+you on how to enter the superuser password. ${LL} "
+
+until /bin/passwd root
+do
+    echo "Trying again to set Super User password. . .${LL}  "
+done
+
+#
+# set the Field Service password
+#
+
+echo "${LL}*** SPECIFY THE FIELD SERVICE PASSWORD *** ${LL}
+The installation booklet for your processor instructs
+you on how to enter the field service password. ${LL} "
+
+until /bin/passwd field
+do
+    echo "Trying again to set Field Service password. . .${LL}"
+done
+
+#
+# read the root device from the file .minidevice
+# To know media_D media_d media_u 
+#	and  root_D root_d root_u .
+#
+if test -s ".minidevice" 
+then
+	set `cat .minidevice`
+	root_D=$1; root_d=$2; root_u=$3; root_p=a
+	media_D=$4; media_d=$5; media_u=$6 media_p=$7
+	(cd /dev; MAKEDEV $root_d$root_u >/dev/null )
+else
+	echo "
+The installation software failed to recognize the distribution
+device and the system disk you are using. $ERMSG2"
+	exit 1
+fi
+
+case $remoteflag in
+y )
+	echo "
+The advanced installation is not available to you
+because you are using the network as your software
+distribution device. The installation software will
+now complete the installation for you."
+	ADVFLAG=0
+	media_D=REMOTE
+	;;
+* )
+	cd /install.tmp
+	while : true
+	do
+		echo -n "$MSG1"
+		read resp
+		case $resp in
+		n* | N* | "" ) 
+			echo -n "$MSG2"
+			read ans 
+			case $ans in
+			y* | Y* )
+				ADVFLAG=0	
+				;;
+			*)
+				continue
+				;;
+			esac
+			;;
+		y* | Y* )
+			echo -n "$MSG3"
+			read ans 
+			case $ans in
+			y* | Y* )
+				ADVFLAG=1	
+				;;
+			*)
+				continue
+				;;
+			esac
+			;;
+		*)	
+			continue
+			;;
+		esac
+		break
+	done
+	;;
+esac
+export ADVFLAG
+
+while : true
+do
+	case $ADVFLAG in
+	0)
+		ans=y
+		;;
+	1)	
+		echo -n "
+*** WELCOME TO THE ULTRIX-32 ADVANCED INSTALLATION ***
+
+The advanced installation allows you to tailor the ULTRIX-32
+operating system according to the needs of your site. Before
+performing the advanced installation, you should read the
+introductory chapters and fill out the worksheets provided
+in the Advanced Installation Guide. Use the Advanced 
+Installation Guide to step you through the advanced 
+installation. 
+
+*** SPECIFY IF YOU WANT THE FILE SYSTEM DEFAULTS ***
+
+Do you want the installation software to allocate the /usr and
+/usr/users file systems, swap space, and crash dump space to
+their default partitions? Type y or n [y]: "
+		read ans
+		;;
+	esac
+	case $ans in
+	y* | Y* | "" )
+		case $root_D in
+		RA82 | RA90 )
+			usr_p=d ;;
+		*)
+			usr_p=g ;;
+		esac
+		usr_d=$root_d; usr_u=$root_u	
+		umount /dev/$usr_d$usr_u$usr_p  > /dev/null 2>&1
+		echo "
+Making the new file system for /usr on /dev/r$usr_d$usr_u$usr_p $root_D ${LL}"
+		newfs /dev/r$usr_d$usr_u$usr_p $root_D 
+		case $? in
+		0 )	;;
+		* )
+			echo "
+The newfs command failed to construct the /usr file system on
+partition $usr_p of the system disk, $usr_d$usr_u. 
+${LL}$ERMSG2"
+			exit 1
+			;;
+		esac
+		mount -o force /dev/$usr_d$usr_u$usr_p /usr
+		case $? in
+		0 )	;;
+		* )
+			echo "
+The mount command failed to mount the /usr file system on partition
+$usr_p of the system disk, $usr_d$usr_u.  $ERMSG2"
+			exit 1
+			;;
+		esac
+		mkdir /usr/users
+		chmod 755 /usr/users
+		usrusers=/usr/users
+		users_d=$root_d; users_u=$root_u
+		case $root_D in
+		RD52 | RD53 | RD54 | RD31 | RD32 | RM03 | RM80 | RP05 | RP06 )	
+			users_p=g
+			;;
+		* )
+			users_p=h
+			echo "
+Making the new file system for /usr/users 
+on /dev/r$users_d$users_u$users_p $root_D ${LL}"
+			newfs /dev/r$users_d$users_u$users_p $root_D 
+			case $? in
+			0 )	;;
+			* )	
+				echo "
+The newfs command failed to construct the /usr/users file system on
+partition $users_p of the system disk, $users_d$users_u. $ERMSG2"
+				exit 1 ;;
+			esac
+			mount -o force /dev/$users_d$users_u$users_p /usr/users
+			case $? in
+			0 )	;;
+			* )
+				echo "
+The mount command failed to mount the /usr/users file system 
+on partition $users_p on the system disk, $users_d$users_u. $ERMSG2."
+				exit 1
+				;;
+			esac
+			;;
+		esac
+		swap1_d=$root_d
+		swap1_u=$root_u
+		swap1_p=b
+		dump_d=$root_d
+		dump_u=$root_u
+		dump_p=b
+		;;
+	n* | N* )
+		. ask_filesys
+		;;
+	* )
+		continue
+		;;
+	esac
+	break
+done
+
+#
+# Start to retore the /usr file system
+#
+echo "/dev/${root_d}${root_u}a:/:rw:1:1:ufs::" > /etc/fstab
+echo "/dev/${usr_d}${usr_u}${usr_p}:/usr:rw:1:2:ufs::" >> /etc/fstab
+case "${users_d}${users_u}${users_p}" in
+"${usr_d}${usr_u}${usr_p}")
+	;;
+*)
+	echo "/dev/${users_d}${users_u}${users_p}:${usrusers}:rw:1:3:ufs::" >> /etc/fstab
+	;;
+esac
+
+case "${swap2_p}" in
+"" )	;;
+* )
+	echo "/dev/${swap2_d}${swap2_u}${swap2_p}::sw:0:0:ufs::" >> /etc/fstab
+	;;
+esac
+chmod 644 /etc/fstab
+
+case $ADVFLAG in
+0 )
+	echo "${LL}Installing supported software subsets."
+	;;
+1 )
+	echo "
+*** SELECT SUPPORTED SOFTWARE SUBSETS *** ${LL}
+The installation software now requests that you indicate which supported 
+software subsets you want to install. Follow the instructions provided
+by the subsequent prompts. "
+	;;
+esac
+
+cd /
+N=1
+while test $N -le 3
+do
+	case $N in
+	1 )	;;
+	2 )
+		echo "
+*** Attempting again to install the supported software subsets. *** "
+		;;
+	3 )
+		echo " 
+The installation software failed to install the supported software subsets. 
+This causes the installation procedure to stop. Contact your DIGITAL
+representative."
+		exit 1
+		;;
+	esac
+	N=`expr $N + 1`
+	case $media_D in
+    	REMOTE )
+		for i in `cat /etc/hosts` 
+		do
+			SERVER=$i
+		done	
+		setld -l $SERVER:	
+		case $? in
+		0 )	
+			echo "
+The installation software has successfully installed 
+the supported software subsets."
+			break
+			;;
+		1 )
+			echo "
+The installation software was unable to install the supported software
+subsets." 
+			continue
+			;;
+		* )
+			echo -n "$MSG4"
+			read ans
+			case $ans in
+			2 )
+				N=2
+				continue ;;
+			"" | * )
+				break 
+				;;
+			esac
+			;;
+		esac
+		;;
+    	RA60 )
+		(cd /dev; MAKEDEV ${media_d}${media_u} )
+		echo "
+The installation software checks your distribution media,
+${media_d}${media_u}, to ensure that it is not corrupt."
+		fsck /dev/r${media_d}${media_u}${media_p}
+		case $? in
+		0 )	;;
+		* )
+			echo "
+The fsck command failed to perform a file consistency check on partition
+${media_p} of the distribution media, ${media_d}${media_u}. Thus, the
+installation software was unable to load the supported software subsets."
+			continue
+			;;
+		esac
+		mount  -r -o force /dev/${media_d}${media_u}${media_p} /mnt
+		case $? in
+		0 ) 	;;
+		* )
+			echo "
+The mount command failed to mount partition ${media_p} of the distribution
+media, ${media_d}${media_u}. Thus, the installation software was unable
+to load the supported software subsets. "
+			continue
+			;;
+		esac
+		setld -l /mnt
+		case $? in
+		0 )	
+			echo "
+The installation software has successfully installed 
+the supported software subsets."
+		umount /dev/${media_d}${media_u}${media_p}
+			break
+			;;
+		1 )
+			umount /dev/${media_d}${media_u}${media_p}
+			echo "
+The installation software was unable to install the supported software
+subsets." 
+			continue
+			;;
+		* )
+			umount /dev/${media_d}${media_u}${media_p}
+			echo -n "$MSG4"
+			read ans
+			case $ans in
+			2 )
+				N=2
+				continue ;;
+			"" | * )
+				break 
+				;;
+			esac
+			;;
+		esac
+		;;
+	RX50 )
+		nextdisk=`expr ${media_u} + 1`
+		(cd /dev ; MAKEDEV ${media_d}${media_u} ${media_d}${nextdisk} )
+		setld -l ${media_d}${media_u}a
+		case $? in
+		0 )	
+			echo "
+The installation software has successfully installed 
+the supported software subsets."
+			break
+			;;
+		1 )
+			echo "
+The installation software was unable to install the supported software
+subsets." 
+			continue
+			;;
+		* )
+			echo -n "$MSG4"
+			read ans
+			case $ans in
+			2 )
+				N=2
+				continue ;;
+			"" | * )
+				break 
+				;;
+			esac
+			;;
+		esac
+		;;
+    	* )
+		(cd /dev; rm -f *rmt*; MAKEDEV ${media_d}${media_u} >/dev/null )
+		setld -l /dev/nrmt0h
+		case $? in
+		0 )	
+		echo "
+The installation software has successfully installed the supported 
+software subsets. You can now remove the tape containing the
+supported software subsets from the device."
+			break
+			;;
+		1 )
+			echo "
+The installation software was unable to install the supported software
+subsets." 
+			continue
+			;;
+		* )
+			echo -n "$MSG4"
+			read ans
+			case $ans in
+			2 )
+				N=2
+				continue ;;
+			"" | * )
+				break 
+				;;
+			esac
+			;;
+		esac
+		;;
+	esac
+done
+
+
+case $ADVFLAG in
+1 )
+	trap '
+	while :
+	do
+		echo -n "
+The installation software has detected an interrupt condition during the
+selection of unsupported software subsets. Do you want to skip the selection
+of the unsupported software subsets?  ${LL}
+Your choices are: ${LL}
+	1) Continue with the next task. 
+	2) Continue with the selection of the unsupported software subsets.${LL}
+Type 1 or 2 [1]:  "
+		read ans
+		case $ans in
+		"" | 1 )
+			trap '' 1 2 3
+			break 2
+			;;
+		2 )
+			break
+			;;
+		* )
+			continue
+			;;
+		esac
+	done ' 1 2 3
+
+	while : true
+	do
+		echo -n "
+*** SELECT UNSUPPORTED SOFTWARE SUBSETS ***${LL}
+Do you want to install unsupported software subsets? 
+Type y or n [no default]:  "
+		read ans
+		case $ans in
+		[Nn]* ) 
+			break	;;
+		[yY]* )
+			echo "
+The Advanced Installation Guide explains the following
+table of software distribution devices:${LL}"
+			DEVICE=`finder -i`
+			set xx $DEVICE
+			device_D=$2; device_d=$3; device_u=$4
+			case $device_D in
+			RA60 )
+			     (cd /dev; MAKEDEV $device_d$device_u >/dev/null )
+				echo "
+The installation software checks your distribution media,
+${media_d}${media_u}, to ensure that it is not corrupt."
+				fsck /dev/r${device_d}${device_u}h
+				case $? in
+				0 )	;;
+				* )
+					echo "
+The fsck command failed to perform a file consistency check on partition
+${device_p} of the distribution media, ${device_d}${device_u}. Thus, the
+installation software was unable to load the unsupported software subsets."
+					continue
+					;;
+				esac
+				mount -r /dev/${device_d}${device_u}h /mnt
+				case $? in
+				0 ) 	;;
+				* )
+					echo "
+The mount command failed to mount partition 'h' of the distribution
+media, ${device_d}${device_u}. Thus, the installation software was unable
+to load the unsupported software subsets. "
+					continue
+					;;
+				esac
+				setld -l /mnt
+				case $? in
+				0 )	
+					echo "
+The installation software has successfully installed 
+the unsupported software subsets."
+					umount /dev/${device_d}${device_u}h
+					break
+					;;
+				* )
+					umount /dev/${device_d}${device_u}h
+					echo "$MSG5"
+					break
+					;;
+				esac
+				;;
+			RX50 )
+				nextdisk=`expr ${device_u} +1`
+				(cd /dev; 
+	MAKEDEV ${device_d}${device_u} ${device_d}${nextdisk} >/dev/null )
+				setld -l /dev/${device_d}${device_u}a
+				case $? in
+				0 )	
+					echo "
+The installation software has successfully installed the unsupported 
+software subsets. "
+					break
+					;;
+				* )
+					echo "$MSG5"
+					break
+					;;
+				esac
+				;;
+    			* )
+			    	(cd /dev; rm -f *rmt*; 
+				MAKEDEV ${device_d}${device_u} >/dev/null )
+				setld -l /dev/nrmt0h
+				case $? in
+				0 )	
+					echo "
+The installation software has successfully installed the unsupported 
+software subsets. You can now remove the tape containing the
+unsupported software subsets from the device."
+					break
+					;;
+				* )
+					echo "$MSG5"
+					break
+					;;
+				esac
+				;;
+			esac
+			;;
+		* )
+			echo "
+You typed an invalid response. Type y or n."
+			continue
+			;;
+		esac
+	done
+
+    	case $cputype in
+    	MVAX_II )
+		while : true
+		do
+			echo -n "
+*** INSTALL ULTRIX-32w LAYERED PRODUCT SOFTWARE SUBSETS ***${LL}
+Do you want to install ULTRIX-32w software subsets?
+type y or n [no default]: "
+			read ans
+			case $ans in
+			[Nn]* ) break ;;
+			[Yy]* )
+				echo "
+The Advanced Installation Guide explains the following
+table of software distribution devices:${LL}"
+				DEVICE=`finder -i`
+				set xx $DEVICE
+				device_D=$2; device_d=$3; device_u=$4
+				(cd /dev; rm -f *rmt*; 
+				MAKEDEV ${device_d}${device_u} >/dev/null )
+				setld -l /dev/nrmt0h
+				case $? in
+				0 )	
+					echo "
+The installation software has successfully installed the ULTRIX-32w software. 
+You can now remove the tape containing the ULTRIX-32w software from the device."
+					;;
+				* )
+				echo "
+The installation software failed to install the ULTRIX-32w software subsets.  
+You can install at a later time, using the setld utility."
+					;;
+				esac
+				break		
+				;;
+			esac
+     		done
+		;;
+    	esac
+	;;
+esac
+
+trap '
+while : true
+do
+	echo -n "
+Do you want to stop the installation?  Type y 
+or n [no default] "
+	read ans
+	case $ans in
+	[yY]* )
+		trap '' 1 2 3
+		exit 1
+		;;
+	[nN]* )
+		break
+		;;
+	* )
+		continue
+		;;
+	esac
+	break
+done	' 1 2 3
+
+case $cputype in
+MVAX_I | MVAX_II )
+	ed /usr/lib/crontab <<xxEOFxx  1>/dev/null
+		/#BIGVAX/d
+		.,/#END/d
+		/#MICROVAX/d
+		.,/#END/s/^#//g
+		d
+		w
+		q
+xxEOFxx
+	ed /etc/rc <<xxEOFxx  1>/dev/null
+		/#MICROVAX/d
+		.,/#END/s/^#//g
+		d
+		w
+		q
+xxEOFxx
+	subcpu=`sizer -s`
+	case $subcpu in
+	4 )	# for vaxstar
+		ed /etc/rc.local <<xxEOFxx  1>/dev/null
+			/HDWR/s/HDWR/se0/
+			w
+			q
+xxEOFxx
+		;;
+	* )
+		ed /etc/rc.local <<xxEOFxx  1>/dev/null
+			/HDWR/s/HDWR/qe0/
+			w
+			q
+xxEOFxx
+		;;
+	esac
+	;;
+* )
+	ed /usr/lib/crontab <<xxEOFxx   1>/dev/null
+		/#BIGVAX/d
+		/#END/d
+		/#MICROVAX/d
+		.,/#END/d
+		w
+		q
+xxEOFxx
+	ed /etc/rc <<xxEOFxx   1>/dev/null
+		/#MICROVAX/d
+		.,/#END/s/^#//g
+		d
+		w
+		q
+xxEOFxx
+	ed /etc/rc.local <<xxEOFxx  1>/dev/null
+		/HDWR/s/HDWR/de0/
+		w
+		q
+xxEOFxx
+	;;
+esac
+		
+[ -s /netstart ] &&
+{
+	IFCONF=`grep broadcast /netstart`
+	set $IFCONF; BRDCST=$5; NETMSK=$7
+	ed /etc/rc.local <<xxEOFxx  1>/dev/null
+		/NETNUM.0/s/NETNUM.0/$BRDCST/
+		s/^#//
+		/255.0/s/255.0/$NETMSK/
+		w
+		q
+xxEOFxx
+}
+	
+
+# Setup network for local loopback. Netsetup will rearrange this when run.
+case $remoteflag in
+n )
+	ed  /etc/hosts <<xxxEOFxxx 1>/dev/null 
+	/localhost/s/\$/ $realsysname/p
+	w
+	q
+xxxEOFxxx
+	;;
+esac
+
+echo "dumps on $dump_d$dump_u$dump_p" > /install.tmp/.config
+case "$swap2_p" in
+"" )	
+	echo "swap on $swap1_d$swap1_u$swap1_p"  >> /install.tmp/.config
+	;;
+* )
+	echo "swap on $swap1_d$swap1_u$swap1_p and $swap2_d$swap2_u$swap2_p"  >> /install.tmp/.config
+	;;
+esac
+
+case $ADVFLAG in
+0 )
+	echo "
+options		QUOTA
+options		INET
+options		NFS
+options		RPC
+options		LAT
+options		DLI
+options		BSC
+options		EMULFLT
+pseudo-device 	pty
+pseudo-device	loop
+pseudo-device	ether
+pseudo-device	inet
+pseudo-device	nfs
+pseudo-device	rpc
+pseudo-device	lat
+pseudo-device	lta
+pseudo-device	bsc
+pseudo-device	dli " >> /install.tmp/.config
+	;;
+1 )
+	echo "
+options		QUOTA
+options		INET
+options		EMULFLT	
+pseudo-device 	pty
+pseudo-device	loop
+pseudo-device	ether 
+pseudo-device	inet " >> /install.tmp/.config
+	while :
+	do
+		echo  " 
+*** SPECIFY OPTIONS FOR THE CONFIGURATION FILE *** ${LL}"
+		echo -n "
+     CONFIGURATION FILE OPTIONS MENU ${LL}
+SELECTION NUMBER      OPTION 		    DESCRIPTION ${LL}
+	1		NFS		'Network file system'
+	2		RPC		'Remote procedure calls'
+	3		LAT		'Local area terminal'
+	4		DLI		'Data link communication protocol'
+	5		BSC		'Bisynchronous communication protocol'
+	6		All of the above options
+	7		None of the above options
+
+Please enter the selection number for those options you want to add to
+your configuration file. For example, 1 3 4 :  "
+		read ans
+		case $ans in
+		"" )
+			echo "You pressed the RETURN key without choosing one 
+or more options. You must choose one or more options from the menu."
+			continue
+			;;
+		7 )
+			echo "
+You chose not to specify any options from the menu. Thus, the installation 
+software will not add any of these options to your configuration file. "
+			;;
+		* )	
+		    case $ans in
+		    6 )
+			ans="1 2 3 4 5"
+			;;
+		    esac
+		    echo "
+You specified that the following options be added to the configuration file: ${LL}"
+		    for i in $ans
+		    do
+			case $i in
+			1 ) echo "	NFS"
+				;;
+			2 ) echo "	RPC"
+				;;
+			3 ) echo "	LAT"
+				;;
+			4 ) echo "	DLI"
+				;;
+			5 ) echo "	BSC"
+				;;
+			* )
+				echo "
+You specified $i, which is an invalid response. Study the options provided 
+in the following menu and enter a valid response.  ${LL}"
+				continue 2
+				;;
+			esac
+		    done
+		    ;;
+		esac
+		echo -n "
+Are the options you have chosen correct? Type y or n [y]:  "
+		read resp
+		case $resp in
+		[yY]* | "" )
+			break
+			;;
+		esac
+	done
+	case $ans in
+	7 )	;;
+	* )
+		for i in $ans
+		do
+			case $i in
+			1 )
+				echo "
+options		NFS
+pseudo-device	nfs" >> /install.tmp/.config	
+				;;
+			2 )
+				echo "
+options		RPC
+pseudo-device	rpc" >> /install.tmp/.config	
+				;;
+			3 )
+				echo "
+options		LAT
+pseudo-device	lat
+pseudo-device	lta" >> /install.tmp/.config	
+				;;
+			4 )
+				echo "
+options		DLI
+pseudo-device	dli" >> /install.tmp/.config	
+				;;
+			5 )
+				echo "
+options		BSC
+pseudo-device	bsc" >> /install.tmp/.config	
+				;;
+			esac
+		done
+		;;
+	esac
+	;;
+esac
+	
+
+rm /.minidevice  /restoresymtable
+rm /netstart > /dev/null
+
+rm -f /dev/*mt*		# prevent wrong unit number after doconfig 
+
+sync
+sync
+/etc/doconfig $realsysname $timezone 
+
+[ ! -f /newvmunix ] && exit 1
+
+mv /vmunix /genvmunix
+echo "${LL}Moving /newvmunix to /vmunix ${LL}"
+mv /newvmunix /vmunix
+
+mv real.profile .profile  
+rm -rf /install.tmp	# the doconfig usr the file /install.tmp/.config
+sync
+sync
+
+BOOTMSG="${LL}Type the following boot sequence at the console mode prompt "
+WAITMSG="${LL}Please wait for message indicating that the processor can be halted."
+
+case $cputype in
+MVAX_I | MVAX_II )
+	case $root_u in
+	0 )
+		/etc/reboot
+		;;
+	* )
+		dd if=/tmp/showboot 2>/dev/null
+		/etc/halt
+		;;
+	esac
+	;;
+VAX780 | VAX730 | VAX8600)
+    while : true
+    do
+	echo -n "
+*** UPDATE THE CONSOLE MEDIA *** ${LL}
+Do you need to update the console media? Type y or n [y]:  "
+	read answer
+	case $answer in
+	[Nn]*)
+		dd if=/tmp/showboot 2>/dev/null
+		/etc/halt
+		;;
+	[Yy]* | "")
+		case ${cputype} in
+		VAX780)
+			echo "
+Remove the RX01 diskette labelled Boot 1/1 from the inside drive.
+Replace it with the RX01 diskette that was supplied with the processor.
+
+Press the RETURN key when you are ready to continue. " 
+			read ans
+			case $ans in
+			"" )	;;
+			* )  continue ;;
+			esac
+			cd /sys/780cons
+			sizer -b -k /genvmunix
+			make update
+			/etc/reboot
+			;;
+		VAX8600)
+			cd /sys/8600cons
+			sizer -b -k /genvmunix
+			make update
+			/etc/reboot
+			;;
+		VAX730)
+			echo "
+Remove the TU58 tape cassette labelled Boot 1/1 from the inside drive.
+Replace it with the TU58 cassette that was supplied with the processor.
+
+Press the RETURN key when you are ready to continue. " 
+			read ans
+			case $ans in
+			"" )	;;
+			* )	continue
+				;;
+			esac
+			cd /sys/730cons
+			sizer -b -k /genvmunix
+			make update
+			while :
+			do
+				echo -n "
+Press the RETURN key when you are ready. "
+				read ans
+				case $ans in
+				"" )
+					/etc/reboot
+					break
+					;;
+				* )
+					;;
+				esac
+			done
+			;;
+		esac
+		;;
+	esac
+	break
+    done
+	;;
+VAX750 )
+	case $root_u in
+	0 )
+	    while :
+	    do
+		echo "
+Please set the front switch labelled "BOOT DEVICE", to the postion which 
+boots your system disk. "
+		echo -n "
+Press the RETURN key when ready to reboot. "
+		read ans
+		case $ans in
+		"" )
+			/etc/reboot
+			break
+			;;
+		* )
+			;;
+		esac
+    done
+	    ;;
+	* )
+		dd if=/tmp/showboot 2>/dev/null
+		/etc/halt
+		;;
+	esac
+	;;
+VAX8800 | VAX8200 )
+	dd if=/tmp/showboot 2>/dev/null
+	/etc/halt
+	;;
+* )
+	dd if=/tmp/showboot 2>/dev/null
+	/etc/halt
+	;;
+esac

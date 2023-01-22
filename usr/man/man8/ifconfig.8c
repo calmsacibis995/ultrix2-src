@@ -1,0 +1,85 @@
+.TH ifconfig 8c
+.SH NAME
+ifconfig \- configure network interface parameters
+.SH SYNTAX  
+.B /etc/ifconfig
+interface
+[
+.I address
+[
+.I dest_address
+] ] [
+.I parameters
+]
+.SH DESCRIPTION
+The
+.PN Ifconfig
+command assigns an address
+to a network interface and/or configures
+network interface parameters.
+You must use
+.PN ifconfig
+at boot time to define the network address
+of each interface present on a machine. You can also use 
+it at a later time to redefine an interface's address.  The
+.I interface
+parameter is a string of the form ``name unit'', e.g. ``en0''. 
+The address is either a host name present in the host name data
+base, hosts(5),
+or a DARPA Internet address expressed in the Internet standard
+dot notation.
+.PP
+You can set the following parameters with 
+.IR ifconfig :
+.IP \fBup\fR 1i
+Marks an interface ``up.'' 
+.IP \fBdown\fR 1i
+Mark an interface ``down.''  When an interface is
+marked ``down,'' the system does not attempt to
+transmit messages through that interface. 
+.IP \fBtrailers\fR 1i
+Enables the use of a trailer link level encapsulation when
+sending (default).
+If a network interface supports
+.IR trailers ,
+the system, when possible, encapsulates outgoing
+messages in a manner that minimizes the number of
+memory-to-memory copy operations performed by the receiver.
+.IP \fB\-trailers\fR 1i
+Disables the use of a trailer link level encapsulation.
+.IP \fBarp\fR 1i
+Enables the use of the Address Resolution Protocol in mapping
+between network level addresses and link level addresses (default). 
+This is currently implemented for mapping between DARPA Internet
+addresses and 10Mb/s Ethernet addresses.
+.IP \fB\-arp\fR 1i
+Disables the use of the Address Resolution Protocol.
+.IP \fBdebug\fR 1i
+Enables driver-dependent debugging code. Usually, this turns on
+extra console error logging.
+.IP \fB\-debug\fR 1i
+Disables driver dependent debugging code.
+.IP \fBnetmask\fR 1i
+Specify how much of the address you wish to
+reserve for subdiving Class A and B networks
+into sub-networks.  (Inet only).
+.IP \fBdstaddr\fR 1i
+Specify the correspondent on the other end of
+a point to point link
+.IP \fBbroadcast\fR 1i
+Specify the address you wish to use to
+represent broadcasts to the network.
+.PP
+The
+.PN ifconfig
+command displays the current configuration for a network interface
+when no optional parameters are supplied.
+.PP
+Only the superuser can modify the configuration of a network interface.
+.SH DIAGNOSTICS
+Messages indicating the specified interface do not exist, the
+requested address is unknown, the user 
+tried to alter an interface's configuration
+but is not privileged.
+.SH "SEE ALSO"
+netstat(1), intro(4n), rc(8)

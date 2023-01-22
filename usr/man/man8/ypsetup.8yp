@@ -1,0 +1,63 @@
+.\" Written by liza sanford-crane  (7/30/86)
+.\"
+.TH ypsetup 8yp
+.SH NAME
+ypsetup - set up the Yellow Pages (YP) environment
+.SH SYNTAX
+.B /etc/ypsetup
+.br
+.SH DESCRIPTION
+The
+.PN ypsetup (8yp)
+command is an interactive facility that allows you to set up
+Yellow Pages (YP) on your system.
+A local area network must be set up on your system 
+before you can set up YP.
+.LP
+The
+.PN ypsetup
+command takes you through the setup process by
+setting up your default domain name and
+the nature of your YP environment (master, slave, and or client server),
+and by placing several administrative files under YP control.
+.LP
+Before running
+.PN ypsetup,
+you must know your system's default domain name and
+whether your system will be a master, slave, and or client server.
+If your system is to be the master server for your domain,
+be sure no other master has been established.
+If your system is not to be the master server,
+be sure a master already exists for your domain.
+Once you know this information, run
+.PN ypsetup
+with the system in multiuser mode and answer its questions.
+.SH FILES
+.ta 2i
+.IP \(bu
+Files That Start the YP Daemons:
+.sp
+/usr/lib/crontab	Clock daemon data base file
+.br
+/etc/rc.local	Commands pertinent to a specific system
+.sp
+.IP \(bu
+Default YP Map Files:
+.sp
+/etc/group	ULTRIX-32 file system group file
+.br
+/etc/hosts	Host name data base
+.br
+/etc/networks	Network name data base
+.br
+/etc/passwd	Password file
+.br
+/etc/protocols	Protocol name data base
+.br
+/etc/services	Service name data base
+.br
+/etc/netgroup	Network group data base
+.SH SEE ALSO
+domainname(1yp), ypwhich(1yp), yppasswdd(8yp), ypserv(8yp), ypxfr(8yp) 
+.br
+Network Management Guide

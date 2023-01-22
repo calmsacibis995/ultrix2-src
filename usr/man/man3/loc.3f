@@ -1,0 +1,11 @@
+.TH loc 3f
+.SH NAME
+loc \- return the address of an object
+.SH SYNTAX
+.B function loc (arg)
+.SH DESCRIPTION
+The returned value will be the address of
+.I arg.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a

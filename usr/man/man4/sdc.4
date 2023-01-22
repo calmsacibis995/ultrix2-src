@@ -1,0 +1,171 @@
+.TH sdc 4
+.SH NAME
+sdc \-  RD31, RD32, RD53, RD54, RX33 \- Small VAX disk controller interface
+.SH SYNTAX
+.B "controller sdc0 at uba0 csr 0x200c0000 vector sdintr "
+.br 
+.B "disk rd0 at sdc0 drive 0"
+.br
+.B "disk rd1 at sdc0 drive 1"
+.br
+.B "disk rx2 at sdc0 drive 2"
+.SH DESCRIPTION				
+.\" Begin
+This is a driver for the DIGITAL Small VAX disk controller.
+This disk controller is used by both the workstation and
+multiuser configurations of the busless Small VAX processor.
+.PP
+The SDC driver uses the same disk format as the RQDX3 controller.
+Winchester disks formatted by the small VAX controller are
+compatible with RQDX3 formatted disks, but
+not with RQDX1 and RQDX2 formatted disks.
+The SDC driver implements dynamic bad block replacement
+in the same manner as the RQDX3 controller.
+.PP
+Files with minor device numbers 0 through 7 refer to various portions
+of drive 0; minor devices 8 through 15 refer to drive 1, and so
+forth.  The standard device names begin with 
+.B rd,
+for winchester disk drives 0 and 1 and
+.B rx,
+for the diskette drive 2
+followed by the drive number and then a letter,
+.B a 
+through 
+.B h 
+for partitions 0 through 7, respectively. 
+.PP
+The block files access the disk by the system's normal
+buffering mechanism and can be read and written without regard to
+physical disk records.  There is also a raw interface
+that provides for direct transmission between the disk
+and the user's read or write buffer.
+One read or write call results in one I/O operation,
+so raw I/O is considerably more efficient when
+many words are transmitted.  
+The names of the raw files conventionally begin with an extra 
+.B r.
+.PP
+In raw I/O, counts should be a multiple of 512 bytes (a disk sector).
+Likewise
+.B seek 
+calls should specify a multiple of 512 bytes.
+.SH "DISK SUPPORT"
+The SDC driver handles RD31, RD32, RD53, and RD54 winchester disk drives
+on drives 0 and 1 and RX33 floppy disk drive on drive 2.
+The RX33 drive reads and writes both single density (400 K-bytes) RX50 floppy
+diskettes and double density double sided (1200 K-bytes) RX33 diskettes.
+Drive types are recognized in the autoconfiguration process.
+For constructing file systems the partition sizes 
+are required.  Partition sizes are the same as those supported by
+the MSCP driver,
+ra(4).
+Partition sizes can be queried or changed by 
+chpt(8).
+(See also 
+disk(4).
+.PP
+The rd?a partition is usually used for the root file system,
+the rd?b partition as a paging area,
+and the rd?g partition for the usr file system.
+.PP
+.SH FILES
+.B "/dev/rd[0-1][a-f]"
+.br
+.B "/dev/rrd[0-1][a-f]"
+.br
+.B "/dev/rx2a"
+.br
+.B "/dev/rrx2a"
+.R
+.SH DIAGNOSTICS
+The following messages are printed at the console
+and written to the system
+error log file
+/usr/adm/syserr/syserr.<hostname>.
+.PP
+\fBsd%d:HARD_ERR: cannot read XBN \fP
+.br
+The driver cannot read the format information from the disk during autoconfiguration. The disk may not be formatted properly.
+.PP
+\fBsd%d:HARD_ERR: CANNOT RECOVER FROM PREVIOUS BBR \fP
+.br
+Bad block replacement was interrupted in the middle when the system was last 
+halted. The driver cannot successfully complete the bad block replacement. Try
+to recover all the data from the disk and reformat it.
+Refer to the "Dynamic and Forced Bad Block Replacement"
+chapter in the System Manager's Guide for additional information.
+.PP
+\fBsd%d:HARD_ERR: Drive select failed \fP
+.br
+The driver cannot select the specified drive for doing I/O. Make sure the drive
+is online.
+.PP
+\fBsd%d:HARD_ERR: Invalid cylinder: %d \fP
+.br
+The driver tries I/O on a cylinder outside the valid range for the type of disk
+on the drive. This is a fatal error caused by the driver and should not happen.
+.PP
+\fBsd%d:HARD_ERR: Invalid head:%d \fP
+.br
+The driver tries I/O on a head outside the valid range for the type of disk on
+the drive. This is a fatal error caused by the driver and should not happen.
+.PP
+\fBsd%d:HARD_ERR: Forced Error Modifier set LBN %d
+.br
+The forced error bit is set on the specified block. The block was found to be
+bad and has been replaced with a good block. But the data in the block is bad.
+Writing new data into this block will clear the forced error bit.
+Refer to the "Dynamic and Forced Bad Block Replacement"
+chapter in the System Manager's Guide for additional information.
+.PP
+\fBsd%d:HARD_ERR: compare error \fP
+.br
+The driver received a compare error for the drive from the controller. This 
+should be seen only for the floppy drive. For hard disks, the bad block will 
+get replaced.
+.PP
+\fBsd%d:HARD_ERR: eccerror \fP
+.br
+The driver received an ECC error for the drive from the controller.
+.PP
+\fBsd%d:HARD_ERR: syncerr \fP
+.br
+The driver received sync error for the drive from the controller. If it is the
+floppy drive, reinsert the floppy and repeat the command.
+.PP
+\fBsd%d:HARD_ERR: bad sector \fP
+.br
+The controller detected the sector to be bad from the sector's ID field. This
+message should appear only for the floppy drive. For hard disks, the bad block
+will get replaced.
+.PP
+\fBsd%d:HARD_ERR: WRITE FAULT \fP
+.br
+This is due to internal error in the drive, such as improper supply voltage.
+This message should appear only for hard disk drives.
+.PP
+The following messages are written to the system error file,
+/usr/adm/syserr/syserr.<hostname>.
+.PP
+\fBsd:SOFT_ERR: stray interrupt \fP
+.br
+An unexpected interrupt was received (e.g. when no i/o was pending). The
+interrupt is ignored.
+.PP
+\fBsd:SOFT_ERR: No valid buffer \fP
+.br
+An interrupt was received when the driver was not ready to receive one. The
+interrupt is ignored. This should rarely happen.
+.PP
+\fBsd%d:SOFT_ERR: Command not yet implemented thru interrupt, command = %c \fP
+.br
+An interrupt was received for the command which should not happen. The interrupt
+is ignored.
+.PP
+\fBsd%d:SOFT_ERR: Unknown error type, UDC_CSTAT = %o, UDC_DSTAT = %o, DKC_STAT = %o \fP
+.br
+The error type indicated by the controller for the last I/O is not any of the
+common ones. An I/O error is generated.
+.SH SEE ALSO
+nbuf(4), dkio(4), chpt(8), ra(4), rd(4), rx(4) uerf(8)

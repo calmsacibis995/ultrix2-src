@@ -1,0 +1,30 @@
+.TH pxref 1
+.SH NAME
+pxref \- Pascal cross-reference program
+.SH SYNTAX
+.B pxref
+[
+.BR \- ""
+]
+name
+.SH DESCRIPTION
+The
+.B pxref
+command
+makes a line numbered listing and a cross-reference of identifier usage
+for the program in
+.I name.
+The optional `\fB\-\fP' argument suppresses the listing.  The keywords
+.B goto
+and
+.B label
+are treated as identifiers for the purpose of the cross-reference.
+.B Include
+directives are not processed, but cause the placement of an entry
+indexed by `#include' in the cross-reference.
+.SH RESTRICTIONS
+Identifiers are trimmed to 10 characters.
+.SH "SEE ALSO"
+"Berkeley Pascal User's Manual,"
+.I ULTRIX-32 Supplementary Documents 
+Vol II:Programmer

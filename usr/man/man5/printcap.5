@@ -1,0 +1,99 @@
+.TH printcap 5
+.SH NAME
+printcap \- printer capability data base
+.SH SYNTAX
+/etc/printcap
+.SH DESCRIPTION
+The
+.B printcap
+data base
+is a simplified version of the
+termcap(5)
+data base
+used to describe line printers.  The spooling system accesses the
+.B printcap
+file every time it is used, allowing dynamic
+addition and deletion of printers.  Each entry in the data base
+is used to describe one printer.  This data base may not be
+substituted for, as is possible for 
+.B termcap,
+because it may allow accounting to be bypassed.
+.PP
+The default printer is normally 
+.B lp,
+though the environment variable PRINTER
+may be used to override this.  Each spooling utility supports an option,
+.BI \-P printer,
+to allow explicit naming of a destination printer.
+.PP
+Refer to the
+.ul
+4.2BSD Line Printer Spooler Manual
+for a complete discussion on how to set the data base for a given printer.
+.SH CAPABILITIES
+Refer to
+.B termcap
+for a description of the file layout.
+.nf
+
+.ta \w'k0-k9  'u +\w'Type  'u +\w'``/usr/spool/lpd\'\'  'u
+\fBName	Type	Default	Description\fR
+af	str	NULL	Name of accounting file
+br	num	none	If lp is a tty, set the baud rate (ioctl call)
+cf	str	NULL	Cifplot data filter
+df	str	NULL	Tex data filter (DVI format)
+dn	str	/usr/lib/lpd	Line printer daemon filename 
+du	num		Daemon user id      
+fc	num	0	If lp is a tty, clear octal flag values (tty(4) "sg_flags") ff	str	``\ef''	string to send for a form feed
+fo	bool	false	Print a form feed when device is opened
+fs	num	0	If lp is a tty, set octal flag values (tty(4) "sg_flags")	
+gf	str	NULL	Graph data filter (plot (3X) format)
+ic	bool	false	Driver supports (nonstandard) ioctl to indent printout
+if	str	NULL	Name of text filter which does accounting
+lf	str	``/dev/console''	Error logging file name
+lo	str	``lock''	Name of lock file
+lp	str	``/dev/lp''	Device name to open for output
+mc	num		Maximum number of copies allowed
+mx	num	1000	Maximum file size (in BUFSIZ blocks), zero = unlimited
+nc	bool	false	No control characters allowed in output file
+nd	str	NULL	Next directory for list of queues (unimplemented)
+nf	str	NULL	Ditroff (device independent troff) data filter 
+of	str	NULL	Name of output filtering program
+op	str		Object port on LAT terminal server
+pl	num	66	Page length (in lines)
+pp	str	NULL	Print command filter replacement
+pw	num	132	Page width (in characters)
+px	num	0	Page width in pixels 
+py	num	0	Page length in pixels 
+rf	str	NULL	Filter for printing FORTRAN style text files
+rm	str	NULL	Machine name for remote printer
+rp	str	``lp''	Remote printer name argument
+rs	bool	false	Restrict remote users to those with local accounts
+rw	bool	false	Open the printer device for reading and writing
+sb	bool	false	Short banner (one line only)
+sc	bool	false	Suppress multiple copies
+sd	str	``/usr/spool/lpd''	Spool directory
+sf	bool	false	Suppress form feeds
+sh	bool	false	Suppress printing of burst page header
+st	str	``status''	Status file name
+tf	str	NULL	Troff data filter (cat phototypesetter)
+tr	str	NULL	Trailer string to print when queue empties
+ts	str		LAT terminal server node name
+vf	str	NULL	Raster image filter
+xc	num	0	If lp is a tty, clear local mode octal values (tty(4) "Local mode")
+xf	str	NULL	Transparent mode filter
+xs	num	0 	If lp is a tty, set local mode octal values (tty(4) "Local mode")	
+.fi
+.PP
+Error messages sent to the console have a carriage return and a line
+feed appended to them, rather than just a line feed.
+.PP
+If the local line printer driver supports indentation, the daemon
+must understand how to invoke it.
+.PP
+Printer filter entries can be either an executable program or
+a single line which is interpreted by the shell.
+.SH "SEE ALSO"
+lpr(1), lprm(1), lpq(1), termcap(5), lpc(8), lpd(8), pac(8)
+.br
+System Management Guide

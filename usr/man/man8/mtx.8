@@ -1,0 +1,112 @@
+.TH mtx 8 
+.SH NAME
+mtx \- Generic Magtape Exerciser
+.SH SYNTAX
+.B /usr/field/mtx
+.B [
+.I options
+.B ]
+.BI \-a dev
+.br
+.B /usr/field/mtx
+.B [
+.I options
+.B ]
+.BI \-s dev
+.br
+.B /usr/field/mtx
+.B [
+.I options
+.B ]
+.BI \-l dev
+.br
+.B /usr/field/mtx
+.B [
+.I options
+.B ]
+.BI \-v dev
+.SH DESCRIPTION
+The 
+.PN mtx 
+exerciser will write, read, and validate random
+data on the specified magnetic tape device from beginning
+of tape (BOT) to end of tape (EOT).
+There are four record length modes in which to run 
+this exerciser:
+.IP \(bu 0.3i
+Short (512 bytes)
+.IP \(bu 0.3i
+Long (10240 bytes)
+.IP \(bu 0.3i
+Variable (512-20480 bytes)
+.IP \(bu 0.3i
+All three of the above in sequence. 
+.PP
+The exerciser will run 
+until 
+.CT C
+or a \fBkill -15 \fIpid\fR is
+sent to the process. 
+.PP
+A logfile is made in /usr/field
+for you to examine and then remove. If there are errors
+in the logfile, check the /usr/adm/syserr/syserr.<hostname> 
+file, where the driver and kernel error 
+messages are saved.
+.SH ARGUMENTS
+You must specify one of the following function flags and
+its argument to the
+.PN mtx
+exerciser.
+.IP \fB\-a\fIdev\fR 1i
+Perform short, long, and variable-length record tests
+on the \fIdev\fR, a raw device name and unit number.  For
+example, \fB\-armt0h\fR.
+.IP \fB\-s\fIdev\fR 1i
+Perform short (512-byte) record length test.  The \fIdev\fR
+argument is a raw device name and unit number.  For example,
+\fB\-srmt0h\fR.
+.IP \fB\-l\fIdev\fR 1i
+Perform long (10240-byte) record length test.  The \fIdev\fR
+argument is a raw device name and unit number.  For example
+\fB\-lrmt0h\fR.
+.IP \fB\-v\fIdev\fR 1i
+Perform variable record lenth test (records vary from 512 bytes
+to 20480 bytes).  The \fIdev\fR argument is a raw device name
+and unit number.  For example, \fB\-vrmt0h\fR.
+.SH OPTIONS
+The \fImtx\fR options are:
+.IP \fB\-h\fR 1i
+Print help message for the 
+.PN mtx 
+command.
+.IP \fB\-o\fIfile\fR 1i
+Save diagnostic output in \fIfile\fR.
+.IP \fB\-t\fIi\fR
+Run time in minutes (\fIi\fR). 
+The default is to run until the process receives
+a 
+.CT C
+or \fBkill -15 \fIpid\fR.
+.IP \fB\-r\fIj\fR
+Record length for long-record test.  May range from 1 - 20480;
+the default is 10240 bytes.
+.IP \fB\-f\fIk\fR
+Size of file in records. 
+The default is \-1, go to end-of-tape. 
+.SH EXAMPLES
+This example runs short, long, and variable-length tests
+on rmt0h until the process receives a
+.CT C
+or
+\fBkill -15 \fIpid\fR.
+.EX
+% /usr/field/mtx -armt0h
+.EE
+The following example runs a long-record length test on
+rmt0h for 240 minutes in the background.
+.EX
+% /usr/field/mtx -lrmt0h -t240 &
+.EE
+.SH "SEE ALSO"
+System Management Guide

@@ -1,0 +1,31 @@
+.TH fsirand 8nfs 
+.SH NAME
+fsirand \- install random inode generation numbers
+.SH SYNTAX
+.B fsirand
+[
+.B \-p
+] 
+.I special
+.SH DESCRIPTION
+.IX  "fsirand command"  ""  "\fLfsirand\fP \(em install random inode generation numbers"
+The
+.PN fsirand
+command
+installs random inode generation numbers on all the inodes on device
+.I special.
+This helps increase the security of file systems exported by NFS.
+.LP
+The
+.PN fsirand
+command
+must be used only on an unmounted file system
+that has been checked with fsck(8).
+The only exception is that it can be used
+on the root file system in single-user mode,
+if the system is then immediately rebooted.
+.SH OPTIONS
+.TP
+.B \-p
+Print out the generation numbers for all the inodes,
+but do not change the generation numbers.

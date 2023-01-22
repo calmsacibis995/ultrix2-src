@@ -1,0 +1,40 @@
+.TH alarm 3f
+.SH NAME
+alarm \- execute a subroutine after a specified time
+.SH SYNTAX
+.B integer function alarm (time, proc)
+.br
+.B integer time
+.br
+.B external proc
+.SH DESCRIPTION
+This routine arranges for subroutine
+.I proc
+to be called after
+.I time
+seconds. If
+.I time
+is ``0'', the alarm is turned off and no routine will be called.
+The returned value will be the time remaining on the last alarm.
+.SH RESTRICTIONS
+Both
+.PN alarm
+and
+.PN sleep
+interact. If
+.PN sleep
+is called after
+.PN alarm ,
+the
+.PN alarm
+process will never be called. SIGALRM will occur at the lesser of the
+remaining
+.PN alarm
+time or the
+.PN sleep
+time.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+alarm(3), sleep(3f), signal(3f)

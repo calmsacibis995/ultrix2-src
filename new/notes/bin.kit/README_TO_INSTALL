@@ -1,0 +1,64 @@
+
+Title:		Binary Notefiles
+
+	This is a binary form of the Notes Facility by Raymod B. Essick,
+Rob Kolstad, Rick L. Spickelmier, and Lou Salkind.  The following
+parameters were selected when building the binaries making up notes:
+
+	Owner of Notes:			notes
+	Uid of notes:			1000
+	Group of notes:			staff
+	Anonymous Notes Uid:		1001
+	Default Editor:			/usr/ucb/vi
+	Default Shell:			/bin/csh
+	Default Mailer:			/usr/ucb/Mail
+	Pager:				/usr/ucb/more
+	Write:				/bin/write
+	News Interface:			B
+	Autocreate
+	Days til Archived:		14
+	Expiration Days:		30
+	Notes Umask:			022
+	Maximum System Name Length:	9
+		
+
+Installation:
+
+o In the directory containing the notes binary kit su to superuser.
+
+o edit /etc/passwd to included entries for notes and anonymous, filling
+  in the capitalized parameters.
+
+  notes::1000:STAFF_GUID:Notes Owner:HOME_DIRECTORY_OF_NOTES_OWNER:SHELL
+  anon:no_password:1001:STAFF_GUID:Anonymous Notes Uid::
+
+o make the home directory for the notes account again fill in capitalized
+  parameters.
+
+  mkdir HOME_DIRECTORY_OF_NOTES
+  chown notes HOME_DIRECTORY_OF_NOTES
+
+o create a .login file in notes' home directory that includes
+  /usr/spool/notes/.utilities in its search path.
+
+  vi HOME_DIRECTORY_OF_NOTES/.login
+  .
+  .
+  .
+  :wq
+  chown notes HOME_DIRECTORY_OF_NOTES/.login
+
+o make the necessary directories and place the binaries, help files,
+  and man pages in the appropriate directories by executing the
+  following commands.
+
+  make base
+  su notes
+  make boot
+  <CTRL>D
+  <CTRL>D
+
+This completes the installation of the binary form of the Notes Facility.
+
+	For further information on maintaining Notes (ie creating notes
+files, removing notes files, etc.) refer to the file doc.

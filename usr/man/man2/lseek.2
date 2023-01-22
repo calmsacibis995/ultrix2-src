@@ -1,0 +1,101 @@
+.TH lseek 2
+.\" Last modified by BAM on 13-Nov-1985 1300.
+.\"
+.\" Last modified by BAM on 8-Aug-85  1100  
+.\"
+.SH NAME
+lseek, tell \- move read/write pointer
+.SH SYNTAX
+.B #include <sys/file.h> /*Include definitions of L_SET,
+L_INCR, L_XTND*/
+.PP
+.B pos = lseek(d, offset, whence)
+.br
+.B int pos;
+.br
+.B int d, offset, whence;
+.PP
+.B pos = tell(d)
+.br
+.B int pos;
+.br
+.B int d;
+.SH DESCRIPTION
+The
+.PN lseek
+system call moves the file pointer associated with a
+file or device open for reading or writing.  
+.PP
+The descriptor 
+.I d
+refers to a file or device open for reading and/or writing.
+The
+.PN lseek
+system call sets the file pointer of
+.I d
+as follows:
+.IP
+If
+.I whence
+is L_SET, the pointer is set to
+.I offset
+bytes.
+.IP
+If
+.I whence
+is L_INCR, the pointer is set to its current location plus
+.IR offset .
+.IP
+If
+.I whence
+is L_XTND, the pointer is set to the size of the
+file plus
+.IR offset .
+.PP
+Seeking far beyond the end of a file, then writing,
+creates a gap or \*(lqhole\*(rq, which occupies no
+physical space and reads as zeros.
+.PP
+The
+.PN tell
+system call
+returns the offset of the current byte relative to the
+beginning of the file associated with the file descriptor.
+.PP
+Upon successful completion, an unsigned integer,
+the current file pointer value, is returned.  This pointer
+is measured in bytes from the beginning of the file, where
+the first byte is byte 0.  (Note that some devices are incapable
+of seeking.  The value of the pointer associated with such
+a device is undefined.)
+If a value of \-1 is returned, \fIerrno\fP is set to indicate
+the error.
+.SH ENVIRONMENT
+When your program is compiled using the System V environment,
+an invalid 
+.I whence 
+argument causes \fBSIGSYS\fP to be sent.
+.SH DIAGNOSTICS
+The
+.PN lseek
+system call will fail and the file pointer will remain unchanged if:
+.TP 15
+[EBADF] 
+The
+.I fildes 
+is not an open file descriptor.  
+.TP 15
+[ESPIPE]
+The
+.I fildes
+is associated with a pipe or a socket.
+.TP 15
+[EINVAL]
+The
+.I whence
+is not a proper value.
+.TP 15
+[ESPIPE]
+The resulting file pointer would be negative.
+.SH "SEE ALSO"
+dup(2), open(2)

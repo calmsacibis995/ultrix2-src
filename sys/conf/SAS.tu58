@@ -1,0 +1,63 @@
+#
+# @(#)SAS.tu58	1.3	(ULTRIX)	10/16/86
+# STANDALONE ULTRIX (730 and 750 only)
+#
+machine		vax
+cpu		"VAX750"
+cpu		"VAX730"
+cpu		"VAX725"
+ident		SAS
+timezone	5 dst
+maxusers	1
+maxuprc		10
+physmem		10
+processors	1
+
+config		vmunix		root on md0a
+
+adapter		mba0	at nexus ?
+adapter		mba1	at nexus ?
+adapter		uba0	at nexus ?
+adapter		uba1	at nexus ?
+adapter		uba2	at nexus ?
+disk		hp0	at mba? drive 0
+disk		hp1	at mba? drive 1
+disk		hp2	at mba? drive 2
+disk		hp3	at mba? drive 3
+disk		hp4	at mba? drive 4
+disk		hp5	at mba? drive 5
+disk		hp6	at mba? drive 6
+disk		hp7	at mba? drive 7
+master		ht0	at mba? drive ?
+tape		tu0	at ht0 slave 0
+tape		tu1	at ht0 slave 1
+tape		tu2	at ht0 slave 2
+tape		tu3	at ht0 slave 3
+master		mt0	at mba? drive ?
+tape		mu0	at mt0 slave 0
+tape		mu1	at mt0 slave 1
+tape		mu2	at mt0 slave 2
+tape		mu3	at mt0 slave 3
+adapter		klesiu0	at uba?
+controller	tmscp1	at klesiu0 csr 0174500		vector tmscpintr
+tape		tms0	at tmscp? drive 0
+controller	uda0	at uba?
+controller	uq0	at uda0 csr 0172150		vector uqintr
+controller	uda1	at uba?
+controller	uq1	at uda1 csr 0172150		vector uqintr
+disk		ra0	at uq? drive 0
+disk		ra1	at uq? drive 1
+disk		ra2	at uq? drive 2
+disk		ra3	at uq? drive 3
+disk		ra4	at uq? drive 4
+disk		ra5	at uq? drive 5
+disk		ra6	at uq? drive 6
+disk		ra7	at uq? drive 7
+controller	idc0	at uba0 csr 0175606		vector idcintr
+disk		rb0	at idc0 drive 0
+disk		rb1	at idc0 drive 1
+disk		rb2	at idc0 drive 2
+disk		rb3	at idc0 drive 3
+controller	zs0	at uba? csr 0172520		vector tsintr
+device		ts0	at zs0 drive 0
+pseudo-device	md 1024

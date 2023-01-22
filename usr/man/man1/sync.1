@@ -1,0 +1,22 @@
+.TH sync 1 
+.SH NAME
+sync \- update the super block
+.SH SYNTAX
+.B /bin/sync
+.SH DESCRIPTION
+The
+.B sync
+command executes the
+.B sync
+system primitive.
+The
+.B sync
+command
+can be called to insure all disk writes have been completed before the
+processor is halted in a way not suitably done by
+reboot(8) or halt(8).
+.PP
+See sync(2)
+for details on the system primitive.
+.SH "SEE ALSO"
+fsync(2), sync(2), halt(8), reboot(8), update(8)

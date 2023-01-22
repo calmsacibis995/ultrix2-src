@@ -1,0 +1,357 @@
+.\" 	Modification History
+.\"
+.\" 24 Oct 85  depp
+.\"	Added documentation on commands that are only supported by the
+.\"	sccs preprocessor
+.\"
+.\" Last modified by MJT on 23-Apr-85  2245
+.\"
+.TH sccs 1
+.SH NAME
+sccs \- source code control system preprocessor
+.SH SYNTAX
+\fBsccs \fIcommand\fB [ \fIcommand-option\fB ] [ \fIfile \fB] [ sccs ]
+.SH DESCRIPTION
+SCCS is a source management system which
+maintains records of changes made in files
+within that system.  Records stating what the
+changes were, why and when they were made,   
+and who made them are kept for each version.
+Previous versions can be recovered,
+and different versions can be maintained
+simultaneously.  
+SCCS also insures that two people are not editing
+the same file at the same time.
+.PP
+The SCCS
+system has two levels of operation,
+a preprocessor called 
+.PN sccs 
+and the traditional
+SCCS
+commands.  
+The preprocessor sccs(1)
+provides an interface with the
+more traditional
+SCCS commands, such as
+.B get, delta,
+and so forth.  The 
+sccs(1) interface is a more 
+user-friendly environment
+for the
+.I SCCS
+user.  Some of the commands are more intuitive, such as 
+.B sccs edit
+rather than the traditional
+.B get -e
+to retrieve a file for editing. 
+Some commands will perform multiple operations, such as   
+.B sccs delget
+that will perform a 
+.B delta
+on the file, and then
+.B get
+the changed file back.
+.PP
+The sccs(1) preprocessor
+also restructures the method in which SCCS
+files are stored and manipulated.  In the traditional
+version of SCCS,
+files (s-files, p-files, etc.) are stored in the
+directory that contains the g-files, unless an SCCS
+directory is explicitly defined with 
+each command.  The sccs(1)
+preprocessor expects that an SCCS directory 
+is available within the directory that contains the g-files
+and that this directory also contains the SCCS 
+files.  The SCCS
+directory is owned by 
+.PN sccs, 
+providing an
+additional level of security.  This method also
+cleans up the directory where the g-files are
+stored.  One other important difference in using the
+preprocessor is that the file specification is the name of the
+g-file rather than the name of the s-file when invoking an
+SCCS command. If SCCS
+is specified rather than the filename, the SCCS 
+preprocessor handles this in the same
+manner as the traditional commands handle it.  Each
+s-file in the directory SCCS 
+is acted upon as if explicitly named.  Please
+note that not all sccs(1)
+preprocessor commands permit this feature.
+.PP
+The traditional SCCS
+commands are also included for reference in SEE ALSO.
+If the sccs(1)
+preprocessor is used, small discrepancies may
+exist due to conflicts between the command parameters
+and the sccs(1)
+preprocessor parameters.  
+.PP
+SCCS stores all versions of each file along with the
+logged data about each version in the s-file.
+Three major operations can be performed  
+on the s-file:
+.sp
+.IP 1)
+To retrieve a file for reading or printing 
+use the following command:
+.sp
+.in +5
+.B sccs get [filename][sccs]
+.in -5
+.sp
+The latest version is retrieved and is NOT intended for edit. 
+.sp
+.IP 2)
+To retrieve a file for edit use the following command:
+.sp
+.in +5
+.B sccs edit [filename][sccs]
+.in -5
+.sp
+The latest version is retrieved and only one person can 
+edit a given file at one time.
+.sp
+.IP 3) 
+To merge a file back into the s-file use the following command:
+.sp
+.in +5
+.B sccs delta [filename][sccs]
+.in -5
+.sp
+This is a companion operation to the edit command (Step 2).
+A new version number is assigned. Comments explaining
+the changes are saved. 
+.PP 
+A 
+.B delta
+consists of the changes made to a file, not the file itself. 
+All deltas to a given file are stored,  
+enabling you to get a version of the file that has selected
+deltas removed which gives you the option of removing
+your selected changes later. 
+.PP
+An SID is an identification number for a delta.  It consists of
+two parts, a release number and a level number.  The release number
+normally remains constant but can be changed when major changes
+in the file are made.  The level numbers represent each 
+delta for a given file.  A SID can also be used to represent a 
+version number of the entire file.
+.PP
+To create all the source files in a given directory in SCCS 
+format, run the following shell script from csh:
+.EX
+mkdir SCCS save
+chown sccs SCCS
+foreach i (*.[.ch])
+        sccs admin -i$i $i
+        mv $i save/$i
+end
+.EE
+Note that to run the 
+.PN chown
+command, you must be the superuser.
+.PP
+To create a single source file in SCCS format, assuming the 
+presence of the SCCS directory, use the following command:
+.in +5
+.EX
+sccs create <filename>
+.in -5
+.EE
+Because the number and types of commands used within SCCS are many 
+and complex, the following quick reference table is included here.
+See
+the System Management Guide
+for further explanations of commands.
+.SH COMMANDS 
+.PP
+These commands should all be preceded by 
+.B sccs.
+.IP get 1i 
+Gets files for compilation (not for editing).
+Id keywords are expanded.
+.RS
+.IP \-r\fISID\fR .6i
+Get specified version.
+.IP \-p
+Send to standard output rather than to the actual file.
+.IP \-k
+Do not expand id keywords.
+.IP \-i\fIlist\fR
+Include list of deltas. 
+.IP \-x\fIlist\fR
+Exclude list of deltas. 
+.IP \-m
+Precede each line with SID of delta being created.
+.IP \-c\fIdate\fR
+Do not apply any deltas created after
+.I date.
+.RE
+.B edit  
+Gets files for editing.
+Id keywords are not expanded.
+Should be matched with a
+.B delta
+command after editing.
+.RS
+.IP \-r\fISID\fR .6i 
+Get specified version.  If
+.I SID 
+specifies a release that does not yet exist,
+the highest numbered delta is retrieved
+and the new delta is numbered with SID 
+.IP \-b
+Create a branch.
+.IP \-i\fIlist\fR
+Include list of deltas
+.IP \-x\fIlist\fR
+Exclude list of deltas
+.RE
+.IP delta  
+Merge a file retrieved using
+.B edit
+back into the s-file.
+Collect comments about why this delta was made.
+.IP unedit  
+Remove a file that has been edited previously
+without merging the changes into the s-file.
+.IP info 
+Display a list of all files being edited.
+.RS
+.IP \-b .6i
+Ignore branches.
+.IP \-u[\fIuser\fP]
+Ignore files not being edited by
+.I user .
+.RE
+.IP check  
+Same as
+.I info,
+except that nothing is printed if nothing is being edited
+and exit status is returned.
+.IP create 
+Create an s. file and do not remove the associated g-file.
+.IP tell  
+Same as
+.I info,
+except that only the file name of files being edited is listed. 
+.IP clean  
+Remove all files that can be regenerated from the
+s-file.
+.IP what  
+Find and print id keywords.
+.IP admin  
+Create or set parameters on s-files.
+.RS
+.IP \-i\fIfile\fR .6i
+Create, using
+.I file
+as the initial contents.
+.IP \-z
+Rebuild the checksum in case
+the file has been corrupted.
+.IP \-f\fIflag\fR
+Turn on the
+.I flag.
+.IP \-d\fIflag\fR
+Turn off (delete) the
+.I flag .
+.IP \-t\fIfile\fR
+Replace the text
+in the s-file with the contents of
+.I file.
+If
+.I file
+is omitted,
+the text is deleted.
+Useful for storing documentation
+or design and implementation
+documents to insure distribution with the
+s-file.
+.PP
+Useful flags are:
+.RS
+.IP b .6i
+Allow branches to be made using the -b flag to
+.I edit.
+.IP d\fISID\fR
+Default SID to be used
+on a
+.I get
+or
+.I edit.
+.IP i
+Cause
+.I No Id Keywords
+error message
+to be a fatal error rather than a warning.
+.IP t
+The module
+type; 
+the value of this flag replaces the
+.B %\&Y\&%
+keyword.
+.RE
+.RE
+.IP fix  
+Remove a delta and reedit it.
+.IP delget  
+Do a
+.I delta
+followed by a
+.I get.
+.IP deledit  
+Do a
+.I delta
+followed by an
+.I edit.
+.IP diffs
+Compare the g-file out for edit with an earlier SCCS version.
+.IP sccsdiff
+Compare any two SCCS versions of a g-file.
+.IP help
+Given either a command name, or a sccs message number, this command will 
+provide additional information.
+.SH ID KEYWORDS
+.LP
+.IP %\&Z\&%
+Expands to
+@\&(#)
+for the
+.I what
+command to find.
+.IP %\&M\&%
+The current module name,
+for example,
+prog.c.
+.IP %\&I\&%
+The highest SID applied.
+.IP %\&W\&%
+A shorthand for
+``%\&Z\&%%\&M\&% <tab> %\&I\&%''.
+.IP %\&G\&%.
+The date of the delta
+corresponding to the
+%\&I\&%.
+keyword.
+.IP %\&R\&%.
+The current release number,
+for example,
+the first component of the
+%\&I\&%
+keyword.
+.IP %\&Y\&%
+Replaced by the value of the
+.B t
+flag
+(set by
+.I admin).
+.SH "SEE ALSO"
+admin(1), cdc(1), comb(1), delta(1), get(1), prs(1), rmdel(1), 
+sccshelp(1), unget(1), val(1), what(1), sccsfile(5)
+.br
+System Management Guide

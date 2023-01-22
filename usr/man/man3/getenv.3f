@@ -1,0 +1,26 @@
+.TH getenv 3f
+.SH NAME
+getenv \- get value of environment variables
+.SH SYNTAX
+.B subroutine getenv (ename, evalue)
+.br
+.B character*(*) ename, evalue
+.SH DESCRIPTION
+The
+.PN getenv
+subroutine searches the environment list
+for a string of the form
+.IB ename = value
+and returns
+.I value
+in
+.I evalue
+if such a string is present, otherwise fills
+.I evalue
+with blanks.
+For further information, see environ(7).
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+execve(2), environ(7)

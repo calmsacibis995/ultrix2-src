@@ -1,0 +1,75 @@
+.\" Last modified by MJT on 19-Aug-85  0016
+.\"  Repaired beginning matter to work right in whatis database
+.TH what 1
+.SH NAME
+what \- identify SCCS files
+.SH SYNTAX
+.B what
+.I files
+.SH DESCRIPTION
+The 
+.B what
+command searches the given files for all occurrences
+of the pattern that
+get(1)
+substitutes for %\&Z% (this is
+\fB@\&(#)\fR
+at this printing)
+and prints out what follows until the
+first
+.BR ~ ,
+.BR > ,
+new-line,
+.BR \e ,
+or null character.
+For example, if the C program in file \fBf.c\fR contains
+.PP
+.RS 5
+char ident[] = "\|@\&(#)identification information\|";
+.RE
+.PP
+and \fBf.c\fR is compiled to yield \fBf.o\fR and \fBa.out\fR,
+then the command
+.PP
+.RS 5
+what\|
+.RB f . c\|
+.RB f . o\|
+.RB a . out
+.RE
+.PP
+will print
+.PP
+.RS 5
+.TP 8
+f\fB.\fRc:
+.br
+identification information
+.TP 8
+f\fB.\fRo:
+.br
+identification information
+.TP 8
+a\fB.\fRout:
+.br
+identification information
+.RE
+.PP
+Use
+.B what
+in conjunction with the \*(S) command get(1),
+which automatically inserts identifying information,
+but information can also be inserted manually.
+.SH RESTRICTIONS
+It is possible that an unintended occurrence of the pattern
+.B @\&(#)
+could be
+found.  This causes no harm in nearly all cases.
+.SH DIAGNOSTICS
+Use sccshelp(1) for explanations.
+.SH SEE ALSO
+get(1), help(1), sccs(1)
+.br
+``An Introduction to the Source Code Control System,''
+.I ULTRIX-32 Supplementary Documentation 
+Vol. II:Programmer

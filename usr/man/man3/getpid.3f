@@ -1,0 +1,15 @@
+.TH getpid 3f
+.SH NAME
+getpid \- get process id
+.SH SYNTAX
+.B integer function getpid()
+.SH DESCRIPTION
+The
+.PN getpid
+subroutine
+returns the process ID number of the current process.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+getpid(2)

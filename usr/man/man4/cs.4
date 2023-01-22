@@ -1,0 +1,22 @@
+.TH cs 4
+.SH NAME
+cs \- console RX50 interface
+.SH DESCRIPTION
+This is a simple interface to the RX50
+disk unit, which is part of the console
+subsystem for the VAX 8200 (8200, 8300, 8500, 8550, 8700, 8800).
+Access is given to the entire
+RX50 consisting of 80 cylinders of 1 track of 10 sectors of 512 bytes.
+The RX50 sectors are accessed as logical 512 byte disk blocks.
+.PP
+The seek addresses in raw transfers should be a multiple
+of 512 and a multiple of 512 bytes should be transferred, as in other
+`raw'  disk interfaces.
+.SH FILES
+.nf
+.DT
+/dev/cs??
+/dev/rcs??
+.fi
+.SH SEE ALSO
+MAKEDEV(8)

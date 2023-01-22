@@ -1,0 +1,26 @@
+0a1
+> # %W%	ULTRIX	%G%
+19a21
+> DESTROOT=
+82c84
+< VaxObj = bigmath.o qfuncl.o vax.o hbrk.o
+---
+> VaxObj = bigmath.o qfuncl.o vax.o
+119,121d120
+< hbrk.o: hbrk.c
+< 	cc -I../h -I/usr/src/lib/libc/vax/sys -E ${ProfFlag2} hbrk.c | as -o hbrk.o
+< 
+161a161,169
+> clobber: clean
+> 	rm -f tags map fixpbig.e fixmask make.vms *.c *.unx Makefile
+> 
+> sccsinfo:
+> 	sccs info
+> 
+> sccsget:
+> 	sccs get SCCS
+> 
+170c178
+< 	mv nlisp ${ObjDir}/lisp
+---
+> 	install -c nlisp ${ObjDir}/lisp

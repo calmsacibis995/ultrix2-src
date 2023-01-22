@@ -1,0 +1,192 @@
+.TH write 2
+.\" Last modified by CCB, March 5, 1986.
+.\" Last modified by BAM on 31-Oct-1985 1300.
+.\"
+.\" Last modified by BAM on 19-Jul-85  1100  
+.\"
+.SH NAME
+write, writev \- write to a file
+.SH SYNTAX
+.nf
+.ft B
+write\|(\|d, buf, nbytes\|)
+int d;
+char *buf;
+int nbytes;
+.PP
+.ft B
+#include <sys/types.h>
+#include <sys/uio.h>
+.PP
+.ft B
+writev\|(\|d, iov, ioveclen\|)
+int d;
+struct iovec *iov;
+int ioveclen;
+.fi
+.SH DESCRIPTION
+The
+.PN write
+system call attempts to write a buffer of
+data to a file.  The
+.PN writev
+system call attempts to write an array of
+buffers of data to a file.
+.PP
+When the file has been opened to a device
+capable of seeking (for example, disks and tapes),
+the write starts at a position
+given by the file pointer associated with the file descriptor
+.IR d .
+This file pointer is the offset, in bytes, from the beginning
+of the file where the write is to begin.
+When the file is first opened, this file pointer is set at 0.
+It can be modified by the 
+read(2) and the
+.PN write
+system calls, and also with lseek(2).  
+When the 
+.PN write
+call returns, this file pointer is incremented by the number of
+bytes actually written.
+.PP
+When the file has been opened to a device
+not capable of seeking (such as sockets, pipes, or terminals), 
+the write is from the current
+position. 
+The value of the pointer associated with such an object is
+undefined.
+.PP
+By default,
+.PN write
+does asynchronous writes.  That is, after the data is written to a
+buffer cache, control returns to the program.  The actual write to
+the device takes place after control returns.
+If, however, you used an open(2) or fcntl(2)
+call to open the file for synchronous writes, control does not
+return to the program until the buffer cache has been written
+to the device.
+.PP
+If the file being written is a pipe (or FIFO) and the O_NDELAY
+flag was set when the file was opened, then
+.PN write
+to a full pipe (or FIFO)
+will return a count of 0.
+Otherwise, if the O_NDELAY flag was clear when the file was
+opened, a
+.PN write
+to a full pipe (or FIFO) will block until space becomes
+available.
+.PP
+The 
+.I d
+argument is a descriptor returned by a
+creat(2), open(2), dup(2), fcntl(2), pipe(2), or socket(2)
+system call.
+The
+.I buf
+argument points to the buffer containing the data to be
+written.
+.PP
+The
+.I nbytes
+argument is a positive integer defining the number of bytes to
+be written from the buffer.
+.PP
+The \fIiov\fR argument points to a data structure
+of type
+.PN iovec ,
+which defines the starting location of the set of vectors
+forming the array and the length of each individual
+vector in the array to be written.
+.PP
+This structure is defined in <sys/uio.h> as:
+.EX
+struct iovec {
+
+       caddr_t   iov_base ;
+       int       iov_len ;
+} ;
+.EE
+The
+.PN caddr_t
+data type is defined in <sys/types.h>, 
+and is the recommended way to define an address
+for a character value.  In any case, the
+address
+.PN iov_base
+is the starting address of the set of vectors.
+The integer value
+.PN iov_len
+is the length of each individual vector, in bytes.
+.PP
+\fIioveclen\fR
+.PP
+The \fIioveclen\fR argument defines the number of vectors
+in the array of data to be written.  Note that the numbering
+of the vectors begins with 0 and proceeds through \fIioveclen\fR - 1.
+.SH ENVIRONMENT
+When your program is compiled using the System V environment,
+and the file was opened with the O_NDELAY flag
+set, then a
+.PN write
+to a full pipe (or FIFO) will return an error, rather than a
+0 as for the ULTRIX non-System V environment.
+.SH RETURN VALUE
+.PP
+Upon successful completion, the number of bytes actually
+written is returned.  Otherwise, a -1 is returned, and
+.I errno
+is set to indicate the error.
+.SH DIAGNOSTICS
+The
+.PN write
+system call
+will fail and the file pointer will remain unchanged if one or more
+of the following are true:
+.TP 15
+[EBADF]
+The \fId\fR argument is not a valid descriptor open for writing.
+.TP 15
+[EPIPE]
+An attempt was made to write to a pipe that is not open
+for reading by any process.
+.TP 15
+[EPIPE]
+An attempt was made to write to a socket of type SOCK_STREAM
+which is not connected to a peer socket.
+.TP 15
+[EFBIG]
+An attempt was made to write a file that exceeds the process's
+file size limit, set by
+ulimit(2), or the maximum file size (approximately 2 Gigabytes).
+.TP 15
+[EFAULT]
+Part of the array pointed to by \fIiov\fP or 
+data to be written to the file
+points outside the process's allocated address space.
+.TP 15
+[ENOSPC]
+There is no free space remaining on the file system containing
+the file.
+.TP 15
+[EDQUOT]
+The user's quota of disk blocks on the file system containing
+the file has been exhausted.
+.TP 15
+[EIO]
+An I/O error occurred while reading from or writing to the file
+system.
+.TP 15
+[EINVAL]
+The
+.I nbytes 
+argument is negative.
+.TP
+[ETIMEDOUT]
+A "connect" request or remote file operation failed
+because the connected party
+did not properly respond after a period
+of time which is dependent on the communications protocol.
+.SH "SEE ALSO"
+creat(2), dup(2), fcntl(2), lseek(2), open(2), pipe(2), socket(2)

@@ -1,0 +1,34 @@
+.TH dmbsp 4
+.SH NAME
+dmbsp \- DMB32 communications multiplexor serial printer
+.SH SYNTAX
+.B "device dmb0 at vaxbi? node? flags 0x????"
+.br
+.ti +0.5i
+.B "vector dmbsint dmbaint dmblint"
+.SH DESCRIPTION
+A
+DMB32
+supports a connection to a line printer
+through the line printer port of the
+DMB32.
+.PP
+Bits
+8-15
+of the flags longword specify the number of columns per line on
+the line printer.  If 0 is specified, 132 columns will be used.
+Bits
+16-23
+specify the number of lines per page.  If 0 is specified, 66
+lines will be used.
+.SH DIAGNOSTICS
+.IP "\fBdmb%d: Line Printer Disconnected.\fR" 0.3i
+This message occurs if an open is performed on the printer port when
+the DMB32 detects that there is no printer cable connected.
+.IP "\fBdmb%d: Printer DMA Error\fR" 0.3i
+A DMA output transfer to the printer failed.
+This could be caused by a memory error or an invalid pte.
+.SH FILES
+/dev/lp?
+.SH SEE ALSO
+dmb(4), MAKEDEV(8)

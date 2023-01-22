@@ -1,0 +1,165 @@
+vax/autoconf.c		standard device-driver Binary
+vax/autoconf_mba.c	optional mba device-driver Binary
+vax/clock.c		standard  Binary
+vax/conf.c		standard
+vax/cons.c		standard  Binary
+vax/crl.c		optional cpu VAX8600  Binary
+vax/cpuconf.c		standard
+vax/cpudata.c		standard  Binary
+vax/dkbad.c		standard  Binary
+vax/errlog.c		standard  Binary
+vax/flp.c		standard  Binary
+vax/in_cksum.c		optional inet Binary
+vax/ka610.c		optional cpu MVAX Binary
+vax/ka630.c		optional cpu MVAX Binary
+vax/ka730.c		optional cpu VAX730 Binary
+vax/ka750.c		optional cpu VAX750 Binary
+vax/ka780.c		optional cpu VAX780 Binary
+vax/ka8200.c		optional cpu VAX8200 device-driver Binary
+vax/ka8600.c		optional cpu VAX8600 Binary
+vax/ka8800.c		optional cpu VAX8800 device-driver Binary
+vax/machdep.c		standard config-dependent Binary
+vax/md.c		optional md
+vax/mem.c		standard  Binary
+vax/pup_cksum.c		optional pup Binary
+vax/sbi.c		optional cpu VAX8600 or cpu VAX780 or cpu VAX750 or cpu VAX730 Binary
+vax/sys_machdep.c	standard  Binary
+vax/trap.c		standard  Binary
+vax/tu.c		standard  Binary
+vax/udiv.s		standard  Binary
+vax/ufs_machdep.c	standard  Binary
+vax/urem.s		standard  Binary
+vax/vm_machdep.c	standard  Binary
+vax/rx50.c		optional cpu VAX8200 or cpu VAX8800 device-driver Binary
+vaxbi/biinit.c		optional vaxbi  device-driver Binary
+vaxbi/bimem.c		optional cpu VAX8200  device-driver Binary
+vaxbi/bua.c		optional vaxbi device-driver Binary
+vaxbi/bla.c		optional klesib device-driver Binary
+vaxbi/bda.c		optional kdb device-driver Binary
+vaxbi/dmb.c		optional dmb device-driver Binary
+vaxbi/aie.c		optional aie device-driver Binary
+vaxif/if_acc.c		optional acc imp device-driver Binary Unsupported
+vaxif/if_css.c		optional css imp device-driver Binary Unsupported
+vaxif/if_de.c		optional de device-driver Binary
+vaxif/if_dmc.c		optional dmc device-driver Binary
+vaxif/if_dmv.c		optional dmv device-driver Binary
+vaxif/if_dpv.c		optional dpv device-driver Binary
+vaxif/if_dup.c		optional dup device-driver Binary
+vaxif/if_ec.c		optional ec device-driver Binary Unsupported
+vaxif/if_en.c		optional en inet device-driver Binary Unsupported
+vaxif/if_hy.c		optional hy device-driver Binary Unsupported
+vaxif/if_il.c		optional il device-driver Binary Unsupported
+vaxif/if_pcl.c		optional pcl device-driver Binary Unsupported
+vaxif/if_qe.c		optional qe device-driver Binary 
+vaxif/if_se.c		optional se device-driver Binary 
+vaxif/if_uba.c		optional inet device-driver Binary
+vaxif/if_un.c		optional un device-driver Binary Unsupported
+vaxif/if_vv.c		optional vv device-driver Binary Unsupported
+vaxif/if_ni.c		optional bvpni device-driver Binary
+vaxmba/hp.c		optional hp device-driver Binary
+vaxmba/ht.c		optional ht or tu device-driver Binary
+vaxmba/mba.c		optional mba device-driver Binary
+vaxmba/mt.c		optional mt or mu device-driver Binary
+vaxuba/ad.c		optional ad device-driver Binary Unsupported
+vaxuba/ct.c		optional ct device-driver Binary Unsupported
+vaxuba/dh.c		optional dh device-driver Binary Unsupported
+vaxuba/dhu.c		optional dhu device-driver Binary
+vaxuba/sh.c		optional sh device-driver Binary
+vaxuba/dmf.c		optional dmf device-driver Binary
+vaxuba/dmz.c		optional dmz device-driver Binary
+vaxuba/dn.c		optional dn device-driver Binary Unsupported
+vaxuba/dz.c		optional dz device-driver Binary
+vaxuba/ss.c		optional ss device-driver Binary
+vaxuba/gpib.c		optional gpib device-driver Binary Unsupported
+vaxuba/ib.c		optional ib device-driver Binary Unsupported
+vaxuba/kgclock.c	optional kg device-driver Binary Unsupported
+vaxuba/idc.c		optional idc or rb device-driver Binary
+vaxuba/ik.c		optional ik device-driver Binary Unsupported
+vaxuba/its.c		optional its device-driver Binary Unsupported
+vaxuba/lp.c		optional lp device-driver Binary
+vaxuba/lpa.c		optional lpa device-driver Binary Unsupported
+vaxuba/ps.c		optional ps device-driver Binary Unsupported
+vaxuba/qd.c		optional qd device-driver Binary
+vaxuba/sg.c		optional sg device-driver Binary
+vaxuba/qv.c		optional qv device-driver Binary
+vaxuba/sm.c		optional sm device-driver Binary
+vaxuba/qfont.c		optional qd or qv or sm or sg device-driver Binary
+vaxuba/rk.c		optional hk or rk device-driver Binary
+vaxuba/rl.c		optional hl or rl device-driver Binary
+vaxuba/rx.c		optional urx device-driver Binary Unsupported
+vaxuba/tm.c		optional te device-driver Binary Unsupported
+vaxuba/ts.c		optional zs or ts device-driver Binary
+vaxuba/stc.c		optional st device-driver Binary
+vaxuba/tmscp.c		optional tmscp or tms device-driver Binary
+vaxuba/uba.c		optional uba or kdb device-driver Binary
+vaxuba/uda.c		optional uq or ra device-driver Binary
+vaxuba/sdc.c		optional rd or rx device-driver Binary
+vaxuba/bbr.c		optional uq or ra  device-driver Binary
+vaxuba/bbrstab.c	optional uq or ra device-driver Binary
+vaxuba/up.c		optional up device-driver Binary Unsupported
+vaxuba/ut.c		optional tj device-driver Binary Unsupported
+vaxuba/uu.c		optional uu device-driver Binary Unsupported
+vaxuba/va.c		optional va device-driver Binary Unsupported
+vaxuba/vp.c		optional vp device-driver Binary Unsupported
+vaxuba/vs.c		optional vs device-driver Unsupported
+data/bi_data.c		optional vaxbi
+data/ad_data.c		optional ad  device-driver Notbinary
+data/ct_data.c		optional ct  device-driver Notbinary
+data/dh_data.c		optional dh  device-driver Notbinary
+data/dhu_data.c		optional dhu  device-driver Notbinary
+data/sh_data.c		optional sh  device-driver Notbinary
+data/dmf_data.c		optional dmf  device-driver Notbinary
+data/dmb_data.c		optional dmb  device-driver Notbinary
+data/dmz_data.c		optional dmz  device-driver Notbinary
+data/dn_data.c		optional dn  device-driver Notbinary
+data/dz_data.c		optional dz  device-driver Notbinary
+data/ss_data.c		optional ss  device-driver Notbinary
+data/hp_data.c		optional hp  device-driver Notbinary 
+data/ht_data.c		optional ht or tu device-driver Notbinary
+data/idc_data.c		optional idc or rb device-driver Notbinary
+data/ik_data.c		optional ik  device-driver Notbinary
+data/its_data.c		optional its device-driver Notbinary
+data/lp_data.c		optional lp  device-driver Notbinary
+data/lpa_data.c		optional lpa  device-driver Notbinary
+data/mt_data.c		optional mt or mu device-driver Notbinary
+data/ps_data.c		optional ps  device-driver Notbinary
+data/qd_data.c		optional qd device-driver Notbinary
+data/sg_data.c		optional sg device-driver Notbinary
+data/rk_data.c		optional hk or rk  device-driver Notbinary
+data/rl_data.c		optional hl or rl  device-driver Notbinary
+data/rx_data.c		optional urx  device-driver Notbinary
+data/tm_data.c		optional te device-driver Notbinary
+data/ts_data.c		optional zs or ts  device-driver Notbinary
+data/stc_data.c		optional st  device-driver Notbinary
+data/tmscp_data.c	optional tmscp or tms device-driver Notbinary
+data/uda_data.c		optional uq or ra device-driver Notbinary
+data/sdc_data.c		optional rd or rx device-driver Notbinary
+data/up_data.c		optional up  device-driver Notbinary
+data/ut_data.c		optional tj device-driver Notbinary
+data/uu_data.c		optional uu  device-driver Notbinary
+data/va_data.c		optional va  device-driver Notbinary
+data/vp_data.c		optional vp  device-driver Notbinary
+data/if_acc_data.c	optional acc imp device-driver Notbinary
+data/if_css_data.c	optional css imp device-driver Notbinary
+data/if_de_data.c	optional de device-driver Notbinary
+data/if_dmc_data.c	optional dmc  device-driver Notbinary
+data/if_dmv_data.c	optional dmv  device-driver Notbinary
+data/if_dpv_data.c	optional dpv  device-driver Notbinary
+data/if_dup_data.c	optional dup  device-driver Notbinary
+data/if_ec_data.c	optional ec  device-driver Notbinary
+data/if_en_data.c	optional en inet device-driver Notbinary
+data/if_hy_data.c	optional hy  device-driver Notbinary
+data/if_il_data.c	optional il  device-driver Notbinary
+data/if_pcl_data.c	optional pcl  device-driver Notbinary
+data/if_qe_data.c	optional qe  device-driver Notbinary
+data/if_se_data.c	optional se  device-driver Notbinary
+data/if_un_data.c	optional un  device-driver Notbinary
+data/if_vv_data.c	optional vv  device-driver Notbinary
+data/tty_pty_data.c	optional pty  Notbinary
+data/af_data.c		standard Notbinary
+data/tty_conf_data.c	standard Notbinary
+data/uipc_domain_data.c	standard Notbinary
+data/autoconf_data.c	standard Notbinary
+data/if_to_proto_data.c standard Notbinary
+data/if_ni_data.c	optional bvpni device-driver Notbinary
+data/kern_sysproc_data.c standard 

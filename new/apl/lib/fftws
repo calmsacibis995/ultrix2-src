@@ -1,0 +1,25 @@
+nÅ n{1YRz
+ x{z
+ n2{n%2
+ bitrev { 2B O-((2O*n)R2)NIn
+loop: mk{(n2R1),n2R0
+ i2 { n2+i1 { (nRmk)/In
+ arg { bitrev[Di1%n2]%n
+ cs { O\ 2 1 J.O 2XO arg
+ t { x[i2; 0 1 1 0]Xcs,cs
+ t { (t[;,0]+t[;,1]),t[;,2]-t[;,3]
+ x[i2;] { x[i1;]-t
+ x[i1;] { x[i1;]+t
+ }(1$n2 { n2%2)/loop
+ x { x[bitrev;]
+r { (O|Isteps +1),1UIsteps
+FtiFm { NB21
+E prog
+L { ''
+L { 'execution time is',(,B (.01XS((BN21)-FtiFm)%.6)), ' secs.'
+''
+real0 { y[;0]=0
+atans { `3Oy[;1]%real0 +y[;0]
+phase { (~real0 )X((Oy[;0]<0)XXy[;1])+ atans
+phase { phase +0.5XO real0 XXy[;1]
+result { O\(O|Ry)R((+/yXy)*0.5),phase

@@ -1,0 +1,1243 @@
+#!/bin/sh
+#	@(#)setld	1.11 ULTRIX 12/16/86
+#
+#	setld.sh
+#		load, unload, and inventory software subsets.
+#
+#	000	ccb	8-AUG-85
+#		Digital Equipment Corporation
+#	Many thanks to robin, rnf, and afd
+#
+#	001	ccb	19-AUG-85
+#		Sidestep verification if tar fails.
+#		Check for empty ctrl file fields.
+#		Rename REMOK flag to FLAGS for future implementation
+#			of "option" in "verified" flags.
+#		Changed default -i to only name what subsets are
+#			installed.
+#
+#	002	ccb	21-NOV-85
+#		Fix typo in code for -c option.
+#
+#	003	ccb	04-jun-1986
+#		Hammer first wave of changes for v2.0
+#		1) control file formats and basic speed.
+#
+#	004	Greg Tarsa & John Williams
+#		Various hacks and fixes to get the F kit
+#
+#	005	ccb & John Williams
+#		general cleanup
+#
+#	006	ccb	6-dec-1986
+#		allow -a over the network to update the subsets directory.
+#		allow default subset list to be restricted to
+#			mandatory only for BASIC installation with -l.
+#
+#	007	ccb	11-dec-1986
+#		Fix -d to delete references from dependent lockfiles
+#		fix -d so that no check is made on subset names for
+#			each record of the inventory file. fixes bug
+#			seen with deleting uwd,uwv subsets.
+#		Add ra60 support for setld -x
+#		Correct file modes on /usr/adm/subsets and the
+#			constituent lockfiles.
+#
+#	008	ccb	8-jan-1987
+#		make mount -a shut up on errors.
+#		allow install of non-mandatory subsets to small disks
+#			from network on setld -l.
+#		check existence of ris/instctrl dir before creating.
+#		do not ask if choice of subsets is correct if no
+#			subsets were chosen.
+#
+#	009	ccb	28-jan-1987
+#		fix bugs in setld -x <directory> (mandatory, stltmp/*)
+#		wait for tape rewind at end.
+
+# A NOTE ABOUT CODING STYLE AND CONVENTIONS.
+#
+#	setld uses a few features of the shell that my not be immediately
+#	obvious to persons not heavily involved in shell use and
+#	maintenance.
+#
+#	{}	curly braces for statement grouping. statements in
+#		curlies are treated as single statements in compound
+#		statements.
+#	||	logical or. throughout the code, this is used to mean
+#		'execute the second if the first fails'. The cheif burden
+#		of command error checking and recovery falls to the
+#		use of this construct.
+#	&&	logical and. used to mean execute the second if the first
+#		succeeds. These bind more tightly ( have higher precedence )
+#		than '||' so: false && echo false || echo true
+#		will cause 'true' to be printed.
+#	:	no op, always true. "while :" in shell is the same as
+#		for(;;) in 'C'
+#	[	the 'test' command. used in [ stuff ] && command constructs
+#		as a one-branched 'if'.
+#
+#	IFS	internal feild separator. twiddled to speed parsing.
+
+# set PATH
+DIFS="$IFS"
+PATH=:/install.tmp:/etc:/bin:/usr/bin:/usr/adm/bin:/usr/ucb
+export PATH
+
+# make sure the tabs come out OK
+stty -tabs
+
+# mag tape record skip
+T_0=3
+CURVOL=1
+PROG=$0
+
+# dummy some pathnames
+D=/dev
+U=/usr
+A=/adm
+T=/tmp
+
+NUL=$D/null
+
+UAS=$U$A/subsets
+TDIR=$U$T/stltmp
+TMP1=$TDIR/tmp1
+TMP2=$TDIR/tmp2
+TMPS="$WS $TDIR $TMP1 $TMP2 $RA60"
+STAT=1
+
+trap 'rm -rf $TMPS;echo "$EMESG";exit $STAT' 0
+
+HT="	"
+NL="
+"
+ID=.inv
+
+
+# message strings
+E_NOSUPP="not supported for installations."
+E_NODEV="$NLPlease be certain that device special file"
+E_FAIL="$NLFile copy to system disk failed."
+E_READ="$NLAttempt to read from your distribution media failed."
+E_MKDIR="$NLCannot create directory"
+E_NORECOVER="Cannot recover"
+E_NOINST="not currently installed"
+E_UNKNOWN="Unknown subset"
+E_STARS="*** Subset"
+E_TPOS="Tape positioning error."
+E_CFCPTN="$NLControl file is corrupt or obsolete: subset"
+IC="Installation Control"
+
+USAGE="${NL}Setld Usage Examples:$NL
+Add previously initialized subset(s) from device:
+${HT}setld -a device subset [subset ...]$NL
+Send a configuration message to an installed subset:
+${HT}setld -c subset message$NL
+Delete subset(s):$NL${HT}setld -d subset [subset ...]$NL
+List all subsets:$NL${HT}setld -i$NL
+List contents of installed subset(s):$NL${HT}setld -i subset [subset ...]$NL
+Load layered product from device:$NL${HT}setld -l device$NL
+Verify setld on-disk data integrity:$NL${HT}setld -v$NL
+Verify integrity of subset(s):$NL${HT}setld -v subset [subset ...]$NL
+Extract media images from device for network distribution:
+${HT}setld -x device$NL$NL"
+
+
+#trap '' 1 2 3
+
+# get function code.
+case "$1" in
+-i)	# only inventory can be run by anybody and may have 0 args
+	;;
+-[adlcvx])
+	case "$#" in
+	1)	EMESG="$USAGE";exit
+		;;
+	esac
+	case "`whoami`" in
+	root)	;;
+	*)	EMESG="You must be super-user to use option $1"
+		exit
+		;;
+	esac
+	;;
+*)	# this covers case of short args
+	EMESG="$USAGE"
+	exit
+	;;
+esac
+X=$1
+IFS=-
+ACT=`echo $1|dd conv=ucase 2>$NUL`
+IFS="$DIFS"
+shift
+
+# MAKE SURE ALL THE FILE SYSTEMS ARE MOUNTED AND THAT KEY PARTS
+#  OF USR ARE IN EXISTENCE.
+#  this will need to look at ./etc/fstab if we want to do setld foreign
+
+mount -a -t ufs > $NUL 2>&1 || #! this may cause trouble with setld foreign.
+{
+	echo "$NLError mounting your file-systems."
+	exit
+}
+
+
+
+# break up arglist
+case $ACT in
+[AXL])	DEVICE=$1
+	shift
+	;;
+esac
+SBS=`echo $*|dd conv=ucase 2> $NUL`
+
+#	THE NEXT STRETCH OF CODE DEALS WITH THE C-D-I-V OPTIONS
+#
+case $ACT in
+C)	
+	L= MESSAGES= X=0
+	for K in $SBS
+	do
+		case "$X" in
+		0)	L="$L $K"
+			X=1
+			;;
+		1)	MESSAGES="$MESSAGES $K"
+			X=0
+			;;
+		esac
+	done
+	case "$X" in
+	1)	echo "setld -c command syntax error."
+		exit
+		;;
+	esac
+
+	set - $MESSAGES
+
+	for _S in $SBS
+	{
+		MESSAGE=$1
+		TZAK=$UAS/$_S
+		[ -f $TZAK.ctrl ] ||
+		{
+			echo "$NL$E_STARS $_S: $E_NOCTRL"
+			shift
+			continue
+		}
+		[ -f $TZAK.lk ] ||
+		{
+			echo "$NL$E_STARS $_S: $E_NOINST"
+			shift
+			continue
+		}
+		ACT=C $TZAK.scp $MESSAGE
+		shift
+	}
+	;;
+
+D)	# delete named subsets.
+	#! hooks for -dp go here.
+	cd /
+	[ -d $TDIR ] || mkdir $TDIR ||
+	{
+		echo "$NL$E_MKDIR $TDIR"
+		exit
+	}
+	for _S in $SBS
+	do
+		TZAK=$UAS/$_S
+		# do we know this subset
+		[ -f $TZAK.ctrl ] ||
+		{
+			echo "$NL$E_STARS $_S: $E_NOCTRL"
+			continue
+		}
+		# is it installed?
+		[ -f $TZAK.lk ] ||
+		{
+			echo "$NL$E_STARS $_S: $E_NOINST"
+			continue
+		}
+		# read in the control file.
+		. $TZAK.ctrl ||
+		{
+			echo "
+Error reading control file for subset $_S, cannot delete."
+			continue
+		}
+
+		case "~$NAME~$DESC~$NVOLS~$MTLOC~$DEPS~$FLAGS~" in
+		*~~*)
+			echo "$E_CFCPTN $_S"
+			continue
+			;;
+		esac
+
+		case `expr $FLAGS % 2` in
+		1)	echo "
+Sorry, You may not delete the $_S subset"
+			continue
+			;;
+		esac
+
+		[ -s $TZAK.lk ] &&
+		{
+			echo "
+The following subsets need the subset you are trying to delete
+to operate correctly:$NL"
+
+			cat $TZAK.lk | sed 's/^/	/'
+			while :
+			do
+				echo -n "
+Are you sure you wish to delete the $_S subset (y/n)? "
+				read X
+				case "$X" in
+				[Yy]*)	break
+					;;
+				[Nn]*)	continue 2
+					;;
+				esac
+			done
+		}
+		ACT=PRE_D $TZAK.scp ||
+		{
+			echo "
+Subset $_S has declined it's deletion message.
+Cannot delete subset $_S"
+			continue
+		}
+
+		# all of the deletion dragons have been slain...
+		echo "
+Deleting $NAME."
+
+		# create n lists of files to be deleted.
+		#  each list contains max 170 files (NCARGS/60 for
+		#  worst case average 60 chars per path name.)
+
+		awk '{if ($9 != "d") print $10}' $TZAK.inv |
+			split -170 - $TDIR/del$$.
+
+		# little rotor machine sets off up to 4 'rm's in
+		#  parallel, great for VAX/MP machines
+		X=0
+		CMD="rm -rf \`cat \$K\`"
+		for K in $TDIR/del$$.??
+		do
+			# cover case of no files to delete. (?!?)
+			case "$K" in
+			*'??')	break
+				;;
+			esac
+			case "$X" in
+			0)	X=1
+				_B="&"
+				;;
+			1)	X=2
+				;;
+			2)	X=3
+				;;
+			3)	X=0
+				_B=
+				;;
+			esac
+			eval $CMD $_B
+		done
+		wait
+		ACT=POST_D $TZAK.scp
+		# mark subset as uninstalled
+		rm -f $TZAK.lk
+		case "$DEPS" in
+		".")	;;
+		*)	# remove dependency lock file info
+			for K in $DEPS
+			{
+				[ -f $UAS/$K.lk ] &&
+				{
+					grep -v $_S $UAS/$K.lk > $TMP1
+					mv $TMP1 $UAS/$K.lk
+				}
+			}
+			;;
+		esac
+	done
+	STAT=0;exit
+	;;
+
+I)	# inventory named subsets.
+
+	case "$SBS" in
+	"")	# list names of all subsets known to system.
+		cd $UAS
+		RAWLIST=`echo *.ctrl|sed 's/\.ctrl//g'`
+		case "$RAWLIST" in
+		'*')	echo "No subsets installed?!?"
+			STAT=0;exit
+			;;
+		esac
+		OUTLIST=
+		for K in $RAWLIST
+		{
+			[ -f $K.lk ] || K=`echo $K|dd conv=lcase 2>$NUL`
+			OUTLIST="$OUTLIST
+$K"
+		}
+		echo "$OUTLIST"
+		;;
+	*)	# inventory named subsets
+		for _S in $SBS
+		{
+			[ -f $UAS/$_S$ID ] && awk '{print $10}' $UAS/$_S$ID
+		}
+		;;
+	esac
+	STAT=0;exit
+	;;
+
+V)	# on the fly verify...
+	#! this is the place in the code where a full consistency
+	#! check of all of setld's data files is taken.
+	echo "Checking setld data files."
+	for _S in $SBS
+	{
+		[ -f $UAS/$_S.lk ] && ACT=V $UAS/$_S.scp
+	}
+	STAT=0;exit
+	;;
+esac
+# END CODE FOR OPTIONS C-D-I-V
+
+
+
+# ALL OF THE REST OF THE CODE DEALS WITH INPUT FROM SOME DEVICE.
+#
+#	the parts:
+#		CREATE NEEDED DIRECTORIES
+#		PARSE DEVICE NAME
+#		LOAD CONTROL INFORMATION (-l,-x only)
+#		EXTRACT FOR RIS (-x only)
+#		USER SUBSET SELECTION (-l only)
+#		INSTALL SUBSETS FROM MEDIA
+
+#	CREATE NEEDED DIRECTORIES
+#
+rm -rf $TDIR
+for X in $U$T $U$A $UAS $TDIR
+{
+	[ -d $X ] || mkdir $X ||
+	{
+		echo "$E_MKDIR $X"
+		exit 1
+	}
+}
+chmod 755 $U$A $UAS
+#
+# END	CREATE NEEDED DIRECTORIES
+
+#**************************************
+#	PARSE DEVICE NAME
+#
+MEDIA=
+[ -d $DEVICE ] &&
+{
+	MEDIA=ra60
+	_U=$DEVICE
+}
+# get the media type.
+case "$DEVICE" in
+*:)	# network installation
+	MEDIA=network
+	# the 'unit-number' is the server hostname
+	IFS=:
+	_U=`echo $DEVICE`
+	IFS="$DIFS"
+	# validate.
+	# beware yp.
+	CAT=cat
+	HOSTS=/etc/hosts
+	[ -f /usr/bin/domainname ] &&
+	{
+		case `domainname` in
+		"")	;;
+		*)	CAT=ypcat
+			HOSTS=hosts
+			;;
+		esac
+	}
+	$CAT $HOSTS | egrep -s "$_U" ||
+	{
+		echo "
+No entry in /etc/hosts for installation server $_U."
+		exit 1
+	}
+	# is it out there?
+
+	#! error case should be handled with retries for goodies like
+	#!  no network ports, login limit reached.
+	ERROR=`rsh $_U -l ris -n "echo hello" 2>&1` ||
+	{
+		echo "
+Error contacting server $_U: $ERROR"
+		exit 1
+	}
+	;;
+*mt*[lmh])
+	# some sort of tape device, get unit number and verify
+	#  access to nrmt?h.
+	MEDIA=tape
+	_U=`expr $DEVICE : '.*mt\([0-9][0-9]*\).*'`
+	;;
+	
+*mt*)	# tape device naming obsolete - xlate to 2.0
+	MEDIA=tape
+	_U=`expr $DEVICE : '.*mt\([0-9][0-9]*\).*'`
+	_U=`expr $_U % 4`	# this gets unit plug number.
+	;;
+
+*ra*)	# ra, rx50 diskettes
+	# get unit number
+	_U=`expr $DEVICE : '.*ra\([0-9][0-9]*\).*'`
+
+	MEDIA=rx50
+	ALTOP=+
+	ALT=`expr $_U $ALTOP 1`
+	# validate the existence of device files for
+	# both the primary and alternate rx50's
+	[ -f $D/rra${_U}a -a -f $D/rra${ALT}a ] ||
+	{
+		echo "$NL${E_NODEV}s $D/rra${_U}a
+and $D/rra${ALT}a exist and try again."
+		exit
+	}
+	;;
+esac
+case "$MEDIA" in
+"")	# bogus device.
+	echo "$NLDevice $DEVICE $E_NOSUPP"
+	exit 1
+	;;
+tape)	# do code for old and new style tapes
+	RAW=$D/nrmt${_U}h
+	[ -f $RAW ] ||
+	{
+		echo "$NLCannot access $RAW."
+		exit 1
+	}
+	echo "
+Please make sure your installation tape is mounted and on-line.$NL"
+	ready
+	# position tape for the first read.
+	{ mt -f $RAW rew && mt -f $RAW fsf $T_0; } &
+	MTPID=$!
+	POS=0
+	;;
+esac
+#
+# END	PARSE DEVICE NAME
+#**************************************
+
+#**************************************
+#	LOAD CONTROL INFORMATION
+#
+case "$ACT$MEDIA" in
+Lrx50)
+	echo -n "
+Insert the $IC diskette for the software
+you wish to load on your system in $MEDIA unit $_U.$NL"
+
+	ready
+
+	(cd $TDIR;tar xpf $D/rra${_U}a) > $TMP1 ||
+	{
+		echo "
+Attempt to read from diskette drive $_U failed.$NL
+Remove your diskette from $MEDIA unit $_U."
+
+		# flip unit numbers
+		_U=`expr $_U $ALTOP 1`
+		case "$ALTOP" in
+		+)	ALTOP=-
+			;;
+		-)	ALTOP=+
+			;;
+		esac
+		echo -n "
+Insert the $IC diskette for the software
+you wish to load in $MEDIA unit $_U.
+NOTE: we are trying the SAME DISKETTE again but in $MEDIA unit $_U.$NL"
+
+		ready
+
+		(cd $TDIR;tar xpbf 80 $D/rra${_U}a) ||
+		{
+			echo "
+Attempt to read from $MEDIA unit $_U failed.$NL$NL$E_NORECOVER"
+			exit 1
+		}
+	}
+	;;
+
+[LX]ra60)	# directory on system contains subsets
+	[ -d $_U/instctrl ] && cp $_U/instctrl/* $TDIR ||
+	{
+		echo "
+Error accessing the control files on your installation media."
+		exit 1
+	}
+	;;
+
+[LX]tape)
+	echo -n "Positioning tape..."
+	wait ||
+	{
+		echo "$NL$E_TPOS${NL}Taking tape unit $_U offline."
+		mt -f $RAW offl || echo "$NL$W_UMOUNT"
+		exit 1
+	}
+	echo ".done."
+
+	(cd $TDIR;tar xpbf 20 $RAW) ||
+	{
+		echo "$NL$E_READ${NL}Taking tape unit $_U offline."
+		mt -f $RAW offl || echo "$NL$W_UMOUNT"
+		exit 1
+	}
+	{ mt -f $RAW bsf; mt -f $RAW fsf; } &
+	MTPID=$!
+	;;
+
+[AL]network)
+	# grabbing control files from server.
+	cp /etc/hosts /hosts
+	IAM=`hostname`
+	rcp $_U.ris:clients/$IAM $TMP1 ||
+	{
+		echo "
+Error accessing control file list from $MEDIA"
+		exit 1
+	}
+
+	# drag over all of the control info.
+	SERVLIST=
+	for K in `cat $TMP1`
+	do
+		TZAK="$_U.ris:instctrl/$K"
+		SERVLIST="$SERVLIST $TZAK.scp $TZAK.ctrl $TZAK.inv"
+	done
+	case "$ACT" in
+	A)	# update subsets directory in case of client file changes
+		X=$UAS
+		;;
+	L)	# set up temp directory for later processing
+		X=$TDIR
+		SERVLIST="$SERVLIST $_U.ris:instctrl/???.image"
+		;;
+	esac
+	(cd $X;rcp $SERVLIST .) ||
+	{
+		echo "
+Error accessing control files from server $_U"
+		exit 1
+	}
+	;;
+X*)	echo "$NLSetld -x supports tape and ra60 media only."
+	exit 1
+	;;
+A*)	;;
+*)	echo "$NLInternal error"
+	exit 1
+	;;
+esac
+
+# check to see if we're looking at a v1.2 workstation tape
+case "$ACT" in
+L|X)
+	X=
+	[ -f $TDIR/X-WINDOWS-WS.ctrl ] &&	# qdss 32w v1.0
+	{
+		X=UWD
+		rm -f $TDIR/*-WS*
+	}
+	[ -f $TDIR/X,V.ctrl ] &&		# qvss 32w v1.0
+	{
+		X=UWV
+		rm -f $TDIR/*,V*
+	}
+	[ -f $TDIR/WS-MD.ctrl ] &&		# muc (MSO) 32w v1.0
+	{
+		X=UMS
+		rm -f $TDIR/*WS-MD*
+	}
+	case "$X" in
+	"")	;;
+	*)	(cd /sys/dist;cp $X.image $X*.ctrl $X*.inv $X*.scp $TDIR)
+		;;
+	esac
+	IMAGE=$TDIR/???.image
+	case "$IMAGE" in
+	'$TDIR/???.image')
+		echo "$NLNo image file."
+		exit 1
+		;;
+	esac
+#
+#****************SBS always in order of .image files**************
+#****************with ULT product always first      **************
+#
+	for i in `grep -v ROOT $TDIR/???.image|awk '{print $3}'`
+	{
+		[ -f $TDIR/$i.ctrl ] &&
+		{
+			PRODUCT=`expr $i : '\(...\).*'`
+			case $PRODUCT in
+			"ULT") SBS="$SBS $i";;
+			"UWD") WSD="$WSD $i";;
+			"UWV") WSV="$WSV $i";;
+			*)   OTHER="$OTHER $i";;
+			esac
+		}
+	}
+	case "$MEDIA$ADVFLAG" in
+	network0)
+		SBS="$SBS $WSV $WSD";;
+	*)	SBS="$SBS $WSV $WSD $OTHER";;
+	esac
+	case "$ACT" in
+	L)	mv $TDIR/* $UAS
+		;;
+	esac
+	;;
+esac
+
+
+#**************************************
+#	EXTRACT FOR RIS
+#
+case "$ACT$MEDIA" in
+Xtape)
+	#! run a df -i and get sizing here.
+	wait ||
+	{
+		echo "$NL$E_TPOS"
+		exit 1
+	}
+
+	# is there a root dump to be had?
+	grep -s ROOT $TDIR/???.image &&
+	{
+		# extract it from the tape
+		echo -n "Extracting ROOT..."
+		mt -f $RAW bsf 2 && mt -f $RAW fsf &&
+			dd if=$RAW of=ROOT bs=20b 2> $NUL||
+		{
+			echo "ERROR!
+Error extracting the ROOT image from $RAW"
+			exit 1
+		}
+		echo done.
+	}
+	
+	# drop the load.
+	> mandatory
+	mt -f $RAW fsf
+	for _S in $SBS
+	{
+		echo -n "Extracting $_S..."
+		dd if=$RAW of=$_S bs=10k 2> $NUL ||
+		{
+			echo "ERROR!$NLError extracting image $_S from $RAW"
+			exit 1
+		}
+		echo done.
+		TZAK=$TDIR/$_S
+		[ -f $TZAK.ctrl ] &&
+		{
+			. $TZAK.ctrl
+			FLAGS=`expr $FLAGS / 2`
+			case `expr $FLAGS % 2` in
+			0)	echo $_S >> mandatory
+			esac
+		}
+	}
+	mt -f $RAW rew &
+	echo "Checksumming the images..."
+	cat $TDIR/???.image |
+	while read X
+	do
+		set - $X
+		SUM=$1
+		_S=$3
+		X=`sum $_S`
+		set - $X
+		case "$1" in
+		$SUM)	echo "$_S"
+			;;
+		*)	echo "Checksum error on image $_S"
+			;;
+		esac
+	done
+	[ -d instctrl ] || mkdir instctrl
+	cp $TDIR/* instctrl
+	wait
+	echo "Media extraction complete."
+	STAT=0;exit
+	;;
+Xra60)
+	echo -n "Copying RA60 distribution to server directory..."
+	(cd $_U; tar cpf - .)|tar xpf -
+	# build mandatory file.
+	for _S in $SBS
+	{
+		. $TDIR/$_S.ctrl
+		FLAGS=`expr $FLAGS / 2`
+		case `expr $FLAGS % 2` in
+		0)	echo $_S >> mandatory
+		esac
+	}
+	(cd instctrl;cp $TDIR/???.image .)
+	echo done.
+	STAT=0;exit
+esac
+
+#**************************************
+#	FIND MANDATORY SUBSETS
+#
+#!merge with above post-FT
+case "$ACT" in
+L)
+	MAND=""	# list of mandatory subsets
+	OPT=""	# list of optional subsets
+
+	# scan control files, differentiate OPT & MAND subsets
+	for _S in $SBS
+	{
+		# make sure subset is not installed.
+		[ -f $UAS/$_S.lk ] && continue
+		. $UAS/$_S.ctrl
+		# bit 2 on flags means subset is optional
+		X=`expr $FLAGS / 2`
+		case `expr $X % 2` in
+		1)	OPT="$OPT $_S"
+			;;
+		*)	MAND="$MAND $_S"
+			;;
+		esac
+	}
+	case "$MAND$OPT" in
+	"")	exit 0
+		;;
+	esac
+	;;
+esac
+
+
+#**************************************
+#	USER SUBSET SELECTION
+#
+case "$ACT$ADVFLAG" in
+L0)	# this selects which subsets are mandatory
+	#  dependent on disk type (length of /usr)
+	ULEN=`df /usr|awk 'NR == 3 {print $2}'`
+
+	#  systems with < 30mb on /usr get mandatory only as default load.
+	[ $ULEN -lt 30000 ] &&
+	{
+		case "$MEDIA" in
+		network)
+			;;
+		*)	SBS=$MAND
+			;;
+		esac
+	}
+	;;
+L*)
+	case "$OPT" in
+	"")	echo "The following subsets will be installed:
+$MAND"
+		;;
+	*)
+		echo "*** ENTER SUBSET SELECTIONS ***$NL"
+		# list out mandatory subsets if any.
+		while :
+		do
+			PRINT=
+			case "$MAND" in
+			"")	;;
+			*)	PRINT="
+The following subsets are mandatory and will automatically be installed
+for you:$NL	$MAND$NL"
+				;;
+			esac
+
+			X=1
+			PRINT="$PRINT
+${NL}The subsets listed below are optional.$NL
+Please select subsets by entering the selection numbers:$NL"
+			for _S in $OPT
+			{
+				. $UAS/$_S.ctrl
+				PRINT="$PRINT$X	$_S	$DESC$NL"
+				eval ORD$X=$_S
+				X=`expr $X + 1`
+			}
+			ALL=$X
+			NONE=`expr $X + 1`
+			echo -n "$PRINT$ALL		ALL	All of the Above
+$NONE		NONE	None of the Above$NL
+Enter your choice(s) (eg: 1 5 7): "
+
+			read X
+			case "$X" in
+			"$ALL")	# SBS already set to the entire list.
+				SBS="$MAND $OPT"
+				;;
+			"$NONE")
+				SBS="$MAND"	# mandatory subsets only
+				;;
+			*)	SBS="$MAND"
+				set - $X
+				for K
+				{
+					K=`expr $K : '\([0-9][0-9]*\)'`
+					case "$K" in
+					"$1")	;;
+					*)	echo "
+Invalid choice: $1 (malformed number)"
+						shift
+						continue
+						;;
+					esac
+					[ $K -gt $NONE ] &&
+					{
+						echo "
+Invalid Choice: $1 (out of range)"
+						shift
+						continue
+					}
+					_S=`eval echo '$ORD'$K`
+					SBS="$SBS$NL	$_S"
+					shift
+				}
+				;;
+			esac	# case X
+			case "$SBS" in
+			"")	echo "No subsets selected."
+				STAT=2;exit
+				;;
+			*)	echo -n "
+You are installing the following subsets:
+$SBS
+
+Is this correct (y/n)? "
+				read X
+				case "$X" in
+				y|Y)	break
+				esac
+				;;
+			esac
+		done
+		;;
+	esac	# case OPT
+	;;
+esac	# case ACT,ADVFLAG
+
+
+#**************************************
+#	INSTALL SUBSETS FROM MEDIA
+#
+SCPLIST=
+for _S in $SBS
+do
+
+	ERR=0
+	# set TZAK for this context.
+	TZAK=$UAS/$_S
+	# do we know this subset?
+	[ -f $TZAK.ctrl ] ||
+	{
+		echo "$NL$E_UNKNOWN $_S."
+		continue
+	}
+
+	# internalize the control file
+	. $TZAK.ctrl
+
+	CTRLSTR="~$DESC~$NVOLS~$MTLOC~$DEPS~$FLAGS~"
+	# did we get it all?
+	case "$CTRLSTR" in
+	*~~*)	echo "$E_CFCPTN $_S"
+		continue
+		;;
+	esac
+	# check dependency list
+	for DEP in $DEPS
+	{
+		case $DEP in
+		.)	continue
+			;;
+		*)
+			[ -f $UAS/$DEP.lk ] ||
+			{
+				echo "
+Subset $_S requires the existence of the $DEP subset to operate
+correctly. Please install subset $DEP before trying to install the
+$_S subset."
+				continue 2
+			}
+			;;
+		esac
+	}
+
+	ACT=PRE_$ACT $UAS/$_S.scp ||
+	{
+		echo "
+Pre-install subset control program failed!
+Subset $NAME cannot be installed."
+		continue
+	}
+
+
+	echo "${NL}Copying $_S from $MEDIA"
+
+	case $MEDIA in
+	network)	# install from server.
+		[ -f /hosts ] && cp /hosts /etc/hosts
+		rsh $_U -l ris -n "dd if=$_S bs=10k " 2> $NUL |
+			(cd /;tar xpbf 20 - ) ||
+		{
+			cp /hosts /etc/hosts
+			echo "Install from $_U failed subset $_S"
+			continue
+		}
+		;;
+	rx50)	# load from diskettes.
+		VOL=1
+		IFS=:
+		set - $NVOLS
+		IFS="$DIFS"
+
+		NVOLS=$2
+		VMAX=`expr $2 + 1`
+		while :
+		do
+			case "$VOL" in
+			"$VMAX")
+				break
+				;;
+			esac
+			echo -n "
+Insert diskette $NAME $VOL of $NVOLS in $MEDIA unit $_U.$NL"
+
+			ready
+
+			# check volume number.
+			(cd /;tar tbf 80 $D/rra${_U}a) > $TMP1 ||
+			{
+				_U=`expr $_U $ALTOP 1`
+				case "$ALTOP" in
+				+)	ALTOP=-
+					;;
+				-)	ALTOP=+
+					;;
+				esac
+
+				echo -n "$NL$E_FAIL
+Remove diskette $NAME $VOL of $NVOLS.$NL
+Insert diskette $NAME $VOL of $NVOLS in $MEDIA unit $_U.
+NOTE: we are trying the SAME DISKETTE AGAIN but in $MEDIA unit $_U.$NL"
+
+				ready
+
+				(cd /;tar tbf 80 $D/rra${_U}a) > $TMP1 ||
+				{
+					echo "
+Cannot read your diskette, we will continue with the next volume."
+					VOL=`expr $VOL + 1`
+					continue
+				}
+			}
+			ISVOL=`grep "^Volume" $TMP1`
+			ISVOL=`expr "$ISVOL" : '.*ume\([0-9][0-9]*\)'`
+			case "$ISVOL" in
+			$VOL)
+				;;
+			*)
+				echo "
+You have mistakenly mounted volume $ISVOL.$NL
+Please remove the diskette."
+				sleep 2
+				continue
+				;;
+			esac
+			(cd /;tar xpbf 80 $D/rra${_U}a) ||
+			{
+				_U=`expr $_U $ALTOP 1`
+				case "$ALTOP" in
+				+)	ALTOP=-
+					;;
+				-)	ALTOP=+
+					;;
+				esac
+
+				echo -n "$NL$E_FAIL
+Remove diskette $NAME $VOL of $NVOLS.$NL
+Insert diskette $NAME $VOL of $NVOLS in $MEDIA unit $_U.
+NOTE: we are trying the SAME DISKETTE AGAIN but in $MEDIA unit $_U.$NL"
+
+				ready
+				(cd /;tar xpbf 80 $D/rra${_U}a) ||
+				{
+					echo "$NL$NL$E_FAIL$NL
+Diskette $NAME: $VOL of $NVOLS may not have been installed
+properly on your system but the rest of the installation will continue."
+				}
+				ERR=1
+			}
+			echo "
+Remove diskette $NAME $VOL of $NVOLS."
+			VOL=`expr $VOL + 1`
+		done
+		;;
+
+	ra60)	(cd /;tar xpf $_U/$_S) ||
+		{	# utter failure
+			echo "$NL$E_FAIL$NL
+Subset $_S may not have been installed properly on your system
+but the rest of the installation will continue."
+			ERR=1
+		}
+		;;
+
+	tape)	IFS=:
+		set - $MTLOC
+		IFS="$DIFS"
+		MTVOL=$1
+		MTLOC=$2
+		# position tape.
+		#
+		wait
+
+		# how far to next subset?
+		case "$MTVOL" in
+		$CURVOL)
+			;;
+		*)	echo -n "
+Volume change. Rewinding tape..."
+			mt -f $RAW rew && mt -f $RAW offl ||
+				echo "error$NL$NL
+I can't dismount your tape. You will have to take the
+tape drive off line manually."
+
+			echo -n "$NL
+Please remove tape volume $CURVOL and replace it with
+volume $MTVOL.$NL"
+
+			# ready wait
+			ready
+			mt rew; mt fsf 2	# don't change that 2!
+			POS=0
+			;;
+		esac
+
+
+		X=`expr $POS - $MTLOC`
+		POS=$MTLOC
+		# exit status from last command run from between
+		#  these parenthes will serve as exit value of
+		#  parens as a whole.
+		wait
+		case "$X" in
+		0)	# we're at it.
+			# avert "blocksize = 0"
+			mt -f $RAW fsf
+			;;
+		-*)	# forward X files.
+			IFS=-
+			X=`echo $X`
+			IFS="$DIFS"
+
+			mt -f $RAW fsf $X
+			;;
+		*)	X=`expr $X + 1`
+			mt -f $RAW bsf $X && mt -f $RAW fsf
+			;;
+		esac && (cd /; tar xpbf 20 $RAW) ||
+		{
+			echo "$NL$E_FAIL$NL
+Subset $NAME may not have installed properly on your system (tar error)"
+			ERR=1
+		}
+		;;
+	esac	# MEDIA
+
+	# verify this subset.
+	echo "Verifying $_S"
+	echo "${NL}SUBSET $_S:" >> $U$A/fverifylog
+	if (cd /;fverify -y <$TZAK.inv 2> $TMP1)
+	then
+		> $UAS/$_S.lk
+		chmod 644 $UAS/$_S.lk
+		SCPLIST="$SCPLIST $_S"
+	else
+		echo "$NLThere were fatal verification errors for subset $_S"
+		for K in $MAND
+		do
+			case "$K" in
+			"$_S")	exit
+				;;
+			esac
+		done
+	fi
+done
+case $MEDIA in
+tape)	wait; mt -f $RAW rew &
+	;;
+esac
+
+
+#**************************************
+#	EXECUTE POST INSTALL SCP'S
+#
+ACT=POST_$ACT; export ACT
+for _S in $SCPLIST
+{
+	$UAS/$_S.scp ||
+	{
+		echo "
+The subset control program for subset $_S failed."
+		[ -s $UAS/$_S.lk ] &&
+		{
+			echo "
+This failure may adversely affect the operation of the following subsets:
+"
+			sort $UAS/$_S.lk|uniq
+		}
+		rm -f $UAS/$_S.lk
+		for K in $MAND
+		{
+			case "$K" in
+			"$_S")	exit
+			esac
+		}
+		continue
+	}
+	# update lock files
+	. $UAS/$_S.ctrl
+	for K in $DEPS
+	{
+		case "$K" in
+		.)	break
+		esac
+		echo "$_S" >> $UAS/$K.lk
+	}	
+}
+
+[ -f /hosts ] && mv /hosts /etc/hosts
+rm -f /*_inv.dist /Volume*
+STAT=0
+wait	# finish rew on tapes
+exit

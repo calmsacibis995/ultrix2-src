@@ -1,0 +1,52 @@
+.TH gfsi 5
+.SH NAME 
+GFSI 
+\- The Generic File System Interface
+.SH DESCRIPTION
+The Generic File System Interface is the interface
+between the kernel and
+specific file system implementations such as 
+.B ufs,
+the local ULTRIX file system and 
+.B nfs 
+The Network File System.
+The Generic File System Interface has many performance improvements
+along
+with a complete reorganization of the file system code.  The GFS interface
+has been accomplished with modifications to both
+the mount table,
+sys/mount.h
+and to the inode, which under the GFS interface implementation
+is referred to as the gnode.  The gnode is defined in the
+sys/gnode.h
+and 
+sys/gnode_common.h.
+.PP
+The GFS interface allows super-users to
+.B mount 
+and 
+.B umount
+file systems on local and remote machines.
+Changes to the
+/etc/fstab
+file allow any type of mount to occur automatically at boot time in the
+files, 
+/etc/rc
+and 
+/etc/rc.boot.
+Other than mounting and unmounting file systems, users should not see
+any difference in the local file system.
+.PP
+The GFS interface requires the addition of two new system calls: 
+getmnt(2)
+and 
+getdirents(2).
+The 
+.B getmnt
+system call handles generic mounted file system data.
+The 
+.B getdirents 
+system call handles generic directory entries from any file system.
+.SH SEE ALSO
+getdirents(2), getmnt(2), mount(2), fstab(5), nfs(5nfs), ufs(5),
+fsck(8), mount(8)

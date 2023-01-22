@@ -1,0 +1,269 @@
+.TH ra 4
+.SH NAME
+ra \- MSCP disk controller interface
+.SH SYNTAX
+For UNIBUS, QBUS:
+.br
+.B "controller uda0 at uba?"
+.br
+.B "controller uq0 at uda0 csr 0172150 vector uqintr"
+.br
+.B "disk ra0 at uq0 drive 0"
+.PP
+For VAXBI:
+.br
+.B "controller kdb0 at vaxbi0 node 4"
+.br
+.B "controller uq0 at kdb0 vector uqintr"
+.br
+.B "disk ra0 at uq0 slave 0"
+.SH DESCRIPTION
+Prior to Version 2.0, this device was referenced by 
+uda(4).
+.PP
+This is a driver for all DEC MSCP disk controllers.
+All controllers communicate with the host through a packet
+oriented protocol termed the Mass Storage Control Protocol (MSCP).
+See the file
+< vax/mscp.h >
+for a detailed description of this protocol.
+.PP
+Files with minor device numbers 0 through 7 refer to various portions
+of drive 0;
+minor devices 8 through 15 refer to drive 1, etc.
+The standard device names begin with 
+.B ra
+followed by
+the drive number and then a letter a through h
+for partitions 0 through 7 respectively.
+The character ? stands here for a drive number in the range 0 through 7.
+.PP
+The block files access the disk via the system's normal
+buffering mechanism and may be read and written without regard to
+physical disk records.	There is also a `raw' interface
+which provides for direct transmission between the disk
+and the user's read or write buffer.
+A single read or write call results in exactly one I/O operation,
+so raw I/O is considerably more efficient when
+many words are transmitted.  Multiply buffered I/O operations are
+possible to any raw mscp device (see nbuf(4) for more information).
+The names of the raw files conventionally begin with an extra `r.'
+.PP
+In raw I/O, counts should be a multiple of 512 bytes (a disk sector).
+Likewise,
+.B seek
+calls should specify a multiple of 512 bytes.
+.SH DISK SUPPORT
+.PP
+This driver handles all drives which may be connected to an MSCP based
+controller.  Consult the ULTRIX Software Product Description 
+to determined which controllers
+are supported for which CPU types and hardware configurations.
+Drive types as such are not recognized,
+but rather  the variable length partitions are defined as having an
+``infinite'' length and the controller is relied on to return
+an error when an inaccessible block is requested.
+.PP
+For constructing
+file systems, however the partitions sizes are required.
+Partitions are not rounded
+to cylinder boundaries, as on other drives, because the type
+of drive attached to the controller is discovered too late
+in the autoconfiguration process to maintain separate partition
+tables for each drive.	(The lack of proper drive
+type recognition would be more easily dealt with if the partition
+tables were read off the drive.) Partitions sizes can be changed
+by chpt(8).  For further information, see 
+.PN dkio(4).
+.PP
+The origin and size (in sectors) of the pseudodisks an each
+drive are shown in the following table.  In the table, a -1
+in the length column indicates the end of the pack.  The UDA
+determines pack size either during autoconfiguration or 
+when the disk is put on line.
+.PP
+.nf
+.ta .5i +\w'000000    'u +\w'000000    'u +\w'000000	'u +\w'000000	 'u
+.PP
+RA60 partitions
+	disk	start	length
+	ra?a	0	15884
+	ra?b	15884	33440
+	ra?c	0	400176
+	ra?g	49324	82080
+	ra?h	131404	268772
+.PP
+RA80 partitions
+	disk	start	length
+	ra?a	0	15884
+	ra?b	15884	33440
+	ra?c	0	242606
+	ra?g	49324	82080
+	ra?h	131404	111202
+.PP
+RA81 partitions
+	disk	start	length
+	ra?a	0	15884
+	ra?b	15884	33440
+	ra?c	0	891072
+	ra?d	340670	15884
+	ra?e	356554	55936
+	ra?f	412490	478582
+	ra?g	49324	82080
+	ra?h	131404	759668
+.PP
+RA82 partitions
+	disk	start	length
+	ra?a	0	15884
+	ra?b	15884	66690
+	ra?c	0	\-1
+	ra?d	82574	220096
+	ra?e	302670	219735
+	ra?f	522405	437760
+	ra?g	82574	877591
+	ra?h	960165	\-1
+.PP
+.B "RD31 partitions"
+	disk	start	length
+	ra?a	    0	 15884
+	ra?b	15884	 10024
+	ra?c	    0	 41560
+	ra?g	25908	 15652
+
+.PP
+.B "RD32 partitions"
+	disk	start	length
+	ra?a	    0	 15884
+	ra?b	15884	 15625
+	ra?c	    0	 83204
+	ra?d	31509	 25863
+	ra?e	57372	 25832
+	ra?g	31509	 51695
+.PP
+RD51 partitions
+	disk	start	length
+	ra?a	0	15884
+	ra?b	15884	5716
+	ra?c	0	\-1
+.PP
+RD52 partitions
+	disk	start	length
+	ra?a	0	15884
+	ra?b	15884	9766
+	ra?c	0	\-1
+	ra?g	52650	\-1
+.PP
+RD53 partitions
+	disk	start	length
+	ra?a	0	15884
+	ra?b	15884	33440
+	ra?c	0	136872
+	ra?d	0	0
+	ra?e	0	50714
+	ra?f	50714	87958
+	ra?g	49324	89348
+	ra?h	15884	122788
+.PP
+RD54 partitions
+	disk	start	length
+	ra?a	0	15884
+	ra?b	15884	33440
+	ra?c	0	\-1	
+	ra?d	49324	130938
+	ra?e	180262	\-1
+	ra?f	0	0
+	ra?g	49324	\-1
+	ra?h	0	0
+.PP
+RX33 partitions
+	disk	start	length
+	ra?a	0	2400
+	ra?c	0	\-1
+.PP
+RX50 partitions
+	disk	start	length
+	ra?a	0	800
+	ra?c	0	\-1
+.PP
+RC25
+	disk	start	length
+	ra?a	0	15884
+	ra?b	15884	10032
+	ra?c	0	\-1
+	ra?g	25916	\-1
+
+.DT
+.fi
+.PP
+Usually the ra?a partition is used for the root file system,
+the ra?b partition as a paging area.
+The ra?c partition for pack to pack copying because the
+it maps the entire disk.
+.SH DIAGNOSTICS
+The following messages are printed at the console:
+.PP
+\fBuda%d: random interrupt ignored\fP
+.br
+An unexpected interrupt was received 
+(for example, when no I/O was
+pending).  The interrupt is ignored.
+.PP
+\fBuda%d: interrupt in unknown state %d ignored\fP
+.br
+An interrupt was received when the driver was in an unknown
+internal state.  Indicates a hardware problem or a driver bug.
+.PP
+\fBuda%d: fatal error (%o)\fP
+.br
+The UDA-50 indicated a ``fatal error'' in the status returned
+to the host.  The contents of the status register are displayed.
+.PP
+\fBOFFLINE\fP
+.br
+Additional status information given after a hard I/O error.
+A hard I/O error occurred because the drive was not on-line.
+.PP
+\fBuda: unknown packet\fP
+.br
+An MSCP packet of unknown type was received from the UDA-50.
+Check the cabling to the controller.
+.PP
+\fBUdaerror udasa (%x)\fP
+.PP
+\fBerror: com %d opc 0x%x stat 0x%x\fP
+.PP
+\fBuda%d: hard error\fP
+.PP
+\fBudintr: um_ubinfo == 0\fP
+.PP
+\fBendcd=%o, stat=%o\fP
+.PP
+\fBUda(%d) udasa (%x)\fP
+.PP
+\fBUda (%d) Error (%x)\fP
+.PP
+The following messages are written to the system error log file,
+/usr/adm/syserr/syserr.hostname.
+.PP
+\fBudastrat: ubinfo 0x%x\fP
+.br
+VAX 11/750 only.
+When allocating UNIBUS resources, the driver found it already
+had resources allocated.
+.PP
+\fBUda%d udasa %o, state %d\fP
+.br
+Additional status information given after a hard I/O error.
+The values of the UDA-50 status register and the internal
+driver state are printed.
+.PP
+The following types of MSCP error packets are 
+returned by the UDA-50 to the host: controller error,
+host memory access error, disk transfer errror, SDI
+error, small disk error, and unknown error.
+.SH FILES
+/dev/ra???
+.br
+/dev/rra???
+.SH SEE ALSO
+nbuf(4), dkio(4), chpt(8), MAKEDEV(8), uerf(8)

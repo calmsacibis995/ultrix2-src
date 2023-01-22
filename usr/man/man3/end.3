@@ -1,0 +1,34 @@
+.TH end 3 
+.SH NAME
+end, etext, edata \- last locations in program
+.SH SYNTAX
+.nf
+.B extern end;
+.B extern etext;
+.B extern edata;
+.fi
+.SH DESCRIPTION
+These names refer neither to routines nor to locations with interesting
+contents.  The address of
+.PN etext
+is the first address above the program text,
+.PN edata
+above the initialized data region, and
+.PN end
+above the uninitialized data region.
+.PP
+When execution begins, the program break coincides with
+.PN end,
+but it is reset by the routines
+brk(2), malloc(3), standard input/output
+stdio(3s),
+the profile
+.RB ( \-p )
+option of 
+cc(1),
+and so forth.
+The current value of the program break
+is reliably returned by `sbrk(0)',
+see brk(2).
+.SH "SEE ALSO"
+brk(2), malloc(3), stdio(3s)

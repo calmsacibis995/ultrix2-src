@@ -1,0 +1,37 @@
+.TH putpwent 3
+.SH NAME
+putpwent \- write password file entry
+.SH SYNTAX
+.B #include <pwd.h>
+.PP
+.B int putpwent (p, f)
+.br
+.B struct passwd \(**p;
+.br
+.B \s-1FILE\s+1 \(**f;
+.SH DESCRIPTION
+The
+.PN putpwent
+subroutine is the inverse of getpwent(3).
+Given a pointer to a
+.I passwd\^
+structure created by
+.PN getpwent
+(or
+.PN getpwuid 
+or
+.PN getpwnam), 
+.PN putpwuid
+writes a line on the stream
+.I f\^
+which matches the format of /etc/passwd.
+.SH DIAGNOSTICS
+The
+.PN putpwent
+subroutine returns non-zero if
+an error was detected during its operation, otherwise zero.
+.SH WARNING
+The above routine uses <stdio.h>, which causes 
+it to increase the size of programs,
+not otherwise using standard I/O, more
+than might be expected.

@@ -1,0 +1,250 @@
+.TH cpio 1
+.SH NAME
+cpio \- copy file archives in and out
+.SH SYNTAX
+.B cpio
+.B \-o
+[
+.B aBckv
+]
+.PP
+.B cpio
+.B \-i
+[
+.B bBcdfkmrsStuv6
+] [ 
+.I patterns 
+]
+.PP
+.B cpio
+.B \-p
+[
+.B adklmuv
+] 
+.I directory
+.SH DESCRIPTION
+The 
+.PN cpio
+command is a filter designed to let you copy files to or from an
+archive.  The
+.PN cpio 
+command
+differs from the
+.PN ar
+command in that
+.PN cpio
+lets you archive any kind of file, while
+.PN ar
+is limited to program object files.
+.PP
+The 
+.PN cpio
+command has three function keys, each with its own set
+of options.
+.IP \fB\-o\fR 0.3i
+Copy out.  Reads the standard input to obtain a list of path names
+and copies those files onto the
+standard output
+together with path name and status information.
+.PP
+.IP \fB\-i\fR 0.3i
+Copy in.
+Extracts files from the
+standard input,
+which is assumed to be the product of a previous
+.BR "cpio \-o" ,
+and places them into the user's current directory tree.
+For files with the same name, the newer file replaces
+the older file unless the \fB\-u\fR option is used.
+.IP "" 0.3i
+Only files with names that match
+.I patterns\^
+are selected.
+The
+.I patterns\^
+are specified using the notation for names described
+in 
+sh(1).
+In
+.I patterns,
+the slash for directories (/) is included in searches using
+meta-characters.
+For example, suppose the archive contains the file
+.PN filep 
+and the pathname information in the archive indicates
+that the directory below contains the file 
+.PN file2p .
+This command 
+copies both files into the user's current directory:
+.EX
+cpio -i *p < /dev/rmt0l
+.EE
+.IP "" 0.3i
+Multiple
+.I patterns\^
+may be specified and
+if no
+.I patterns\^
+are specified, the default for
+.I patterns\^
+is
+.BR \(**
+(that is, select all files).
+The extracted files are conditionally created and copied
+into the current directory tree
+based upon the options described below.
+.IP \fB\-p\fR 0.3i
+Pass.
+Reads the standard input to obtain a list of path names
+of files that are conditionally created.  This list of
+files is copied 
+into the destination
+.I directory
+tree based upon the options used.  For files with the
+same name, the newer file replaces the older file unless
+the \fB\-u\fR option is used.
+.SH OPTIONS
+.IP \fBa\fR 0.3i
+Retain original access times of input files, even after
+they have been copied.  Normally, the read(s) used in the
+copy update the copied file's access time.
+.IP \fBb\fR 0.3i
+Swap both bytes and halfwords.
+.IP \fBB\fR 0.3i
+Input/output is to be blocked 5,120 bytes to the record.
+This option is meaningful only with data directed to or from
+/dev/rmt?h
+or
+/dev/rmt?l .
+.IP \fBc\fR 0.3i
+Write (\fB\-o\fR function key) or read (\fB\-i\fR function key)
+header information in ASCII character form for portability
+between different types of UNIX systems.
+.IP \fBd\fR 0.3i
+Create any directories noted in the archive
+on the standard output.
+.IP \fBf\fR 0.3i
+Copy in all files except those in
+.IR patterns .
+.IP \fBk\fR 0.3i
+Enable symbolic link handling.  Use with the \-i, \-o, and \-p options.
+.IP \fBl\fR 0.3i
+Link files rather than copying them whenever possible.
+.IP \fBm\fR 0.3i
+Retain previous file modification time.  This option does
+not work on directories or symbolic links
+that are being copied; the directory
+is always reset to show the access time when the copy was made.
+.IP \fBr\fR 0.3i
+Interactively
+rename
+files.
+If you respond with a null line, the
+file is skipped (not copied).  Use only with the \fB\-i\fR
+option.
+.IP \fBs\fR 0.3i
+Swap bytes.
+.IP \fBS\fR 0.3i
+Swap halfwords.
+.IP \fBt\fR 0.3i
+Print a
+table of contents
+of the input.
+No files are created.
+.IP \fBu\fR 0.3i
+Copy
+unconditionally.
+(Otherwise, an older file will not replace a newer 
+file with the same name).
+.IP \fBv\fR 0.3i
+Causes a verbose listing of file
+names transferred to be printed.
+When used with
+the
+.B t
+option,
+the table of contents looks like the output of an
+.B ls\ \|\-l
+command.  For further information,
+see
+ls(1).
+.IP \fB6\fR 0.3i
+Process a file with the 
+UNIX
+System
+Sixth
+Edition format.
+.SH EXAMPLES
+This example shows how to copy the contents of the user's
+current directory
+into an archive.
+.EX
+ls | cpio -o  > /dev/rmt0l
+.EE
+This example shows how to duplicate a directory hierarchy.
+.EX
+cd olddir
+find . -print | cpio -pdl newdir
+.EE
+This example shows how to copy all files and directories
+with names containing the characters "chapter" in user 
+smith's
+home directory and underlying directories.
+.EX
+find ~smith -name '*chapter*' -print | cpio -o > /dev/rmt0h
+.EE
+This example shows the results of using the \fBr\fR
+option with the \fB\-i\fR function key.
+.EX
+ls | cpio -ir > ~smith/newdir
+Rename <file1>
+newnamefile1
+Rename <file2>
+<RETURN>
+Skipped
+Rename <file3>
+newnamefile3
+.EE
+In some cases, the \fB\-cpio\fR option of the
+find(1)
+command can be used more effectively than pipes and
+redirects using
+.B cpio.  
+For instance, the following example
+.EX 
+file . -print | cpio -oB > /dev/rmt0l
+.EE
+can be handled more efficiently by:
+.EX
+find . -cpio /dev/rmt0l
+.EE
+To copy the contents of a directory (with symbolic link handling
+enabled) to the tape drive, type:
+.EX
+ls | cpio -ok > /dev/rmt0h
+.EE
+To restore the archived files back into a directory, type:
+.EX
+cpio -ik < /dev/rmt0h
+.EE
+To move files from the old directory to the new directory
+including symbolic links, type:
+.EX
+cd olddir
+ls | cpio -pdk newdir
+.EE
+.SH RESTRICTIONS
+Path names are restricted to 128 characters.
+.PP
+When there are too many unique linked files,
+the program runs out of
+memory and cannot trace them
+and linking information is lost.
+.PP
+Only the superuser can copy special files.
+.PP
+The
+.B cpio
+command does not handle symbolic links.
+.SH SEE ALSO
+ar(1), find(1), cpio(5)

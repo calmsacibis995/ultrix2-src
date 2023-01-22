@@ -1,0 +1,15 @@
+.TH hostname 1
+.SH NAME
+hostname \- set or print name of current host system
+.SH SYNTAX
+.B hostname
+[ nameofhost ]
+.SH DESCRIPTION
+The
+.B hostname
+command prints the name of the current host, as given before the
+``login'' prompt.
+The super-user can set the hostname by giving an argument; this
+is usually done in the startup script /etc/rc.local.
+.SH SEE ALSO
+gethostname(2), sethostname(2)

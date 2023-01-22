@@ -1,0 +1,35 @@
+.TH mesg 1
+.SH NAME
+mesg \- permit or deny messages
+.SH SYNTAX
+.B mesg
+[
+.B n
+] [
+.B y
+]
+.SH DESCRIPTION
+The
+.B mesg
+command with argument
+.B n
+forbids messages via
+.B write
+and talk(1) by revoking non-user
+write permission on the user's terminal.
+The
+.B mesg
+command with argument
+.B y
+reinstates permission.
+All by itself,
+.B mesg
+reports the current state without changing it.
+.SH DIAGNOSTICS
+Exit status is 0 if messages are receivable,
+1 if not, 2 on error.
+.SH FILES
+/dev/tty*
+.SH "SEE ALSO"
+talk(1),
+write(1)

@@ -1,0 +1,34 @@
+.TH sleep 1 
+.SH NAME
+sleep \- suspend execution for an interval
+.SH SYNTAX
+.B sleep
+time
+.SH DESCRIPTION
+The
+.PN sleep
+command suspends execution for
+.I time
+seconds.
+It is used to execute a command after a certain amount of time as in:
+.EX
+	(sleep 105; command)&
+.EE
+or to execute a command every so often, as in:
+.EX
+	while true
+
+	do
+
+		command
+
+		sleep 37
+
+	done
+.EE
+.SH RESTRICTIONS
+The
+.I time
+must be less than 2,147,483,647 seconds.
+.SH "SEE ALSO"
+setitimer(2), alarm(3), sleep(3)

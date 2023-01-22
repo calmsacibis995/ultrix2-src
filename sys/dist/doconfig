@@ -1,0 +1,456 @@
+#! /bin/sh
+#
+# SCCSID= @(#)doconfig	1.12	2/12/87
+#
+# 001 - June, 1986 - Tung-Ning Cherng
+#		1. Added the advanced installation flag.
+#		2. system name can be mixed with upper and lower case.
+#		3. Timezone for the area may be a negative number.
+#
+#	Edited prompts on Aug. 5, 1986 by Al Wojtas
+#
+# 000 - May, 1986 - Bob Fontaine
+#		Revised for V2.0 installation.
+#
+#  Based on the V1.2 'doconfig'.
+#
+PATH=/bin:/usr/bin:/usr/ucb:/etc:.
+export PATH
+umask 022
+
+LL="
+"
+if test $# -ge 2
+then
+	realsysname=$1
+	shift
+	timezone=`echo $*`
+	sysname=`echo $realsysname | dd conv=ucase 2>/dev/null`
+	newconfig=true
+else
+	newconfig=false
+
+# setnametime : Collects the information for sysname, date, timezone, time. 
+# Get the system name, loop until a correct one is entered.
+# sysname holds that name.
+#
+	case $remoteflag in
+	y )
+	    realsysname=`/bin/hostname`
+	    sysname=`echo ${realsysname} | dd conv=ucase 2>/dev/null`
+	    echo "
+The system name assigned to your processor by your system
+manager is $realsysname."
+		;;
+	*)
+		while : true
+		do
+	        	echo -n "
+Type the name of your system using alphanumeric characters. 
+The first character must be a letter.  For example, tinker.  ${LL}
+Type your system name:  "
+		    read realsysname
+		    check=`expr $realsysname : '\([a-zA-Z][a-zA-Z0-9]*\)' 2> /dev/null`
+	       	    case $realsysname in
+			"" )
+				continue
+				;;
+		   	$check  ) 
+				;;
+		    	* )
+			echo "
+You specified $realsysname as your system name, which is not valid. 
+Read the following prompt and this time type a valid system name:"
+			continue ;;
+		    esac
+		    sysname=`echo ${realsysname} | dd conv=ucase 2>/dev/null`
+		
+		    echo -n "
+You typed ${realsysname} as the name of your system.  
+Is this correct? Type y or n [y]: "
+		    read resp
+		    case $resp in
+			y* | Y* | "")
+				break
+		    		;;
+			*)
+				;;
+	    	esac
+		done
+		;;
+	esac
+	#
+	# This next if is for the "user" call to doconfig.  It
+	# allows the user to use this script to edit and configure
+	# an existing configuration file, rather than have to create
+	# it from scratch everytime.
+	newconfig="false"
+	if test -s /sys/conf/$sysname
+	then
+	    echo -n "
+A system with that name already exists. ${LL}
+Replace it? (y/n) [n]? "
+	    read resp
+	    case $resp in
+		y* | Y* )
+		    newconfig="true"
+		    ;;
+	
+		*)
+		    echo "Using existing /sys/conf/$sysname file. . ."
+		    cp /sys/conf/$sysname /tmp/$sysname
+		    [ -d /sys/$sysname ] || mkdir /sys/$sysname
+		    ;;
+	    esac
+	else
+	    newconfig="true"
+	fi
+	
+	case ${newconfig} in
+	true)
+		# Set the system date
+		echo "${LL}*** SPECIFY THE DATE AND TIME *** "
+	
+	# Read a date until a valid date is read
+	
+		while : true
+		do
+	    		echo -n "
+Enter the current date and time in this format:
+yymmddhhmm. Use two digits for year (yy), 
+month (mm), day (dd), hour (hh), and minute (mm).
+You type the time in 24-hour format. For example,
+for 11:30 p.m. on November 17, 1986, the response
+would be: ${LL}
+	8611172330 ${LL}
+Type the date and time [no default]: "
+	    	read resp
+	    	case $resp in
+		T)		#testing only
+		    break
+		    ;;
+		"")
+		    echo "You must specify a date and time. ${LL}"
+		    ;;
+		*)
+			/bin/date $resp > /dev/null
+		    case $? in 
+		    0 )	break ;;
+		    * )	;;
+		    esac
+		    ;;
+	    	esac
+	    echo ${LL}
+	done
+		echo "${LL} *** SPECIFY THE TIME ZONE INFORMATION ***${LL}"
+		echo "
+Enter the time zone for your area, using the options
+listed in this table:
+	
+	   Time Zone           Options
+-----------------------------------------------
+	    Eastern		e
+	    Central		c
+	    Mountain		m
+	    Pacific		p
+	    Greenwich		g
+------------------------------------------------
+	
+You can also enter the number of hours (-12 to 12) in time
+west of Greenwich. ${LL} "
+	
+		while : true
+		do
+		    echo -n "Type the time zone [no default]: "
+		    read zone
+	
+		    case ${zone} in
+			e*|E*)
+			    hourswest=5 ;;
+	
+			c*|C*)
+			    hourswest=6 ;;
+	
+			m*|M*)
+			    hourswest=7 ;;
+	
+			p*|P*)
+			    hourswest=8 ;;
+	
+			g*|G*)
+			    hourswest=0 ;;
+	
+			"")
+			    echo ""
+			    continue
+			    ;;
+			*)
+			    hourswest=${zone}
+	
+			    case ${hourswest} in
+				[0-9] | 1[0-2] | -[1-9] | -1[0-2])
+				    ;;
+				*)
+				    echo "Invalid value. "
+				    continue
+				    ;;
+			    esac
+		    esac
+		    break
+		done
+	
+		while : true
+		do
+		    echo -n "
+Does your area alternate between Daylight Savings
+and Standard time [yes] ? "
+		    read dst
+		    case ${dst} in
+			[yY]*|"")
+			    echo "${LL}
+Enter the geographic area for Daylight Savings Time,
+using the options listed in this table:
+	
+	   Geographic Area    Options
+	--------------------------------
+	    USA 		u
+	    Australia	 	a
+	    Eastern Europe 	e
+	    Central Europe 	c
+	    Western Europe 	w
+	--------------------------------
+	"
+			    while : true
+			    do
+				echo -n \
+	"Type the geographic area [u]: "
+				read dst
+				case ${dst} in
+				    u|U|"") dst=1; geog=u ;;
+				    a|A) dst=2 ; geog=a;;
+				    w|W) dst=3; geog=w ;;
+				    c|C) dst=4; geog=c ;;
+				    e|E) dst=5; geog=e ;;
+				    *)
+					echo ""
+					echo "
+You typed an invalid geographic area. Please type u for USA,
+a for Australia, e for Eastern Europe, c for Central Europe,
+or w for Western Europe.${LL} "
+					continue
+					;;
+				esac
+	
+				break
+			    done
+			    ;;
+	
+			[nN]*)
+			    dst=n; geog=n
+			    ;;
+	
+			*)
+			    echo ""
+			    continue
+			    ;;
+		    esac
+	
+		    break
+		done
+	
+		timezone="$hourswest"
+	
+		case ${dst} in
+		    "" | n) ;;
+		    *)  timezone="$timezone dst ${dst}" ;;
+		esac
+		;;
+	esac
+	
+	case ${cputype} in
+	MVAX )
+		echo "`expr ${hourswest} '*' 60`${geog}" > /etc/timezone ;;
+	esac
+	echo "${LL} `/bin/date`"
+fi
+
+echo "${LL} * * * System Configuration Procedure * * *${LL}"
+if egrep -s "^/bin/hostname" /etc/rc.local
+then
+# found, replace it with a new one
+	sed "/^\/bin\/hostname.*/s/hostname.*/hostname ${realsysname}/"\
+	/etc/rc.local > /etc/rc.tmp
+else
+	# Not found, add it at the top
+	echo "/bin/hostname ${realsysname}" | 
+	cat - /etc/rc.local > /etc/rc.tmp
+fi
+mv /etc/rc.tmp /etc/rc.local
+chmod 644 /etc/rc.local
+/bin/hostname ${realsysname}
+
+#
+# Now create a config file containing the
+# fixed device information and proper headers
+#
+if test ! -f /sys/conf/${sysname}
+then
+	sizer -n ${sysname} -t "$timezone"
+	cp /tmp/$sysname /usr/sys/conf/$sysname
+fi
+
+#
+# Iterations of the configuration process
+# start here.
+#
+trap '
+while : true
+do
+	echo -n "Do you want to quit <y/n>? "
+	read ans 
+	case $ans in
+	[yY] )
+		trap '' 1 2 3
+		exit 1
+		;;
+	[Nn] )
+		break
+		;;
+	esac
+done ' 1 2 3	
+	
+case $ADVFLAG in
+"" | 1 )
+    echo -n "
+Do you want to edit the configuration file? Type y or n [n]: "
+read resp
+    case $resp in
+    "" | [nN]*)
+	    ;;
+    *)
+	while : true
+	do
+		echo -n "
+Type the name of the editor you want to 
+use. (Type 'break' to exit this prompt.) [${hiseditor-ed}]: "
+		read editor
+		case ${editor} in
+		break )  break ;;
+		"") editor=${hiseditor-ed} ;;
+		esac
+		if ${editor-ed} /tmp/${sysname}
+		then
+		    	case ${editor} in
+		   	"")
+			    	editor="${hiseditor-ed}"
+			    	;;
+		    	esac
+		    	hiseditor="${editor}"
+		    	cp /tmp/${sysname} /sys/conf/${sysname}
+		    	break
+		fi
+	done
+	;;
+    esac
+    ;;
+esac
+
+while : true
+do
+    #
+    # Perform the actual Configuration using files
+    # and information from the configuration dialogue.
+    #
+    # This code is convoluted because config does not always
+    # return an error status when it gets errors, particularly
+    # syntax errors.  This code greps the error output of config
+    # for various signs of error and fails the configuration if
+    # it finds them.
+    #
+    echo "
+* * * Performing the System Configuration * * *"
+    cd /sys/conf
+    if (config $sysname 2>&1 |
+    	tee /tmp/config$$ |
+	sed '/forget to run/d' ; true)
+    then
+	egrep -s "syntax|Syntax|^config:" /tmp/config$$
+	case $? in
+	0 )
+	    echo "${LL}Configuration file has errors."
+	    true
+	    ;;
+	* )
+	    if cd /sys/$sysname
+	    then 
+	         if make depend && make vmunix
+		 then
+	        	break	# successful configuration
+	    	 else
+	    		make clean
+		 fi
+	    fi
+	    ;;
+	esac
+    fi
+
+    echo -n "
+Do you want to edit the configuration file? Type y or n [y]: "
+    read resp
+    case $resp in
+    	# We have to spell out all permutations of no
+	# to allow acceptance of editors starting with 'n'.
+	n* | N*)
+	    ;;
+	*)
+	    while : true
+	    do
+		echo -n "
+Type the name of the editor you want to
+use. (Type exit to abort this prompt.) [${hiseditor-ed}]: "
+		read editor
+		case ${editor} in
+		    exit) exit 1;;
+		    "") editor=${hiseditor-ed} ;;
+		esac
+		if ${editor-ed} /tmp/${sysname}
+		then
+		    case ${editor} in
+			"")
+			    editor="${hiseditor-ed}"
+			    ;;
+		    esac
+
+		    hiseditor="${editor}"
+		    cp /tmp/${sysname} /sys/conf/${sysname}
+		    break
+		fi
+	    done
+	    ;;
+    esac
+done
+
+trap '' 1 2 3
+
+cp vmunix /newvmunix
+
+case ${newconfig} in
+    true)
+	#
+	# Make the special devices
+	# If this is the second pass, then we have to
+	# delete all of the previous interation's
+	# new devices and restore the originals.
+	#
+	echo "
+* * * Make the Special Files for the System * * *"
+	cd /dev
+	sh -v /tmp/${sysname}.devs	#here is the list of devices to make
+	;;
+esac
+
+cd /
+sync
+
+echo "
+* * * Configured kernel is in /newvmunix * * * "

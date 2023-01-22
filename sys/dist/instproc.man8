@@ -1,0 +1,320 @@
+.TH Installation Procedures 8 local "Ultrix-32 (V1.1)" "ULTRIX Installation Building"
+.SH NAME
+Installation Procedures \- Implementation Details
+
+.SH SYNTAX
+See the Installation Guide.
+
+.SH DESCRIPTION
+.PP
+The functional operation of the ULTRIX V1.1 Installation Procedures are
+amply described in the V1.1 manual titled \fIUltrix-32 Installation
+Procedures\fP.  This document makes no effort to describe them further
+but is instead a description of the implementation, containing
+descriptions of the various sub-components of the procedure.  Further,
+this document does not describe the implementation of the entire
+procedure, but limits itself to that initial part of the procedure used
+to get the configured ULTRIX system up and running.
+.PP
+From the engineer's standpoint, the installation procedures run in two
+separate phases, \fIMiniroot Phase\fP and the \fIGeneric Root Phase\fP.
+The first phase is part of the bootstrapping effort to get into the
+first.  This is necessary so that a general distribution can be
+produced that will fit exactly on a wide range of configurations.  The
+Generic Root Phase ends when a configured ULTRIX kernel is successfully
+booted.
+.PP
+Several operations were required in the scripting process where it was
+desirable to have script "subroutines", that is, sub-scripts.  These
+sub-scripts are indicated by the convention of prefixing their names with
+a double underscore "__".  A sub-script is always called using the dot
+command in shell (.) so that the calling context is available to the
+sub-script and so the sub-script can "return" values to the caller.
+.PP
+The rest of this document serves to describe the separate files in the
+Installation Procedures.
+
+.SH .profile (get)
+.PP
+\&.profile is a "here" file generated during the miniroot build process
+and gets put into the root directory of the miniroot, for automatic
+running at boot time.  It controls the Miniroot Phase of the
+installation.  The miniroot is a generic filesystem that is small
+enough to be loaded into the b partition of any supported disk.  It
+contains the files and programs necessary for the running of the
+Installation Procedures in a root filesystem format.
+.PP
+The miniroot is built using the
+.I buildmini
+script when the installation media is built.  See
+.IR makemedia (8)
+for more details on media building.  The .profile of the
+miniroot is created by the
+.I get
+script, which is called by the
+.I buildmini
+script.  This is important to know so that you can find the .profile
+text when modifications are necessary.
+.PP
+The .profile scriptfirst defines the directory where the Installation
+Procedure components will found in the CONFIGTOOLS environment
+variable.  It then uses
+.IR sizer (8)
+with the -c switch to determine the type of the CPU.  Then, according
+to the processor type, .profile calls __getunit to prompt the user for the
+type of the installation and destination root drives.  If these are
+specified to be disk drives, then the script calls __getunit to request
+the unit numbers as well.
+.PP
+Note that the default unit number for the installation device depends
+upon the type of the device.  If the unit is a tape the
+installation unit is always 0.  If the unit is a disk, then it is
+assumed to be unit 1, because the root must be built on unit 0, because
+of the simpleminded method used to create the fstab files and boot
+command files.  The well-defined exception to this rule is the VAX-11/725,
+using RC25 disks.  In this case, the system is always built in unit 1 (the
+fixed unit) and the installation pack is put in unit 0 (the removable
+unit).  .profile and __gettape both have their hand in implementing
+these defaults.
+.PP
+The installation procedures are able to function with both disk and tape
+media because the tape has been divided into a series of 
+.I filesets,
+which allows the installation procedure code to create a separate shell
+variable for each fileset.  For disks, the value of these variables are
+set individually to /tape/${filsetname} and some extra initialization
+steps are taken to mount a filesystem on the /tape directory.  For a
+tape, all the fileset variables are set to /dev/rmt12, which is the
+unit 0 magtape set on high density and no rewind.  The only special
+initialization necessary is to rewind the tape.
+.PP
+The procedures bank on the ability of 
+.IR tar (1)
+and
+.IR dump (8)
+to read both magtapes and specific disk files, as long as they are both
+tar images.  The installation tape is a series of files that are
+accessed in order of their appearance on the tape.
+.PP
+On a tape the files
+are ordered as follows:
+.RS 1i
+.TP 3n
+1)
+miniroot file (in 300, 20 block records of 512 bytes each)
+.TP 3n
+2)
+root filesytem (
+.IR dump (8)
+format)
+.TP 3n
+3)
+usr filesytem subset (in tar format)
+.TP 3n
+4)
+kernel files (in tar format)
+.RE
+.PP
+Descriptions can be found in the documentation for
+.IR makemedia (8).
+.PP
+On a disk the files are named as follows:
+.RS 1i
+.TP 4n
+.B mini
+miniroot file (in 300, 20 block records of 512 bytes each)
+.TP 4n
+.B root
+root filesytem (
+.IR dump (8)
+format)
+.TP 4n
+.B usr
+usr filesytem subset (in tar format)
+.TP 4n
+.B kernel
+kernel files (in tar format)
+.RE
+.PP
+The procedure then continues as documented in the Guide, eventually
+creating two more files of note in the CONFIGTOOLS area:
+.RS 6n
+.TP 8
+.B tapedrive
+Contains information about the user's selected installation device in a
+format that can be easily read by the scripts in later phases.  This is the
+same information as returned by __gettape.
+.TP 8
+.B diskdrive
+Contains information about the user's selected root device in a format similar
+to
+.IR tapedrive .
+This is the same information as returned by __getdisk.
+.RE
+.PP
+Finally, .profile runs through the cassette/floppy update procedures and then
+calls __showbootsteps, to show the steps necessary for the proper reboot
+and then halts.
+
+.SH __gettape
+.PP
+This script is "sourced" using the dot command from the .profile script
+in the Installation Procedures.  It presents the user with a processor
+dependent list of valid installation devices followed by a prompt to the
+user for the device that his system has.
+.PP
+There is one input variable of interest to it: if the variable "prompt"
+is defined, then this value will be used as the user prompt instead of
+the default "Installation drive name: ".
+.PP
+It returns the following values:
+.RS 6n
+.TP 8
+.B TAPE
+the DEC name of the tapedrive (tu77, te16, etc)
+.TP 8
+.B UTAPE
+the UNIX designation for the drive (tu, ht, etc)
+.TP 8
+.B UTAPEUNIT
+the unit number for the drive (always 0)
+.RE
+
+.SH __getdisk
+This script is similar in function to __gettape, except that it
+presents the user with a processor dependent list of valid root devices
+followed by a prompt to the user for the device he wants his root
+filesystem installed on.
+.PP
+There is one input variable of interest to it: if the variable "prompt"
+is defined, then this value will be used as the user prompt instead of
+the default "Disk drive name [no default]: ".
+.PP
+It returns the following values:
+.RS 6n
+.TP 8
+.B DISK
+DEC disk drive name (rm80, ra60, rc25, etc).
+.TP 8
+.B UDISK
+UNIX internal designation (hp, ra, hk, etc).
+.TP 8
+.B DDISK
+DEC equivalent name (DUA, DBA, DRA, etc).
+.TP 8
+.B UDRIVENUMBER
+Unit number (always 0 from this routine, use __getunit to get a
+different unit number).
+.TP 8
+.B UPARTITION
+The recommended disk partition for the /usr filesystem (always the G
+partition).
+.TP 8
+.B VALIDPARTITIONS
+The set of valid partitions for the /usr filesystem on the disk (currently
+not used).
+.RE
+
+.SH __getunit
+This script is "sourced" using the dot command from the .profile script
+in the Installation Procedures.  It presents the user with the option
+of accepting the supported, default unit number, or specifying his own
+choice of unit (not necessarily supported).  If he decides to override
+the default, the script presents the him with a processor dependent
+prompt for a disk device unit number.  The prompt is a straight-forward
+"What is the number for the drive [no default]: " unless the processor
+is capable of MASSBUS devices where the prompt is preeceeded by the
+algorithm for determining the unit number of a MASSBUS drive (unit = 8
+x adaptor number + device number).
+.PP
+There are no variables of interest to it.
+.PP
+It returns one value:
+.RS 6n
+.TP 8
+.B UDRIVE NUMBER
+The drive number specified by the user, either explicitly or by default.
+.RE
+
+.SH __showbootsteps
+This script is called from various places in the procedures.  It merely
+displays the exact steps that the user will have to perform in order to
+boot the next phase of the system.  It does this based on the CPU type
+and the type of the device to which the user is installing.
+.PP
+It has two variables of note:
+.RS 6n
+.TP 8
+.B kernelname
+This should contain the name of the kernel to be booted, relative to
+the root.  Usually (and by default) it is set to "vmunix".
+.TP 8
+.B norootprompt
+This should not be set if the boot steps displayed are to contain the
+proper response to the "Root Device?" prompt that is given by the
+booting of a generic ULTRIX kernel.  Setting it to the string "true"
+will cause this step to be skipped entirely, the case when a regular
+root is  being booted.
+.RE
+.PP
+It returns no values.
+
+.SH step1
+This script ends up in the .profile of the generic root filesystem, gets
+run at the first boot of generic root and ushers in the Generic Root Phase
+of the installation.  It is the part of the Installation that prompts the user
+for system dates and superuser passwords.
+.PP
+It also calls two other, major scripts.
+.PP
+The first of these is __makeusrfs, which builds the /usr and /usr/src
+filesystems, (except for the /usr/users area).
+.PP
+The second script is __mkconfig, which builds the /usr/users
+partitions, if necessary, and leads the user through a system
+configuration.
+
+.SH __makeusrfs
+This script builds a filesystem in the proper /usr partition of the
+user's root disk.  It then loads the /usr file subset into it.  For
+RL02 installations, the user will first be prompted to dismount the
+first and mount the second installation volume.  The kernel fileset
+(kernel files) are then read into /usr/sys.  If the user's disk is
+large enough to hold /usr/sys as well, then the sub-script is finished.
+On RC25 and RK07 systems, the /usr/sys hierarchy is transferred to the
+"other" disk unit (unit 0 for RC25 and unit 1 for RK07).  The user is
+prompted through this action.
+.PP
+This script returns no values.
+
+.SH __mkconfig
+This script creates the /usr/users directory (and filesystem as well,
+if the root device warrants a separate partition).  If also prompts the
+user for Automatic Crash Dumps, and initializes the /etc/fstab files.
+This script also calls a main level script
+.IR doconfig (8)
+to prompt the user through a system configuration loop
+(edit-config-build...) and finally calls __showbootsteps to
+show the steps necessary for rebooting the system.
+.PP
+This script returns no values.
+
+.SH doconfig
+This script is called by __mkconfig, but can also be called by the user
+directly, using /etc/doconfig.  It runs the user through a system
+configuration dialogue where the
+.IR sizer (8)
+program probes the generic kernel's "found
+devices" table to build a basic configuration file and questions are
+asked to help him configure the fine points (and floating devices) of
+his system.
+.PP
+This script calls a user supplied editor (ed by default) and uses
+config and make to make the kernel.  When make successfully makes the
+kernel, then the script ends.  For the Installation procedures, this
+means returning to __mkconfig, for the regular user, it means booting
+the new kernel.
+
+.SH SEE ALSO
+\fIULTRIX-32 Installation Guide\fP,
+.IR sizer (8).

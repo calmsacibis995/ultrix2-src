@@ -1,0 +1,27 @@
+.TH mkdir 1 
+.SH NAME
+mkdir \- make a directory
+.SH SYNTAX
+.B mkdir
+dirname ...
+.SH DESCRIPTION
+The
+.PN mkdir
+command creates specified directories in mode 777.  The
+directories are then modified by 
+.PN umask(2),
+according to how you have set up 
+.PN umask.
+Standard entries,
+.RB ` . ',
+for the directory itself, and 
+.lg 0
+.BR ` .. '
+.lg 1
+for its parent, are made automatically.
+.PP
+The
+.PN mkdir
+command requires write permission in the parent directory.
+.SH "SEE ALSO"
+rm(1)

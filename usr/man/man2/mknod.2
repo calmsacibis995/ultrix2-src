@@ -1,0 +1,166 @@
+.TH mknod 2
+.\" Last modified by Michaud 16-SEpt-86 1000.
+.\"
+.\" Last modified by BAM on 27-Nov-1985 1300.
+.\"
+.\" Last modified by BAM on 30-Oct-1985 1300.
+.\"
+.\" Last modified by BAM on 23-Jul-85  1300  
+.\"
+.SH NAME
+mknod \- make a directory, a special file or an ordinary file
+.SH SYNTAX
+.nf
+.ft B
+int mknod(path, mode, dev)
+char *path;
+int mode, dev;
+.fi
+.ft R
+.SH DESCRIPTION
+The 
+.PN mknod
+system call creates a new file
+whose name is
+.I path.
+The mode of the new file
+(including special file bits)
+is initialized from
+.IR mode, 
+where the value of 
+.I mode
+is interpreted as follows:
+.PP
+0170000 file type; one of the following:
+.RS
+0010000 fifo special
+.br
+0020000 character special
+.br
+0040000 directory
+.br
+0060000 block special
+.br
+0100000 or 0000000 ordinary file
+.br
+0004000 set user \fBID\fP on execution
+.br
+0002000 set group \fBID\fP on execution
+.br
+0001000 save text image after execution
+.RE
+.PP
+0000777 access permissions: constructed from the following
+.RS
+000400 read by owner
+.br
+0000200 write by owner
+.br 
+execute (search on directory) by owner
+.br
+0000070 read, write, execute (search) by group
+.br
+0000007 read, write, execute (search) by others
+.RE
+.PP
+The file's  owner \fBID\fP is set to the process's effective
+user \fBID\fP.  The file's group \fBID\fP is set to the 
+process's effective group \fBID\fP.
+.PP
+Values of \fImode\fP other than those above 
+are undefined and should not be used.  The 
+low-order 9 bits of \fImode\fP are modified
+by the process's file mode creation mask:
+all bits set in the process's file mode creation mask
+are cleared.  For further information, see umask(2).
+If \fImode\fP
+indicates a block or character special file, 
+.I dev
+is a configuration dependent specification of a
+character or block \fBI/O\fP device.  If
+.I mode
+does not indicate a block special or character
+special device, 
+.I dev
+is ignored.
+.PP
+The
+.PN mknod
+system call may be invoked only by the super-user 
+for file types other than \fBFIFO\fP special.
+.PP
+Upon successful completion, a value of 0 is returned.  
+Otherwise,a value of \-1 is returned and \fIerrno\fP
+is set to indicate the error.
+.SH DIAGNOSTICS
+The
+.PN mknod
+system call will fail and the file mode will be unchanged if:
+.TP 15
+[EPERM]
+The process's effective user ID is not super-user.
+.TP 15
+[EINVAL]
+The pathname contains a character with the high-order bit set.
+.TP 15
+[ENOTDIR]
+A component of the path prefix is not a directory.
+.TP 15
+[ENOENT]
+A component of the path prefix does not exist.
+.TP 15
+[EROFS]
+The named file resides on a read-only file system.
+.TP 15
+[EEXIST]
+The named file exists.
+.TP 15
+[EFAULT]
+.I Path
+points outside the process's allocated address space.
+.TP 15
+[ELOOP]
+Too many symbolic links were encountered in translating the pathname.
+.TP 15
+[ENAMETOOLONG]
+A component of a pathname exceeded 255 characters, or an entire
+pathname exceeded 1023 characters.
+.TP 15
+[EACCES]
+Search permission is denied for a component of the path prefix.
+.TP 15
+[EIO]
+An I/O error occurred while making the directory entry or allocating
+the inode.
+.TP 15
+[ENOSPC]
+The directory in which the entry for the new node is being placed
+cannot be extended because there is no space left on the
+file system.
+.TP 15
+[ENOSPC]
+There are no free inodes on the file system on which
+the node is being created.
+.TP 15
+[EDQUOT]
+The directory in which the entry for the new node is being
+placed cannot be extended because the user's quota of disk
+blocks on the file system containing the directory has been
+exhausted.
+.TP 15
+[EDQUOT]
+The user's quota of inodes on the file system on which the
+node is being created has been exhausted.
+.TP 15
+[ESTALE]
+The file handle given in the argument is invalid.  The
+file referred to by that file handle no longer exists
+or has been revoked.
+.TP
+[ETIMEDOUT]
+A "connect" request or remote file operation failed
+because the connected party
+did not properly respond after a period
+of time which is dependent on the communications protocol.
+.SH "SEE ALSO"
+mkdir(1), chmod(2), execve(2), stat(2), umask(2), fs(5)

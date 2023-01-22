@@ -1,0 +1,104 @@
+#
+# @(#)SAS.gen	1.8	(ULTRIX)	12/16/86
+# GENERIC STANDALONE ULTRIX (except 780, 730 and 750)
+#
+machine		vax
+cpu		"VAX8800"
+cpu		"VAX8600"
+cpu		"VAX8200"
+cpu		"MVAX"
+ident		SAS
+timezone	5 dst
+maxusers	1
+maxuprc		10
+physmem		10
+processors	1
+options		EMULFLT
+
+config		vmunix		root on md0a
+
+adapter		vaxbi0	at nexus ?
+adapter		vaxbi1	at nexus ?
+adapter		vaxbi2	at nexus ?
+adapter		vaxbi3	at nexus ?
+adapter		mba0	at nexus ?
+adapter		mba1	at nexus ?
+adapter		mba2	at nexus ?
+adapter		mba3	at nexus ?
+adapter		uba0	at nexus ?
+adapter		uba1	at nexus ?
+adapter		uba2	at nexus ?
+adapter		uba3	at nexus ?
+adapter		uba4	at nexus ?
+adapter		uba5	at nexus ?
+adapter		uba6	at nexus ?
+disk		hp0	at mba? drive 0
+disk		hp1	at mba? drive 1
+disk		hp2	at mba? drive 2
+disk		hp3	at mba? drive 3
+disk		hp4	at mba? drive 4
+disk		hp5	at mba? drive 5
+disk		hp6	at mba? drive 6
+disk		hp7	at mba? drive 7
+master		ht0	at mba? drive ?
+tape		tu0	at ht0 slave 0
+tape		tu1	at ht0 slave 1
+tape		tu2	at ht0 slave 2
+tape		tu3	at ht0 slave 3
+master		mt0	at mba? drive ?
+tape		mu0	at mt0 slave 0
+tape		mu1	at mt0 slave 1
+tape		mu2	at mt0 slave 2
+tape		mu3	at mt0 slave 3
+adapter		klesib0	at vaxbi? node?
+controller	tmscp0	at klesib0			vector tmscpintr
+adapter		klesiu0	at uba?
+controller	tmscp1	at klesiu0 csr 0174500		vector tmscpintr
+tape		tms0	at tmscp? drive 0
+controller	uda0	at uba?
+controller	uq0	at uda0 csr 0172150		vector uqintr
+controller	uda1	at uba?
+controller	uq1	at uda1 csr 0172150		vector uqintr
+controller	uda2	at uba?
+controller	uq2	at uda2 csr 0172150		vector uqintr
+controller	uda3	at uba?
+controller	uq3	at uda3 csr 0172150		vector uqintr
+controller	kdb0	at vaxbi? node ?
+controller 	uq4 	at kdb0				vector uqintr
+controller	kdb1	at vaxbi? node ?
+controller 	uq5 	at kdb1				vector uqintr
+controller	kdb2	at vaxbi? node ?
+controller 	uq6 	at kdb2				vector uqintr
+controller	kdb3	at vaxbi? node ?
+controller 	uq7 	at kdb3				vector uqintr
+disk		ra0	at uq? drive 0
+disk		ra1	at uq? drive 1
+disk		ra2	at uq? drive 2
+disk		ra3	at uq? drive 3
+disk		ra4	at uq? drive 4
+disk		ra5	at uq? drive 5
+disk		ra6	at uq? drive 6
+disk		ra7	at uq? drive 7
+disk		ra8	at uq? drive 8
+disk		ra9	at uq? drive 9
+disk		ra10	at uq? drive 10
+disk		ra11	at uq? drive 11
+disk		ra12	at uq? drive 12
+disk		ra13	at uq? drive 13
+disk		ra14	at uq? drive 14
+disk		ra15	at uq? drive 15
+controller	sdc0	at uba0 csr 0x200c0000		vector sdintr
+disk		rd0	at sdc0 drive 0
+disk		rd1	at sdc0 drive 1
+disk		rx2	at sdc0 drive 2
+device		ss0	at uba0 csr 0x200a0000 flags 0x0f vector ssrint ssxint
+controller	zs0	at uba? csr 0172520		vector tsintr
+device		ts0	at zs0 drive 0
+controller	stc0	at uba0 csr 0x200c0080		vector stintr
+tape		st0	at stc0 drive 0
+# MicroVAX qvss and qdss (and VAXstar monochrome and color)
+device		qv0	at uba0 csr 0177200 flags 0x0f 	vector qvkint qvvint
+device		sm0	at uba0 csr 0x200f0000 flags 0x0f vector smvint
+device		qd0	at uba0 csr 0177400 flags 0x0f 	vector qddint qdaint qdiint
+device		sg0	at uba0 csr 0x3c000000 flags 0x0f vector sgaint sgfint
+pseudo-device	md 1024

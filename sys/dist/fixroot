@@ -1,0 +1,85 @@
+#!/bin/sh
+#
+#	@(#)fixroot	1.1	(ULTRIX)	10/31/86
+#
+
+case "$#" in
+0)
+	echo -n "This procedure offloads files from the root filesystem
+that are not used in single user mode.
+
+Do you wish to continue? "
+	read X
+	case "$X" in
+	[yY]*)	cd /
+		;;
+	*)	echo "
+Exiting..."
+		exit 0
+		;;
+	esac
+	;;
+esac
+
+USRBIN="domainname ltf pagesize pr rsh5 sh5 su wall who write strip"
+USRETC="2780d bscconfig catman ccr comsat config cron dgated dgateway diskpart"
+USRETC="$USRETC edquota getnode implog implogd install_product load remnode"
+ADMBIN="ac addgroup addnode adduser doconfig lprsetup netsetup nfssetup"
+ADMBIN="$ADMBIN removeuser sa sizer uucpsetup"
+
+umask 022
+# create needed directories
+for K in usr/bin usr/etc usr/adm/bin
+{
+	[ -d $K ] || mkdir $K ||
+	{
+		echo "Cannot create $K
+Exiting..."
+		exit 1
+	}
+}
+
+# offload bin
+cd bin
+for K in $USRBIN
+{
+	ls -l $K | grep -s -e '->' ||
+	{
+		echo "Moving bin/$K to ../usr/bin/$K"
+		mv $K ../usr/bin
+		ln -s ../usr/bin/$K $K
+	}
+}
+
+# offload etc to usr/etc
+cd ../etc
+echo
+for K in $USRETC
+{
+	ls -l $K | grep -s -e '->' ||
+	{
+		echo "Moving etc/$K to usr/etc/$K"
+		mv $K ../usr/etc
+		ln -s ../usr/etc/$K $K
+	}
+}
+
+# offload etc to usr/adm/bin
+echo
+for K in $ADMBIN
+{
+	ls -l $K | grep -s -e '->' ||
+	{
+		echo "Moving etc/$K to ../usr/adm/bin/$K"
+		mv $K ../usr/adm/bin
+		ln -s ../usr/adm/bin/$K $K
+	}
+}
+cd ..
+echo DONE.
+echo "
+
+Don't forget to add /usr/etc and /usr/adm/bin to your PATH
+"
+exit 0
+

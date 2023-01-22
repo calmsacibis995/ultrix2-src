@@ -1,0 +1,32 @@
+.TH syscript 8
+.SH NAME
+syscript \- dialogue for running system exercisers
+.SH SYNTAX
+.B syscript
+.SH DESCRIPTION
+The
+.PN syscript
+command presents a dialogue that lets you run any of
+the following system exercisers:
+.IP cmx(8) 1i
+Tests the terminal communications system
+.IP dskx(8) 1i
+Tests the disk drives
+.IP fsx(8) 1i
+Tests the file systems
+.IP lpx(8) 1i
+Tests the line printers
+.IP memx(8) 1i
+Tests memory
+.IP mtx(8) 1i
+Tests the magnetic tape drives
+.IP netx(8) 1i
+Tests the TCP/IP network system
+.PP
+To execute the
+.PN syscript
+command, you must be logged in as the superuser, and
+your working directory must be the \fB/usr/field\fR
+directory.
+.SH SEE ALSO
+System Management Guide

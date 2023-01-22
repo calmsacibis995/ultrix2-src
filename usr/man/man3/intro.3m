@@ -1,0 +1,44 @@
+.TH intro 3m
+.SH NAME
+intro \- introduction to mathematical library functions
+.SH DESCRIPTION
+These functions constitute the math library,
+.I libm.
+They are automatically loaded as needed by the Fortran compiler
+.IR f77 (1).
+The link editor searches this library under the \*(lq\-lm\*(rq option.
+Declarations for these functions may be obtained from the include file
+.RI < math.h >.
+.PP					.\" Begin
+The GFLOAT version of
+.IR libm
+is used when you use the
+.IR ld(1)
+command with the  
+.B lcg
+option. 
+Note that you must use 
+the GFLOAT version of
+.IR libm
+with modules compiled using the
+.IR cc(1)
+with the 
+.B \-Mg
+option. 
+.PP
+Note that neither the compiler nor the linker
+.IR ld(1)
+can detect when mixed double floating point
+types are used, and the program may produce
+erroneous results if this occurs.
+.SH SYSTEM V COMPATIBILITY
+This library contains System V compatibility features
+that are available to general ULTRIX programs.  For a discussion
+of how these features are documented, and how to specify that
+the System V environment is to be used in compiling and linking
+your programs,
+see
+.MS intro 3 .
+.SH FILES
+/usr/lib/libma,
+/usr/lib/libmg.a

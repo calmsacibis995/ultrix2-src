@@ -1,0 +1,43 @@
+.TH opser 8
+.SH NAME
+opser \- operator services utility
+.SH SYNTAX   
+.B opser
+.SH DESCRIPTION
+The
+.B opser
+program
+is a utility that simplifies normal system and incremental backup.
+It is invoked by default when the system
+operator logs in to the operator account.  The system then runs the
+opser utility, /opr/opser, in place of a shell.  The opser utility
+prompts the operator to bring the system to single-user mode for file
+maintenance. This includes a file system consistency check and 
+file system backup, and then prompts to restart multiuser mode.
+.PP
+Network opser allows the operator to perform opser commands on a slave
+system. The master system name must be in the /.rhosts file on the
+slave system and the slave name in the in the
+master system's /.rhosts file. 
+If necessary, the operator can
+escape to the shell, execute commands, and return.
+Online help is provided.
+The
+.B opser
+program allows remote file system backup, file system check, restart
+and both local and remote shell command execution.
+.SH RESTRICTIONS
+The local opser utility supports only tape as a backup media.
+The remote opser utility allows backup to files, disks, or tapes.
+The opser utility must be run from the system console; if run from a
+terminal, its operation is limited.  
+The opser utility does not contain file restore capability.
+The operator must escape to the shell to perform this function.
+.SH DIAGNOSTICS
+Included in the utility as it runs.
+.SH FILES
+/opr/opser, /opr/backup, /opr/dobackup
+.SH SEE ALSO
+System Management Guide
+.br
+Network Management Guide

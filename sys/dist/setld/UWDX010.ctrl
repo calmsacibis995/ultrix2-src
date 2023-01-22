@@ -1,0 +1,6 @@
+NAME='ULTRIX Workstation UWDX010'
+DESC='X Window Server and Client Utilities'
+NVOLS=1:4
+MTLOC=1:2
+DEPS=UWDQIL010
+FLAGS=2

@@ -1,0 +1,47 @@
+.TH dhq 4
+.SH NAME
+dhq \- DHQ11 communications multiplexer
+.SH SYNTAX
+.B "device dhu0 at uba? csr 0160440 flags 0x???? vector dhurint dhuxint"
+.SH DESCRIPTION
+A DHQ11 provides 8 communication lines with modem control.
+.PP
+Each line attached to the DHQ11 communications multiplexer
+behaves as described in
+tty(4).
+Input and output for each line can be set independently
+to run at any of 16 speeds;
+see
+tty(4)
+for the coding.
+.PP
+Bit
+.I i
+of flags can be specified for a DHQ11
+to say that a line is not properly
+connected, and that the line should be treated as hard-wired 
+with carrier
+always present.
+Thus specifying ``flags 0x0004'' in the specification of dhu0
+would cause the second line to be treated in this way.
+.SH DIAGNOSTICS
+.IP "\fBdhu%d %d: DMA ERROR\fR" 0.3i
+The indicated channel failed to transfer DMA
+data within 21.3 microseconds of the bus request being acknowledged or
+there was a memory parity error.
+.IP "\fBdhu%d: DIAG. FAILURE\fR" 0.3i
+The DHQ11 failed the diagnostics that
+run at initialization time.
+.IP "\fBdhu%d: recv. fifo overflow\fR" 0.3i
+The character input fifo overflowed
+before it could be serviced.  This can happen if a hard error occurs
+when the cpu is running with elevated priority.  Interrupts are
+disabled, and the system then prints a message on the console.
+.SH FILES
+.nf
+.DT
+/dev/tty??
+/dev/ttyd?	(modem lines only)
+.fi
+.SH SEE ALSO
+tty(4), MAKEDEV(8)

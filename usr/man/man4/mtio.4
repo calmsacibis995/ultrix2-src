@@ -1,0 +1,86 @@
+.TH mtio 4
+.SH NAME
+mtio \- ULTRIX magtape interface
+.SH DESCRIPTION
+The /dev directory special files
+``rmt0{l,m,h}, ..., rmt31{l,m,h}''
+refer to the ULTRIX mass storage tape drives,
+which may exist on several different busses depending on the
+bus/formatter/controller. On the BI, the TMSCP controllers,
+tms(4), are available. On the QBUS the TMSCP controllers,
+tms(4), and the TSV05 controller, ts(4),
+are available. On the MASSBUS, there are the TM03, tu(4),
+and TM78 formatters, mu(4).
+On the UNIBUS, TS11 formatters, the TSU05 controller, ts(4),
+and the TMSCP controllers, tms(4), are available.
+On busless small VAX processors,
+the TZK50 cartridge tape subsystem, stc(4), is available.
+The following description applies to any mass
+storage tape drive.
+.PP
+For both the ``rewind'' and ``norewind'' special files, described below,
+the unit number represents a symbolic count that has no connection
+with the actual ``plug'' or controller
+number of a particular tape drive.
+As each tape unit special file is created the number counts up from
+.I 0
+to
+.I 31
+for a total of
+.I 32
+tape drives.
+.PP
+The special files ``rmt0l, ..., rmt31l'' are low density,
+``rmt0m, ..., rmt31m''
+are medium density (when a drive is ``triple density''), and
+``rmt0h, ..., rmt31h''
+are high density. All these special files cause a loaded and online tape
+to automatically rewind to the beginning-of-tape (BOT) when closed.
+Low, medium, and high density
+are relative to the densities supported on a particular tape drive, 
+for example, the TS11/TSU05/TSV05 supports only 1600 bpi
+so its rewind namespace is,
+``rmt0h, ..., rmt31h.''
+.PP
+The special files
+``nrmt0{l,m,h}, ..., nrmt31{l,m,h}''
+do not cause a rewind when closed regardless of density.
+When closed, the tape is positioned between two tapemarks. The
+norewind namespace for the TS11/TSU05/TSV05 example given above is,
+``nrmt0h, ..., nrmt31h.''
+.PP
+The
+.I rmt
+and
+.I nrmt
+special files discussed above are available to all ULTRIX
+utilities that can perform I/O to tape.
+A number of magnetic tape ioctl operations are available
+and some are used by the above utilities. The operations come under
+two ioctl request groups. These are MTIOCTOP and MTIOCGET, for tape
+operation and get status, respectively.
+See the file < sys/mtio.h > for further information.
+.PP
+Each
+.PN read
+or
+.PN write
+system call reads or writes the next record on the tape. In the
+write case the record has the same length as the buffer given.
+During a read, the record size is passed back as the number of
+bytes read, provided it is no greater than the buffer size;
+if the record is long, an error is returned.
+Seeks are ignored. Positioning is done with a tape ioctl call.
+A zero byte count is returned when a tape mark
+is read, but another read will fetch the first record of the
+next tape file. When a file open for writing is closed,
+two end-of-files (EOF) are written. If a tape reaches the
+end-of-tape (EOT) marker, the
+.I ENOSPC
+errno value is set.
+.SH FILES
+/dev/rmt???
+.br
+/dev/nrmt???
+.SH SEE ALSO
+mu(4), stc(4), tms(4), ts(4), tu(4), MAKEDEV(8)

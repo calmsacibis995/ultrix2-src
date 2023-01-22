@@ -1,0 +1,50 @@
+.TH mknod 8 
+.SH NAME
+mknod \- build special file
+.SH SYNTAX
+.B /etc/mknod
+name
+[
+.B c
+] [
+.B b
+]
+major
+minor
+.br
+.B /etc/mknod
+name 
+.B p
+.SH DESCRIPTION
+The
+.PN mknod
+command makes a special file.
+The first argument is the
+.I name
+of the entry.
+The second is
+.B b
+if the special file is block-type (disks, tape) or
+.B c
+if it is character-type (other devices).
+The last two arguments are
+numbers specifying the
+.I major
+device type
+and the
+.I minor
+device (for example, unit, drive, or line number).
+.PP
+The assignment of major device numbers is specific to each system.
+They have to be dug out of the
+system source file
+.I conf.c.
+.PP
+The
+.PN mknod
+command can also be used to create fifo's, also known as
+named pipes, (second case in
+.B SYNTAX
+above).
+.SH "SEE ALSO"
+mknod(2)

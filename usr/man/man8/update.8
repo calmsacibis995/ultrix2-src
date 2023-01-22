@@ -1,0 +1,35 @@
+.TH update 8 
+.SH NAME
+update \- periodically update the super block
+.SH SYNTAX
+.B /etc/update
+.SH DESCRIPTION
+The
+.PN update
+program executes
+the sync(2) primitive every 30 seconds.
+This insures that the file system
+is fairly up to date in case of a crash.
+This command should not be executed directly.
+Rather, it should be executed out of the
+initialization shell command file.
+.SH RESTRICTIONS
+With
+.PN update
+running,
+if the CPU is
+halted just as
+the
+.PN sync
+is executed,
+a file system can be damaged.
+This is partially due to DEC hardware that
+writes zeros when NPR requests fail.
+A fix would be to have 
+.PN sync(1)
+temporarily increment the system time by at
+least 30 seconds to trigger the execution of
+.PN update.
+This would give 30 seconds grace to halt the CPU.
+.SH "SEE ALSO"
+sync(1), sync(2), init(8), rc(8), 

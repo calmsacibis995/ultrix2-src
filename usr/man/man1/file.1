@@ -1,0 +1,33 @@
+.TH file 1
+.SH NAME
+file \- determine file type
+.SH SYNTAX
+.B file
+\fIfilename\fR ...
+.SH DESCRIPTION
+The
+.B file
+command performs a series of tests on each 
+.I filename
+argument
+in an attempt to classify it.
+If an argument appears to be ASCII,
+.B file
+examines the first 512 bytes
+and tries to guess its language.
+.PP
+For character special files, part of this classification is information
+about which devices the system shows as active.
+In particular, device-specific information such as controller type
+and unit, device type and unit, and status (offline, write locked,
+density, errors)
+is returned. The general categories currently
+implemented are disk, tape,
+and terminal devices. The supported terminal devices include
+Local Area Terminals (LAT)
+but not Local Area Network (LAN) pseudo-terminals.
+.SH RESTRICTIONS
+It often suggests that
+command files are C programs.
+.PP
+Does not recognize Pascal or LISP.

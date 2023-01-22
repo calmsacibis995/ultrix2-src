@@ -1,0 +1,48 @@
+.TH reboot 8
+.SH NAME
+reboot \- ULTRIX bootstrapping procedures 
+.SH SYNTAX 
+.B /etc/reboot
+[
+.B \-n
+] [
+.B \-q
+]
+.SH DESCRIPTION
+.PP
+The ULTRIX system is started by placing it in memory
+at location zero and transferring to zero.
+Since the system is not reenterable,
+it is necessary to read it in from disk or tape
+each time it is to be bootstrapped.
+.PP
+.B Rebooting a running system.
+When an ULTRIX system is running and a reboot is desired,
+shutdown(8)
+is normally used.
+If there are no users then /etc/reboot can be used.
+Reboot causes the disks to be synced, and then a multiuser
+reboot (as described below) is initiated.  This causes a system to be
+booted and an automatic disk check to be performed.
+If all this succeeds
+without incident, the system is then brought up for many users.
+.PP
+Options to reboot are:
+.TP
+.B \-n
+option avoids the sync.
+.TP
+.B \-q
+reboots quickly and ungracefully, without shutting down running
+processes first.
+.PP
+.B "Power fail and crash recovery."
+Normally, the system will reboot itself at power-up or after crashes.
+Provided the auto-restart is enabled on the machine front panel,
+an automatic consistency check of the file systems will be performed
+then and unless this fails the system will resume multiuser operations.
+.SH FILES
+.ta \w'/usr/mdec/mboot   'u
+/vmunix	system code
+.SH "SEE ALSO"
+crash(8v), fsck(8), halt(8), init(8), newfs(8), rc(8), shutdown(8)

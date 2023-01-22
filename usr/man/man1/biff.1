@@ -1,0 +1,36 @@
+.TH biff 1
+.SH NAME
+biff \- be notified if mail arrives and who it is from
+.SH SYNTAX
+.B biff
+[
+.B yn
+]
+.SH DESCRIPTION
+The
+.B biff
+command informs the system whether you want to be notified when mail arrives
+during the current terminal session.
+The command,
+.B "biff y,"
+enables notification; the command,
+.B "biff n,"
+disables it.  The biff command with no options displays 
+the current status of biff.
+.PP
+When mail notification is enabled, the header and first few lines of
+the message will be printed on your screen whenever mail arrives.
+A ``biff y'' command is often included in the file .login or .profile
+to be executed at each login.
+.PP
+The
+.B biff
+command operates asynchronously.
+For synchronous notification use the MAIL variable of
+sh(1)
+or the
+.I mail
+variable of
+csh(1).
+.SH SEE ALSO
+csh(1), mail(1), sh(1), comsat(8c)

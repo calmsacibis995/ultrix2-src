@@ -1,0 +1,12 @@
+selection_svc	100015	selnsvc
+sprayd		100012	spray
+rquotad		100011	rquotaprog quota rquota
+etherstatd	100010	etherstat
+yppasswdd	100009	yppasswd
+walld		100008	rwall shutdown
+ypbind		100007
+mountd		100005	mount showmount
+ypserv		100004	ypprog
+nfs		100003	nfsprog
+rusersd		100002	rusers
+rstatd		100001	rstat rup perfmeter

@@ -1,0 +1,24 @@
+.TH chdir 3f
+.SH NAME
+chdir \- change default directory
+.SH SYNTAX
+.B integer function chdir (dirname)
+.br
+.B character*(*) dirname
+.SH DESCRIPTION
+The default directory for creating and locating files will be
+changed to
+.I dirname.
+Zero is returned if successful; an error code otherwise.
+.SH RESTRICTIONS
+Pathnames can be no longer than MAXPATHLEN as defined in
+< sys/param.h >.
+.PP
+Use of this function may cause
+.B inquire
+by unit to fail.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+cd(1), chdir(2), perror(3f)

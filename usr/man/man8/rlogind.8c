@@ -1,0 +1,89 @@
+.TH rlogind 8c
+.SH NAME
+rlogind \- remote login server
+.SH SYNTAX
+.B /etc/rlogind
+.SH DESCRIPTION
+The
+.PN rlogind
+command is the server for the rlogin(1c)
+program.  The server provides a remote login facility
+with authentication based on privileged port numbers.
+.PP
+The
+.PN rlogind
+command is invoked by inetd(8c)
+when it receives a connection on
+the port indicated in
+the ``login'' service specification.  For further information, see
+services(5).
+When a service request is received the following protocol
+is initiated:
+.IP 1)
+The server checks the client's source port.
+If the port is not in the range 0-1023, the server
+aborts the connection.
+.IP 2)
+The server checks the client's source address.
+If the address is associated with a host for which no
+corresponding entry exists in the host name data base 
+the server aborts the connection.
+For further information, see hosts(5).
+.PP
+Once the source port and address have been checked, 
+.PN rlogind
+allocates a pseudo terminal 
+and manipulates file descriptors so that the slave
+half of the pseudo terminal becomes the 
+.B stdin ,
+.B stdout ,
+and
+.B stderr 
+for a login process.
+For further information, see pty(4),
+The login process is an instance of the
+login(1) program, invoked with the
+.B \-r
+option.  The login process then proceeds with the authentication
+process as described in rshd(8c),
+but if automatic authentication fails, it reprompts the user
+to login as one finds on a standard terminal line.
+.PP
+The parent of the login process manipulates the master side of
+the pseudo terminal, operating as an intermediary
+between the login process and the client instance of the
+.PN rlogin
+program.  In normal operation, the packet protocol described
+in pty(4)
+is invoked to provide ^S/^Q type facilities and propagate
+interrupt signals to the remote programs.  The login process
+propagates the client terminal's baud rate and terminal type,
+as found in the environment variable, ``TERM''.  For further
+information see environ(7).
+.SH RESTRICTIONS
+The authentication procedure used here assumes the integrity
+of each client machine and the connecting medium.  This is
+insecure, but is useful in an ``open'' environment.
+.SH DIAGNOSTICS
+All diagnostic messages are returned on the connection
+associated with the
+.BR stderr ,
+after which any network connections are closed.
+An error is indicated by a leading byte with a value of 1.
+.PP
+.B ``Hostname for your address unknown.''
+.br
+No entry in the host name database existed for
+the client's machine.
+.PP
+.B ``Try again.''
+.br
+A
+.I fork
+by the server failed.
+.PP
+.B ``/bin/sh: ...''
+.br
+The user's login shell could not be started.
+.SH SEE ALSO
+rlogin(1c), inetd(8c)

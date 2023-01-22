@@ -1,0 +1,145 @@
+.TH dmv 4
+.SH NAME
+dmv \- DEC DMV-11 point-to-point communications device
+.SH SYNTAX
+.B "device dmv0 at uba0 csr 0167600 flags 0x???? vector dmvrint dmvxint"
+.SH DESCRIPTION
+The
+.PN dmv
+interface provides access to a point-to-point communications
+device which runs at speeds from 2.4 Kb/s to 56 Kb/s.
+DMV-11's communicate using the DEC DDCMP link layer protocol.
+.PP
+Several protocols can be multiplexed over a
+.PN dmv
+link simultaneously.  Conversely, a 
+.PN dmv
+can be set up such that only one protocol family can use that device.
+If the latter approach is taken, an SIOCSTATE ioctl must be issued
+by the protocol family requesting device ownership.  The family's
+address must appear in the ``if_family'' structure member, and
+``if_nomuxhdr '' must be set.  Before requesting ownership, the
+device's current ownership should be read and saved.  This will
+allow device ownership to be returned to a previous owner.
+.PP
+The first byte of the flags word can be set up to indicate
+what mode the device should use.  The supported modes are 0
+for full duplex, 1 for maintenance mode, and 2 for half duplex
+as a primary station.  In addition, the driver will assume
+.PN dmc
+compatibility mode unless bit 2 of the first byte is set.  The
+number of outstanding transmit buffers can be increased from
+a default of 7 to a maximum of 24 buffers by specifying a
+hexadecimal value in the second byte of the flags word.
+For example, if flags is set to 0x1800, then 24 transmit
+buffers will be allocated on a device set up to run full
+duplex in
+.PN dmc
+compatibility mode.
+.SH DIAGNOSTICS
+.BR "dmvprobe: can't start device" .
+The 
+.PN dmv
+could not be started at boot time.
+.PP
+.BR "dmvprobe: device failed diagnostics, octal failure code = %o" .
+The 
+.PN dmv
+failed diagnostics at boot time.
+.PP
+.BR "dmvinit: can't place dmv%d into internal loopback" .
+Unable to place the
+.PN dmv
+into internal loopback requested by user.
+.PP
+.BR "dmv%d: done unalloc rbuf" .
+The device returned a receive or transmit buffer that was
+not allocated to it.
+.PP
+.BR "dmv%d: unknown address type %d" .
+An input packet was received that contained a type of
+address uknown to the driver.
+.PP
+.BR "dmv%d bad packet address 0x%x" .
+The device returned a buffer with an unexpected buffer address.
+.PP
+.BR "dmv%d: unsolicited information response: ctl = %x, data = %x" .
+The device interrupted the driver with an information response
+when none was requested.
+.PP
+.BR "dmvd%d: bad control %o" .
+A bad parameter was passed to the dmvload routine.
+.PP
+.BR "dmv%d: modem disconnect" .
+The modem disconnected or there was a loss of carrier
+while a packet was being received.
+.PP
+.BR "dmv%d: buffer too small" .
+The remote node sent a packet that was too large to fit in
+the allocated receive buffer.
+.PP
+.BR "dmv%d: receive threshold reported" .
+The
+.PN dmv
+reported a receive threshold error.
+.PP
+.BR "dmv%d: transmit threshold reached" .
+The
+.PN dmv
+reported a transmit threshold error.
+.PP
+.BR "dmv%d: select threshold reached" .
+The
+.PN dmv
+reported a select threshold error.
+.PP
+.BR "dmv%d: babbling tributary reported" .
+The
+.PN dmv
+reported a babbling tributary error.
+.PP
+.BR "dmv%d: streaming tributary reported" .
+The
+.PN dmv
+reported a streaming tributary error.
+.PP
+.BR "dmv%d: MOP mode entered while DDCMP was running" .
+.br
+.BR "dmv%d: MOP mode entered while device was halted" .
+.br
+The
+.PN dmv
+has entered MOP mode.
+.PP
+.BR "dmv%d: non existent memory reported" .
+The
+.PN dmv
+accessed non-existent memory.
+.PP
+.BR "dmv%d: device queue overflow reported" .
+The
+.PN dmv
+reported a queue overflow.
+.PP
+.BR "dmv%d: invalid counter pointer" .
+The
+.PN dmv
+is reporting the contents of a counter when no request
+was made to do so.
+.PP
+.BR "dmv%d: can't handle af%d" .
+The
+.PN dmv
+was handed a transmit message which has addresses formatted
+in an unsuitable address family.
+.PP
+.BR "dmv%d: internal loopback enable requested" .
+The device is being put in internal loopback at a user's
+request.
+.PP
+.BR "dmv%d: internal loopback disable requested" .
+The device is being taken out of internal loopback at a user's
+request.
+.PP
+.BR "dmvwatch: dmv%d hung, bse10=%b, bsell = %b, bse12=%b" .
+The device has not responded after a long period of time.

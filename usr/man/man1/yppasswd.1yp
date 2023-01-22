@@ -1,0 +1,53 @@
+.TH yppasswd 1yp
+./" Last edited by Jeff J. 6/24/86
+.SH NAME
+yppasswd \- change login password in yellow pages map.
+.SH SYNTAX
+.B yppasswd
+\ [ name ]
+.SH DESCRIPTION
+.IX  "yppasswd command"  ""  "\fLyppasswd\fP \(em change login password in yellow pages"
+.IX  "change login password in yellow pages"  ""  "change login password in yellow pages \(em \fLyppasswd\fP"
+.IX  "yellow pages"  "change login password in"  ""  "change login password in \(em \fLyppasswd\fP"
+.IX  "password"  "change in yellow pages"  ""  "change in yellow pages \(em \fLyppasswd\fP"
+.IX  "login password"  "change in yellow pages"  ""  "change in yellow pages \(em \fLyppasswd\fP"
+The
+.PN yppasswd
+command changes or installs a password associated with the user
+specified by
+.I name
+in the yellow pages map.  By default, the
+.I name
+is the user's name.
+The yellow pages map password may be different
+from the one stored in the 
+passwd(5yp)
+file.
+.LP
+When invoked, the
+.PN yppasswd
+command prompts for the old yellow pages map password and then for the
+new one.  The user must supply both.  To minimize errors, the new
+password must be typed twice.
+.LP
+The conventions for entering a password are:
+.IP \(bu
+The password can be a minimum of four characters provided 
+that at least one character is non-alphanumeric.
+.IP \(bu
+The password is a combination of at least six alphanumeric 
+characters.
+.PP
+Only the owner or the super-user can change a password.
+.SH RESTRICTIONS
+The update protocol passes all the information to the server in
+one rpc call.  If an old password is
+typed incorrectly, the user will not be notified until
+after entering the new password.
+The
+.PN passwd 
+command will not change your password if your login entry is
+served yp the the yellow pages (YP) since the /etc/passwd 
+file is referenced and not the yp map.  
+.SH SEE ALSO
+passwd(1), passwd(5yp), ypfiles(5yp), yppasswdd(8yp)

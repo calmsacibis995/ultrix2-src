@@ -1,0 +1,30 @@
+.TH unlink 3f
+.\" Last modified by BAM on 13-Nov-1985 1300.
+.\"
+.\" Last modified by BAM on 2-Aug-85  1000  
+.\"
+.SH NAME
+unlink \- remove a directory entry
+.SH SYNTAX
+.B integer function unlink (name)
+.br
+.B character*(*) name
+.SH DESCRIPTION
+The
+.PN unlink
+subroutine causes the directory entry specified by pathname
+.I name
+to be removed.
+If this was the last link to the file,
+the contents of the file are lost.
+The returned value will be zero if successful;
+a system error code otherwise.
+.SH RESTRICTIONS
+Pathnames can be no longer than MAXPATHLEN as defined 
+in < sys/param.h >.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+unlink(2), link(3f), perror(3f)
+.\" removed filsys.5 from see also's because I couldn't locate it.

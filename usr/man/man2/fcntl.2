@@ -1,0 +1,555 @@
+.\" Last modified by BAM on 4-Dec-1985 1300.
+.\"
+.TH fcntl 2
+.SH NAME
+fcntl \- file control
+.SH SYNTAX
+.nf
+.B #include <fcntl.h>
+.PP
+.B res = fcntl(fd, request, arg)
+.B int res;
+.B int fd, request, arg
+.fi
+.SH DESCRIPTION
+The 
+.PN fcntl
+system call provides for control over descriptors.  The
+descriptors can be either file 
+descriptors returned by the open(2) system call, or
+socket descriptors returned by the socket(2)
+system call.
+.PP
+Possible requests are:
+.IP "F_DUPFD" 0.3i
+Return a new descriptor with the same characteristics
+as the old, except that the new descriptor is set to remain
+open across execve(2)
+system calls.
+.IP "F_GETFD and F_SETFD" 0.3i
+Get or set the close-on-exec flag associated with
+the descriptor.
+.IP "F_GETFL and F_SETFL" 0.3i
+Get or set descriptor status flags.
+.IP "F_GETOWN and F_SETOWN" 0.3i
+Get or set some interrupt signals (SIGIO or SIGURG as
+described in sigvec(2) 
+for the process ID or process group associated
+with the descriptor.
+.IP "F_GETLK, F_SETLK, and F_SETLKW" 0.3i
+Lock or unlock regions of a file.
+.IP "F_SETSYN and F_CLRSYN" 0.3i
+Set or clear synchronous write flag.
+.PP
+The discussion of the \fIrequest\fR argument gives more
+detail on the functions you can select.
+.SH ARGUMENTS
+The \fIfd\fR argurment is
+the descriptor to be operated on.  Depending on the
+function selected by the \fIrequest\fR argument,
+the \fIfd\fR argument can be
+a file descriptor returned by an open(2)
+system call, or a socket descriptor returned by a socket(2)
+system call.
+.PP
+The \fIrequest\fR
+argument defines what you want done.
+The possible values, which are 
+defined in <fcntl.h>, are organized in following subsections
+according to general function.
+.PP
+The \fIarg\fR argument
+meaning varies according to the \fIrequest\fR argument,
+as discussed in following subsections.
+.SH "F_DUPFD \- Return New Descriptor"
+The shell provides one example of when a new
+descriptor is useful.  Suppose the shell receives
+a command such as:
+.EX 0
+cat > myfile
+.EE
+The shell needs to redirect the output of the cat
+command from the file descriptor 1 (standard output)
+to a new file named myfile.  The shell issues the
+.PN fcntl
+call, using the old file descriptor of 1, to obtain
+a new file descriptor for the file myfile.
+.PP
+F_DUPFD.   When \fIrequest\fR is set fo F_DUPFD:
+.IP "" 0.3i
+The 
+.PN fcntl 
+call returns a new descriptor.  
+The new file descriptor returned has the
+following characteristics:
+.RS 0.3i
+.IP "1." 0.3i
+The file descriptor returned is the lowest numbered available
+descriptor that is greater than or equal to
+the argument
+.I arg.
+.IP "2." 0.3i
+The descriptor has the same object references 
+as the original descriptor.  That is, if the original
+file descriptor referred to a file, the new file
+descriptor refers to a file.  If the original descriptor
+referred to a socket, the new file descriptor refers to
+a socket.
+.IP "3." 0.3i
+The new descriptor shares the same file pointer if the object
+was a file.  (A file pointer points to an inode, which in
+turn points to a file.  Thus, the new descriptor refers to
+the same file as the old descriptor.)
+.IP "4." 0.3i
+The new descriptor has the same access mode as the old
+descriptor (read, write or read/write).
+.IP "5." 0.3i
+The new descriptor shares the same file status flags 
+as the old file descriptor.  (See the discussion of
+F_GETFL and F_SETFL, below, for a description of
+file status flags.
+.IP "6." 0.3i
+The close-on-exec flag associated with the new file descriptor
+is set to remain open across execve(2)
+system calls.  (See the discussion of F_GETFD and
+F_SETFD, below, for a description of the close-on-exec
+flag.
+.RE
+.SH "F_GETFD and F_SETFD \- Close-on-exec Flag"
+Each file descriptor points to an entry in an
+array of file pointers
+which, among other things,
+define certain characteristics for the file.  One
+such characteristic is the close-on-exec flag.  
+This flag defines whether or not a file remains
+open across calls to execve(2).
+If cleared, the file descriptor will remain open in the new image 
+loaded by the call to execve(2).
+If set, the file descriptor will be closed in the new
+image loaded by the call to execve(2).
+.PP
+F_GETFD.  When \fIrequest\fR is set to F_GETFD:
+.IP "" 0.3i
+The 
+.PN fcntl 
+call returns
+the close-on-exec flag associated with the file descriptor
+\fIfd\fR. 
+If the low-order bit of the value returned by
+.PN fcntl 
+is 0,
+the file will remain open across
+calls to execve(2).  
+If the low-order bit of the value returned
+by 
+.PN fcntl
+is 1, the file descriptor is closed across calls to execve(2).
+.PP
+F_SETFD.  When \fIrequest\fR is set to F_SETFD:
+.IP "" 0.3i
+The
+.PN fcntl
+call sets the close-on-exec flag associated with
+.I fd
+to the low-order bit of
+.I arg
+(0 or 1 as above).
+.SH "F_GETFL and  F_SETFL \- Descriptor Status Flags"
+Each file descriptor points to an entry in an array of file
+pointers which, among other things, define the file's current
+status.  One such item of status, for example, is
+whether or not input/output
+operations to a file are currently blocked.
+.PP
+You might want to program your process to allow blocking,
+for example, if a user was running
+your process in the background while doing other work in the
+foreground, and did not want output from the background jobs
+to be displayed on his screen.
+.PP 
+These and other status indicators are discussed below.  Note
+that some status indicators do not apply to all types of
+descriptors.  The FAPPEND status, for example, is meaningless
+for sockets.
+.PP
+F_GETFL.  When \fIrequest\fR is set to F_GETFL:
+.IP "" 0.3i
+The 
+.PN fcntl
+call returns the file's 
+descriptor status flags.
+The following names have been defined in <fcntl.h> for
+these status flags:
+.IP "" 0.3i
+FNDELAY
+.IP "" 0.6i
+Non-blocking I/O.  If no data is available to a
+.PN read
+call, or if a
+write operation would block, the call returns -1 with
+the error [EWOULDBLOCK].
+.IP "" 0.3i
+FAPPEND
+.IP "" 0.6i
+Force each write to append at the end of file.  This corresponds
+to the action taken with the O_APPEND flag of open(2).
+.IP "" 0.3i
+FASYNC
+.IP "" 0.6i
+Enable the SIGIO signal to be sent to the process group when
+I/O is possible.  For example, send SIGIO when data is available to be
+read.
+.PP
+F_SETFL.  When \fIrequest\fR is set to F_SETFL:
+.IP "" 0.3i
+The
+.PN fcntl 
+call
+sets descriptor status flags (see F_GETFL, above).
+.SH "F_GETOWN and F_SETOWN \- Get or Set Owner"
+With these requests, your process can recognize 
+the software interrupts SIGIO
+or SIGURG.
+As described in sigvec(2),
+SIGIO is a signal indicating that I/O is possible on a descriptor.
+SIGURG indicates an urgent condition present on a socket.  
+.PP
+F_GETOWN.  When \fIrequest\fR is set to F_GETOWN:
+.IP "" 0.3i
+The
+.PN fcntl
+call returns the process ID or process group
+currently receiving SIGIO and SIGURG
+signals.   Process groups are returned
+as negative values.
+.PP
+F_SETOWN.  When \fIrequest\fR is set to F_SETOWN:
+.IP "" 0.3i
+The
+.PN fcntl
+call sets the process or process group
+to receive SIGIO and SIGURG signals;
+process groups are specified by supplying
+.I arg
+as negative.   Otherwise, 
+.I arg
+is interpreted as a process ID.
+.SH "F_GETLK, F_SETLK, and F_SETLKW \- Locking File Regions"
+With these requests, your process can:
+.IP "1." 0.3i
+Test a file for
+a region that may have been read-locked or write-locked by
+another process
+.IP "2." 0.3i
+Set or clear a file region read or write lock.
+.IP "3." 0.3i
+Set a file region read or write lock, sleeping if
+necessary until locks previously set by other processes
+are unlocked.
+.PP
+A read lock prevents any process from write locking
+the protected area.  More than one read lock may exist for a
+given region of a file at a given time.  The file descriptor
+on which a read lock is being placed must have been opened
+with read access.
+.PP
+A write lock prevents any process from read locking
+or write locking the protected region.  Only one write lock
+may exist for a given region of a file at a given time.  The file
+descriptor on which a write lock is being placed must have
+been opened with read access.
+.PP
+Locks may start and extend beyond the current end of a file,
+but may not be negative relative to the beginning of the
+file.
+.PP
+Changing or unlocking a region from the middle of a larger locked region
+leaves two smaller regions with the old setting at either end. 
+Locking a region that is already locked by the calling process
+causes the old lock to be removed and the new lock type to take
+effect.
+.PP
+All locks associated with a file for a given process are removed
+when a file descriptor for that file is closed by that process
+or the process holding that file descriptor terminates.  Locks are
+not inherited by a child process in a fork(2)
+system call.
+.PP
+F_GETLK.  When \fIrequest\fR is set to F_GETLK:
+.IP "" 0.3i
+The 
+.PN fcntl
+call tests a file for a read or write locked region.
+In the call, you pass a lock description in a 
+variable of type
+.I struct flock 
+pointed to by
+.I arg.
+.IP "" 0.3i
+If the region defined in the
+.I flock
+structure is already locked, a description of the existing
+lock
+is returned in the 
+.I flock 
+structure.
+If no lock is found that would prevent this lock from being created,
+then the structure is passed back unchanged except for the lock type
+which will be set to F_UNLCK.
+.IP "" 0.3i
+The
+.I flock 
+structure is defined below:
+.EX
+struct flock {
+        short    l_type;
+        short    l_whence;
+        long     l_start;
+        long     l_len;
+        int      l_pid;
+};
+.EE
+\fBData Passed in \fIflock\fR
+.IP "" 0.3i
+In the data you pass in
+.I flock,
+the 
+.I l_type
+value defines the lock type to be tested for: F_RDLCK for
+a read lock and F_WRLCK for a write lock.  
+.IP "" 0.3i
+The
+.I l_whence 
+value defines point from which the
+starting byte of the region is to be measured.
+If
+.I l_whence 
+is 0, the value in
+.I l_start
+is taken as the starting byte of the region.
+If
+.I l_whence 
+is 1,
+the current file offset plus the value of
+.I l_start
+is taken as the starting point.
+If
+.I l_whence
+is 2,
+the file size plus the value of
+.I l_start
+is taken as the starting point.
+.IP "" 0.3i
+The
+.I l_len
+value is the length of the region to be tested, in bytes.
+If
+.I l_len 
+is zero, the to be tested for extends to the end of file.
+If 
+.I l_len
+is zero and
+.I l_start
+is zero, the whole file is to be tested.
+.IP "" 0.3i
+The
+.I l_pid
+value has no significance in the data passed.
+.IP "" 0.3i
+\fBData Returned in \fIflock\fR
+.IP "" 0.3i
+The 
+.I l_type 
+value can be F_RDLCK is the region passed is under a read lock.
+F_WRLCK means that the region passed is under a write lock.
+F_UNLCK means that the region is not currently locked by any
+process.
+.IP "" 0.3i
+The 
+.IR l_whence ,
+.IR l_start ,
+and
+.IR l_len
+values have similar meanings as discussed under "Data Passed",
+above, except that they define the region currently under
+read or write lock.
+.IP "" 0.3i
+The 
+.I l_pid 
+value is the process ID of the process that currently has the
+region locked, if any.
+.PP
+F_SETLK  When \fIrequest\fR is set to F_SETLK:
+.IP "" 0.3i
+You set or clear a file region lock according to the variable of 
+.I f_type
+in the
+.I struct flock
+pointed to by 
+.IR arg .
+(The 
+.I flock
+structure is shown under the description of F_GETLK,
+preceding.)
+.IP "" 0.3i
+The 
+.I f_type 
+value
+is used to establish read (F_RDLCK) and write (F_WRLCK) locks,
+as well as remove either type of lock (F_UNLCK).
+If a read or write lock cannot be set, 
+.PN fcntl
+will return immediately with an
+error value of \-1.
+.PP
+F_SETLKW  When \fIrequest\fR is set to F_SETLKW:
+.PP
+The 
+.PN fcntl
+call takes the same action as for
+F_SETLK,
+except that if a read or write lock is blocked by other locks,
+the process will sleep until the segment is free to be locked.
+.SH "F_SETSYN and F_CLRSYN \- Synchronous Write Flag"
+.PP 
+F_SETSYN forces subsequent file writes 
+to be done synchronously.
+For further information, see write(2).
+That is, the 
+.PB write 
+system call will not return until the write is complete.
+.PP
+F_CLRSYN resets file writes to be asynchronous, the default.  In
+this case, the write(2)
+system call returns after the data is written to the buffer cache.
+.SH RESTRICTIONS
+The asynchronous I/O facilities of FNDELAY and FASYNC are available
+only for terminal operations.  No SIGIO signal is sent upon draining
+of output sufficiently for non-blocking writes to occur.
+.SH RETURN VALUE
+Upon successful completion, the value returned depends upon
+the
+.I request
+argument
+as follows:
+.sp .5v
+.nf
+.ta .25i 1.25i
+	F_DUPFD	A new file descriptor.
+	F_GETFD	Value of flag (only the low-order bit is defined).
+	F_GETFL	Value of flags.
+	F_GETOWN	Value of file descriptor owner.
+	other	Value other than \-1.
+.fi
+.sp .5v
+Otherwise, a value of \-1 is returned and
+.PN errno
+is set to indicate the error.
+.SH DIAGNOSTICS
+The
+.PN fcntl
+fails if one or more of the following are true:
+.TP 15
+[EBADF]
+The 
+.I fildes
+argument is not a valid open file descriptor.
+.TP 15
+[EMFILE]
+The
+.I request
+argument 
+is F_DUPFD and the maximum 
+allowed number of file descriptors are currently
+open.
+.TP 15
+[EINVAL]
+The
+.I request
+argument
+is F_DUPFD and
+.I arg
+is negative or greater the maximum allowable number.
+For further information, see getdtablesize(2).
+.TP 15
+[EINVAL]
+The
+.I request
+argument
+is F_SETSYN, to change the write mode of a file to
+synchronous, and this operation was not valid 
+for the file descriptor.  For example, the file
+was opened for read-only operations.
+.TP 15
+[EINVAL]
+The
+.I request
+argument
+is
+F_GETLK,
+F_SETLK,
+or
+SETLKW
+and 
+.I arg
+or the data it points to is not valid.
+.TP 15
+[EACCESS]
+The
+.I request
+argument
+is
+F_SETLK, 
+the type of lock (
+.I l_type
+)
+is a read
+(F_RDLCK) or write (F_WRLCK) lock, and the region 
+of the
+file to be locked is already write locked by another process.
+Or, the type is a write lock and the region
+of the file to be locked is already read or write
+locked by another process.
+.TP 15
+[EMFILE]
+The
+.I request
+argument is
+F_SETLK
+or
+F_SETLKW,
+the type of lock is a read or write lock,
+and there are no more file locking headers available
+(too many files have segments locked).
+.TP 15
+[ENOSPC]
+The
+.I request
+argument is
+F_SETLK
+or
+F_SETLKW,
+the type of lock is a read or write lock,
+and there are no more file locking headers available
+(too many files have segments locked).
+Or, there are no more record locks available
+(too many file segments locked).
+.TP 15
+[EDEADLK]
+The
+.I request
+argument is
+F_SETLK,
+and the lock is blocked by some lock from another process
+that is sleeping (waiting) for that lock to become free.  This
+causes a deadlock situation.
+.TP 15
+[EOPNOTSUPP]
+Attempting an operation that is not valid for
+the file descriptor.  This can occur if the file descriptor
+argument, \fIfd\fR, points
+to a socket address, and the
+.I request
+argument is only valid for files.
+.SH SEE ALSO
+close(2), execve(2), getdtablesize(2), open(2), sigvec(2)

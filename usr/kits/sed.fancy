@@ -1,0 +1,8 @@
+/#ifndef[ 	]*CRYPT/,/#endif/ {
+/#else[ 	]*CRYPT/s//#endif CRYPT\
+#ifdef CRYPT/
+}
+/#ifdef[ 	]*CRYPT/,/#endif/ {
+/#else[ 	]*CRYPT/s//#endif CRYPT\
+#ifndef CRYPT/
+}

@@ -1,0 +1,138 @@
+.TH rm 1
+.SH NAME
+rm, rmdir \- remove (unlink) files or directories
+.SH SYNTAX
+\fBrm [ \-f ] [ \-r ] [ \-i ] [ \- ] \fI file-or-directory-name ...
+.sp
+\fBrmdir\fI directory-name ...
+.SH DESCRIPTION
+The
+.B rm
+command removes the entries for one or more files from a directory.
+If there are no links to the file 
+then the file is destroyed.
+For further information, see ln(1). 
+.PP
+The
+.B rmdir
+command removes entries for the named directories, which must be
+empty.  If they are not empty, the directories remain, and
+.B rmdir 
+displays an error message (see EXAMPLES).
+.PP
+To remove a file, you must have write permission in its directory,
+but you do not need read or write permission on the file itself.
+When you are using
+.B rm
+from a terminal, and you do not have write permission on the file, 
+the
+.B rm
+command asks for confirmation before destroying the file. 
+.PP
+If input 
+is redirected from the standard input device (your terminal),
+then
+.B rm
+checks to ensure
+that input is not coming from your terminal.  If not, 
+.B rm
+sets the \fB\-f\fR option, which overrides the file protection,
+and removes the files silently, regardless of what you have
+specified in the file redirected as input to 
+.B rm.
+See EXAMPLES.
+.SH OPTIONS
+.IP \fB\-f\fR .75i
+Forces removal of the file or directory.  No confirmation is
+requested.  Only system or usage messages are displayed.
+.IP \fB\-i\fR .75i
+File or directory removal is interactive.  The
+.B rm 
+command asks whether to delete each file name.  When combined
+with the
+\fB\-r\fR
+option,
+.B rm
+asks for confirmation for each file in the named directory.
+.IP \fB\-r\fR .75i
+If a designated file is a directory,
+.B rm
+prints an error message unless the
+\fB\-r\fR
+option is used.  With
+\fB\-r\fR,
+.B rm
+recursively deletes the entire contents of the specified
+directory, and the directory itself.
+.IP \fB\-\fR .75i
+The null option (\fB\-\fR) indicates that all the arguments
+following it are to be treated as file names.  This
+allows specification of file names starting with a minus.
+.SH EXAMPLES
+The following example shows how to remove a file in
+your current working directory.
+.EX
+rm myfile
+.EE
+This example shows use of the null option to remove
+a file beginning with a minus sign.
+.EX
+rm - -gorp
+.EE
+This example shows how a confirmation is requested 
+for removal of a file for which you do not have
+write permission.
+.EX
+rm testfile
+rm: override protection 400 for testfile? y
+.EE
+This example shows how the combination of \fB\-i\fR
+and \fB\-r\fR options lets you examine all the files in a
+directory before removing them.   In the example,
+mydirectory
+is a subdirectory of the current working directory.
+Note that the last question requests confirmation before 
+removing the directory itself.  Although the user
+types ``y'', requesting removal of the directory,
+the 
+.B rm
+command does not allow this, because the directory
+is not empty; the user typed ``n'' to the question
+about the file
+.I file2 ,
+so 
+.I file2
+was not removed.
+.EX
+rm -ir mydirectory
+rm: remove mydirectory/file1? y
+rm: remove mydirectory/file2? n
+      .
+      .
+      .
+rm: remove mydirectory? y
+rm: mydirectory: Directory not empty
+.EE
+This example illustrates that 
+.B rm
+overrides file protection when input is redirected from
+the standard input device.  The user creates a file
+named ``alfie'', with a read-only file protection.  The
+user then creates a file named ``ans'' to contain the
+character ``n''.  The
+.B rm 
+command
+following destroys the file ``alfie'', even though the
+redirected input file requested no deletion.
+.EX
+cat > alfie
+hello
+^d
+chmod 444 alfie
+cat > ans
+n
+^d
+rm < ans alfie
+.EE
+.SH SEE ALSO
+unlink(2)

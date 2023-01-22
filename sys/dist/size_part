@@ -1,0 +1,33 @@
+#!/bin/sh
+#
+# Usage: sh sizer_part $1 $2 
+#   	  	$1: available partitions
+#		$2: minimum size
+#
+# Description: To delete the size of partition which is smaller than
+#			the required minimum size.
+#
+# 000 - June, 1986 - Tungning Cherng created.
+#
+partition=$2
+availp=$1
+for i in $1
+do 
+	size=`cat ptable | awk '{if ( $1 == "'$i'" ) print $4 }'`
+	if test $size -le $2
+	then
+		valid=
+		for k in $availp
+		do
+			case $k in
+			$i )
+				;;
+			* )
+				valid="$valid $k"
+				;;
+			esac
+		done
+		availp=$valid
+	fi
+done
+echo $availp

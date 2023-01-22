@@ -1,0 +1,58 @@
+#
+# Seahorse and Mayflower
+# Digital MicroVAX 1 and 2
+#
+#
+machine		vax
+cpu		"MVAX"
+timezone	5 dst
+maxusers	16
+maxuprc		50
+physmem		16
+options		INET
+options		DLI
+options		QUOTA
+options		LAT
+options		EMULFLT
+options		EMUL
+
+config		vmunix		root on ra0 swap on ra0
+
+adapter		uba0	at nexus ?
+controller	hl0	at uba? csr 0174400		vector rlintr
+disk		rl0	at hl0 drive 0
+disk		rl1	at hl0 drive 1
+controller	uda0	at uba0
+controller	uq0	at uda0 csr 0172150		vector uqintr
+controller	uda1	at uba0
+controller	uq1	at uda1 csr 0160334		vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+disk		ra2	at uq0 drive 2
+disk		ra3	at uq0 drive 3
+disk		ra4	at uq1 drive 0
+disk		ra5	at uq1 drive 1
+disk		ra6	at uq1 drive 2
+disk		ra7	at uq1 drive 3
+device		lp0	at uba0 csr 0177514		vector lpintr
+device		qe0	at uba0 csr 0174440		vector qeintr
+device		qd0	at uba0 csr 0177400 flags 0x0f 	vector qddint qdaint qdiint
+device		qd1	at uba0 csr 0177402 flags 0x0f 	vector qddint qdaint qdiint
+controller	klesiu0	at uba0
+controller	tmscp0	at klesiu0 csr 0174500		vector tmscpintr
+tape		tms0	at tmscp0 drive 0
+device		dz0	at uba0 csr 0160100 flags 0x0f 	vector dzrint dzxint
+device		dz1	at uba0 csr 0160110 flags 0x0f 	vector dzrint dzxint
+device		dhu0	at uba0 csr 0160440 flags 0xff 	vector dhurint dhuxint
+device		dhu1	at uba0 csr 0160460 flags 0xff 	vector dhurint dhuxint
+device		qv0	at uba0 csr 0177200 flags 0x0f 	vector qvkint qvvint
+controller	zs0	at uba? csr 0172520		vector tsintr
+device		ts0	at zs0 drive 0
+pseudo-device	pty
+pseudo-device	imp
+pseudo-device	inet
+pseudo-device	loop
+pseudo-device	ether
+pseudo-device	lat
+pseudo-device	lta
+pseudo-device	dli

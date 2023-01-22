@@ -1,0 +1,86 @@
+.TH eli 8
+.SH NAME
+eli \- error logger initializer
+.SH SYNTAX
+.B eli [ 
+.I options\fB ]
+.SH DESCRIPTION
+The 
+.B eli 
+command initializes error logging.  This command enables error logging
+of hardware and system-related error packets, or error messages, from
+the kernel errorlog buffer.  It can also disable error logging,
+reconfigure error logging parameters, or initialize the kernel errorlog
+buffer.
+.SH OPTIONS
+.TP
+.B \-d
+Disables error logging.
+.TP
+.B \-e
+Enables error logging in multiuser mode.
+.TP
+.B \-f
+Forces the subsequent option; the system will not prompt.  This is
+the only 
+.B eli 
+command option you can use with another option.
+.TP
+.B \-h
+Prints information about the 
+.B eli 
+command.
+.TP
+.B \-i
+Initializes the kernel errorlog buffer.  The previous contents of the
+errorlog buffer are lost.
+.TP
+.B \-l
+Logs a one-line status message to the kernel errorlog buffer.
+.TP
+.B \-n
+Disables error logging to disk.  Messages appear only at the console.
+To re-enable logging to disk, use the 
+.B \-e 
+option. This option can only be used for local error logging.
+.TP
+.B \-q
+Suppresses the missed error message from appearing on the console. 
+.TP
+.B \-r
+Reconfigures error logging.  Use this option after changing the
+/etc/elcsd.conf
+file.
+.TP
+.B \-s
+Enables error logging in single-user mode.
+.TP
+.B \-w
+Enables the missed error message to appear on the console. 
+.SH EXAMPLES
+This example logs a one-line message into the errorlog file.
+.EX
+eli -f -l "This is a test message"
+.EE
+This example logs a message, up to and including the first newline,
+from file 'myfile'.
+.EX
+eli -f -l < myfile > /dev/null
+.EE
+.SH RESTRICTIONS
+You must have superuser privileges to use the 
+.B eli 
+command.
+.sp
+Only the \fB\-f\fR option can be used with other eli options.
+You must use the syntax shown in the examples above.
+.SH DIAGNOSTICS 
+.I eli: Request Aborted. 
+The requested action was aborted; the reason for the aborted command is
+included with the output. 
+.SH FILES
+/etc/elcsd.conf	
+.SH "SEE ALSO"
+elcsd.conf(5), elcsd(8), uerf(8)
+.br
+System Managerment Guide

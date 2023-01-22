@@ -1,0 +1,50 @@
+# @(#)CHASM	1.4	(ULTRIX)	8/19/86
+#
+# CHASM
+# Digital VAX 11/785 (Superstar) standalone development machine
+#
+machine		vax
+cpu		"VAX785"
+ident		CHASM
+timezone	5 dst
+maxusers	80
+physmem		16
+maxuprc		30
+options		QUOTA
+options		INET
+options		LAT
+
+config		vmunix		root on ra0 swap on ra0
+config		vmunix_usr	root on ra0g swap on ra0b
+
+controller	mba0	at nexus ?
+disk		hp0	at mba0	drive 0
+disk		hp2	at mba0	drive 2
+disk		hp3	at mba0	drive 3
+controller	mba1	at nexus ?
+adapter		uba0	at nexus ?
+adapter		uba1	at nexus ?
+controller	uda0	at uba?
+controller	uq0	at uda0 csr 0172150		vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+disk		ra2	at uq0 drive 2
+disk		ra3	at uq0 drive 3
+controller      klesiu0 at uba?
+adapter         tmscp0  at klesiu0 csr 0174500          vector tmscpintr
+tape            tms0    at tmscp0 drive 0
+device		dz0	at uba? csr 0160110 flags 0xfe	vector dzrint dzxint
+device		dz1	at uba? csr 0160120 flags 0xff	vector dzrint dzxint
+device		de0	at uba? csr 0174510		vector deintr
+device		de1	at uba? csr 0174510		vector deintr
+device		dhu0	at uba0 csr 0160440 flags 0xffff vector dhurint dhuxint
+device		dhu1	at uba0 csr 0160460 flags 0xfffe vector dhurint dhuxint
+device		dmz0	at uba? csr 0160500 flags 0xfffffb	
+	vector dmzrinta dmzxinta dmzrintb dmzxintb dmzrintc dmzxintc
+device		lp0	at uba? csr 0177514		vector lpintr
+pseudo-device	pty
+pseudo-device	loop
+pseudo-device	inet
+pseudo-device	ether
+pseudo-device	lat
+pseudo-device	lta

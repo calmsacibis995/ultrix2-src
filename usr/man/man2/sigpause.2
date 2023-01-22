@@ -1,0 +1,36 @@
+.TH sigpause 2
+.SH NAME
+sigpause \- atomically release blocked signals and wait for interrupt
+.SH SYNTAX
+.ft B
+sigpause(sigmask)
+.br
+int sigmask;
+.ft R
+.SH DESCRIPTION
+The
+.PN sigpause
+system call
+assigns 
+.I sigmask
+to the set of masked signals
+and then waits for a signal to arrive.
+On return the set of masked signals is restored.
+The
+.I sigmask
+is usually 0 to indicate that no
+signals are now to be blocked.
+The
+.PN sigpause
+always terminates by being interrupted, returning EINTR.
+.PP
+In normal usage, a signal is blocked using
+sigblock(2),
+to begin a critical section, variables modified on the occurrence
+of the signal are examined to determine that there is no work
+to be done, and the process pauses awaiting work by using
+.PN sigpause
+with the mask returned by
+.IR sigblock .
+.SH SEE ALSO
+sigblock(2), sigvec(2)

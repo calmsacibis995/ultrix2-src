@@ -1,0 +1,13 @@
+MPgrep	Pgrep.c	/^main(argc, argv)$/
+buildcmd	Pgrep.c	/^buildcmd(command, filelist)$/
+buildgrepargv	Pgrep.c	/^buildgrepargv(grepcmd, pattern, filelist)$/
+closegrep	grep.c	/^closegrep(fp)$/
+dependmark	readmf.c	/^dependmark()$/
+findmacro	readmf.c	/^findmacro(macroname)$/
+getlin	readmf.c	/^getlin(stream)$/
+getmacro	readmf.c	/^getmacro(slist, stream)$/
+gettoken	readmf.c	/^gettoken(token, tp)$/
+grep	grep.c	/^grep(greppath, grepargv)$/
+opengrep	grep.c	/^opengrep(greppath, grepargv)$/
+readgrep	grep.c	/^readgrep(buf, fp)$/
+readmf	readmf.c	/^readmf(mfname, filelist)$/

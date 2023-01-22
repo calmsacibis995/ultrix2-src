@@ -1,0 +1,93 @@
+.TH tftp 1c
+.SH NAME
+tftp \- trivial file transfer program
+.SH SYNTAX
+.B tftp
+[ \fIhost\fR ] [ \fIport\fR ]
+.SH DESCRIPTION
+The 
+.PN tftp
+command
+provides the user interface to the 
+Internet standard Trivial File Transfer Protocol.
+The program allows a user to transfer files to and from a
+remote network site.
+.PP
+.PP
+The client
+.I host
+with which 
+.PN tftp
+is to communicate may be specified on the command line.
+If this is done,
+.PN tftp
+will assume the given host name for future transactions.
+If a
+.I port
+is specified,
+.PN tftp
+will use that port number instead of the standard 
+.PN tftp 
+service port.
+When invoked,
+.PN tftp
+enters its command interpreter and awaits instructions
+from the user, displaying
+the prompt \*(lqtftp>\*(rq.
+The following commands are recognized
+by
+.PN tftp :
+.TP
+.B ?
+Display a help message giving a brief summary of the commands.
+.TP
+.B connect
+Set the host to be used implicitly for all file transfers.
+.TP
+\fBget\fP \fIremote-file\fP [ \fIlocal-file\fP ]
+Retrieve the 
+.I remote-file
+and store it on the local machine.  If the local
+file name is not specified, it is given the same
+name it has on the remote machine.
+The current setting for 
+.IR mode
+is used while transferring the file.
+.TP
+.B mode
+Set the file transfer 
+.I type
+to network ASCII or binary.  The default type is network ASCII.
+.TP
+\fBput\fP \fIlocal-file\fP [ \fIremote-file\fP ]
+Store a local file on the remote machine.  If 
+.I remote-file
+is left unspecified, the local file name is used
+in naming the remote file.  File transfer uses the
+current setting for
+.IR mode.
+.TP
+.B quit
+Exit the 
+.PN tftp 
+program.
+.TP
+.B rexmt
+Set the retransmit timer.
+.TP
+.B status
+Show what
+.PN tftp
+believes to be the current connection status.
+.TP
+.B timeout
+Set the transaction timeout.
+.TP
+.B trace
+Set the packet trace flag.
+.TP
+.B verbose
+Set the verbose mode flag.
+.SH RESTRICTIONS
+Since the TFTP protocol does not support any authentication,
+any files must be world read (writeable) on the remote system.

@@ -1,0 +1,21 @@
+.TH arcv 8
+.SH NAME
+arcv \- convert archives to new format
+.SH SYNTAX
+.B /etc/arcv
+file ...
+.SH DESCRIPTION
+The
+.B arcv
+command converts archive files
+from 32v and Third Berkeley editions to a new portable format.
+For further information, see ar(1) and ar(5).
+The conversion is done in place, and the command
+refuses to alter a file not in old archive format.
+.PP
+Old archives are marked with a magic number of 0177545 at the start;
+new archives have a first line ``!<arch>''.
+.SH FILES
+/tmp/v*, temporary copy
+.SH SEE ALSO
+ar(1), ar(5)

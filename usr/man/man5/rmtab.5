@@ -1,0 +1,71 @@
+.TH rmtab 5nfs
+./" Last edited by Jeff J. 6/19/86 
+.SH NAME
+rmtab \- Table of local file systems mounted by remote NFS clients.
+.SH DESCRIPTION
+.IX  "rmtab file"  ""  "\fLrmtab\fP \(em remote mounted file system table"
+The
+.I rmtab
+file resides in the
+.I /etc
+directory and contains a list of all remote hosts that have mounted
+local file systems using the NFS protocols.
+Whenever a client performs a remote mount, the server machine's mount daemon
+makes an entry in the server machine's
+.I rmtab
+file.
+The 
+.I umount
+command removes remotely-mounted file system entries.
+The 
+.I "umount \-a"
+command broadcasts to all servers, and informs them that they should remove
+all entries from
+.I rmtab
+created by the sender of the broadcast message.
+By placing a
+.I "umount \-a"
+command in
+.I /etc/rc.boot,
+.I rmtab
+tables on NFS servers can be purged of entries made by a crashed
+client, who, upon rebooting, did not remount the same file systems that
+it had before the system crashed.  The 
+.I rmtab 
+table is a series of lines of the form:
+.IP
+hostname:directory
+.PP
+This table is used only to preserve information between crashes,
+and is read only by
+.MS mountd 8nfs
+when it starts up.
+The 
+.I mountd
+daemon keeps an in-core table,
+which it uses to handle requests from programs like
+.MS showmount 1nfs
+and
+.MS shutdown 8 .
+.SH FILES
+/etc/rmtab
+.SH RESTRICTIONS
+Although the
+.I rmtab
+table is close to the truth,
+it may contain erroneous information if NFS client machines fail to execute
+umount -a when they reboot.
+
+.SH SEE ALSO
+.TP
+.MS showmount 1nfs
+Display local file systems mounted by remote hosts.
+.TP
+.MS mountd 8nfs
+NFS mount daemon
+.TP
+.MS mount 8nfs
+Mount or unmount a file system with NFS implemented.
+.TP
+.MS shutdown 8
+Shutdown the system

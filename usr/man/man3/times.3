@@ -1,0 +1,43 @@
+.TH times 3
+.SH NAME
+times \- get process times
+.SH SYNTAX
+.nf
+.B "#include <sys/types.h>
+.B "#include <sys/times.h>
+.PP
+.B times(buffer)
+.B struct tms *buffer;
+.fi
+.SH DESCRIPTION
+The
+.PN times
+subroutine
+returns time-accounting information
+for the current process
+and for the terminated child processes
+of the current process.
+All times are in 1/HZ seconds, where HZ is 60.
+.PP
+This is the structure returned by
+.PN times:
+.EX 0
+
+struct tms {
+        time_t  tms_utime;     /* user time */
+        time_t  tms_stime;     /* system time */
+        time_t  tms_cutime;    /* user time, children */
+        time_t  tms_cstime;    /* system time, children */
+};
+
+.EE
+.PP
+The children times are the sum
+of the children's process times and
+their children's times.
+.SH ENVIRONMENT
+When your program is compiled using the System V environment,
+the elapsed time is returned in seconds since 
+system startup (instead of 0) upon success.
+.SH "SEE ALSO"
+time(1), getrusage(2), wait3(2), time(3)

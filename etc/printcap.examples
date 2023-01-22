@@ -1,0 +1,58 @@
+###
+# /etc/printcap.orig, duplicate of /etc/printcap templates.
+#
+# This file contains examples of line printer definitions
+# you can use to tailor the printcap entries you need.
+#
+# The entries are now comments.  Tailor the entries you can use,
+# delete the entries you do not need.  Should you make a mistake
+# you cannot recover from while editing this file, you can copy
+# the replica file /etc/printcap.orig to /etc/printcap, and begin
+# again.
+###
+ 
+###
+# lp0 | a local LP25 printer on an LP11 parallel interface:\
+#	:du#1:\
+# 	:dn=/usr/lib/lpd:\
+#	:lp=/dev/lp:\
+#	:mx#5000:\
+#	:mc#3:\
+#	:sd=/usr/spool/lpd0:
+###
+
+###
+# lqp02 | a local LQP02 printer on DZ11 serial interface:\
+#	:br#1200:\
+#	:dn=/usr/lib/lpd:\
+#	:du#1:\
+#	:dn=/usr/lib/lpd:\
+#	:mc#10:\
+#	:mx#600:\
+#	:of=/usr/lib/lpf:\
+#	:sd=/usr/spool/lpq02:\
+#	:sh:
+###
+
+###
+# ln | a local LN01 printer on a DMF32 parallel interface:\
+#	:dn=/usr/lib/lpd:\
+#	:if=/usr/lib/lpdfilters/ln01of:\
+#	:lf=/usr/adm/lnd-errs:\
+#	:lp=/dev/lp:\
+#	:mc#20:\
+#	:mx#2000:\
+#	:of=/usr/lib/lpdfilters/ln01of:\
+#	:pl#60:\
+#	:pw#80:\
+#	:sd=/usr/spool/ln:
+###
+
+###
+# ln03 | a remote LN03 printer (on DZ11 serial line):\
+#	:br#1200:\
+#	:lp=:\
+#	:rm=remvax:\
+#	:rp=ln03:\
+#	:sd=/usr/spool/remvaxlqp:
+###

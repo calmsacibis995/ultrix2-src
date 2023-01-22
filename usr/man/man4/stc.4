@@ -1,0 +1,88 @@
+.TH stc 4
+.SH NAME
+stc \- TZK50 (VAXstation TK50) magtape interface
+.SH SYNTAX
+.B "controller stc0 at uba0 csr 0x200c0080 vector stintr"
+.br
+.B "tape st0 at stc0 drive 0"
+.SH DESCRIPTION
+The TZK50/TK50 combination
+provides a standard tape drive interface
+as described in mtio(4).
+The TZK50 is supported only on the VAXstation 2000,
+and the MicroVAX 2000.
+This driver also supports n-buffered reads and writes to
+the raw tape interface (used with streaming tape drives).
+See nbuf(4) for further details.
+.SH DIAGNOSTICS
+The following messages are printed at the console:
+.LP
+.B
+st0: arbitration failed after %d tries
+.br
+After the indicated number of tries, we have given
+up trying to arbitrate for the TK50 bus.
+.LP
+.B
+st0: device failed to select
+.br
+The host was not able to select the TK50
+device on the bus.
+.LP
+.B
+st0: device failed to reselect
+.br
+The host was not able to reselect the
+TK50 device on the bus.
+.LP
+.B
+st0: parity error
+.br
+A parity error was encountered as part of a command or status
+packet.
+.LP
+.B
+st0: bus reset
+.br
+The TK50 bus has just been reset.
+.LP
+.B
+st0: buffer too large
+.br
+A read or write was requested that exceeds the 16K maximum supported
+block size of this driver.
+.LP
+.B
+st0: aborting transfer
+.br
+An error has occurred, and the request to the driver is
+being aborted.
+.LP
+.B
+st0: request sense data: xx xx xx xx xx xx xx xx xx xx
+.br
+When an error occurs, the request sense data is the last command's
+status sent from the TK50 controller.
+.LP
+.B
+st0: software error
+.br
+The software has sent an illegal request to the drive.
+.LP
+.B
+st0: soft error, sense key = 0x%x
+.br
+A non-fatal error has occurred.  The sense key is part of 
+the request sense data returned from the TK50 controller.
+.LP
+.B
+st0: hard error, sense key = 0x%x
+.br
+A fatal error has occurred.  The sense key is part of the
+request sense data returned from the TK50 controller.
+.LP
+.SH FILES
+/dev/rmt???
+/dev/nrmt???
+.SH SEE ALSO
+mtio(4), nbuf(4), MAKEDEV(8), uerf(8)

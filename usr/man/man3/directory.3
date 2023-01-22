@@ -1,0 +1,128 @@
+.TH directory 3
+.SH NAME
+opendir, readdir, telldir, seekdir, rewinddir, closedir \- directory operations
+.SH SYNTAX
+.B #include <sys/dir.h>
+.PP
+.SM
+.B DIR
+.B *opendir(filename)
+.br
+.B char *filename;
+.PP
+.B struct direct
+.B *readdir(dirp)
+.br
+.SM
+.B DIR
+.B *dirp;
+.PP
+.B long
+.B telldir(dirp)
+.br
+.SM
+.B DIR
+.B *dirp;
+.PP
+.B seekdir(dirp, loc)
+.br
+.SM
+.B DIR
+.B *dirp;
+.br
+.B long loc;
+.PP
+.B rewinddir(dirp)
+.br
+.SM
+.B DIR
+.B *dirp;
+.PP
+.B closedir(dirp)
+.br
+.SM
+.B DIR
+.B *dirp;
+.SH DESCRIPTION
+The 
+.PN opendir
+library routine opens the directory named by
+.I filename
+and associates a
+.I directory stream
+with it.
+A pointer is returned to identify the
+.I directory stream
+in subsequent operations.  The pointer
+NULL
+is returned if the specified
+.I filename
+can not be accessed, or if insufficient memory is available to open 
+the directory file.
+.PP
+The 
+.PN readdir
+routine returns a pointer to the next directory entry.  It returns
+.B NULL
+upon reaching the end of the directory or on detecting an invalid
+.PN seekdir
+operation.
+.PP
+The 
+.PN telldir
+routine returns the current location associated with the named
+.I directory stream. 
+Values returned by
+.PN telldir
+are good only for the lifetime of the DIR pointer from which they are derived.
+If the directory is closed and then reopened, the 
+.B telldir
+value may be invalidated due to undetected directory compaction.
+.PP
+The 
+.PN seekdir
+routine sets the position of the next
+.PN readdir
+operation on the
+.I directory stream.
+Only values returned by
+.PN telldir
+should be used with
+.PN seekdir.
+.PP
+The 
+.PN rewinddir
+routine resets the position of the named
+.I directory stream
+to the beginning of the directory.
+.PP
+The 
+.PN closedir
+routine closes the named
+.I directory stream.
+All resources associated with this directory stream are released.
+.SH EXAMPLE
+The following 
+sample code searches a directory for the entry 
+.I name.
+.EX 0
+len = strlen(name);
+
+dirp = opendir(".");
+
+for (dp = readdir(dirp); dp != NULL; dp = readdir(dirp))
+
+if (dp->d_namlen == len && !strcmp(dp->d_name, name)) {
+
+		closedir(dirp);
+
+		return FOUND;
+
+	}
+
+closedir(dirp);
+
+return NOT_FOUND;
+.EE
+.SH "SEE ALSO"
+close(2), getdirentries(2), lseek(2), open(2), read(2), dir(5)

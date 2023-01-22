@@ -1,0 +1,51 @@
+0a1,2
+> # %W%	ULTRIX	%G%
+> #
+18d19
+< #	DF112
+23c24
+< #	  BIZ1031, BIZ1022, VENTEL, V831, V3451, DF112
+---
+> #	  BIZ1031, BIZ1022, VENTEL, V831, V3451
+32a34
+> DESTROOT=
+36,37c38,39
+< CONFIG=	-DDF02 -DDF03 -DVENTEL -DDN11 -DBIZ1031 -DBIZ1022 -DV831 -DV3451 -DDF112
+< CFLAGS=	-O -DDEFBR=300 -DDEFFS=BUFSIZ -DACULOG -DFLOCK -DONDELAY
+---
+> CONFIG=	-DDF02 -DDF03 -DVENTEL
+> CFLAGS=	-O -DDEFBR=300 -DDEFFS=BUFSIZ -DACULOG
+72,77c74,79
+< 	install -m 4711 -o ${OWNER} -g ${GROUP} tip ${DESTDIR}/usr/bin/tip
+< 	rm -f ${DESTDIR}/usr/bin/cu
+< 	ln ${DESTDIR}/usr/bin/tip ${DESTDIR}/usr/bin/cu
+< #	cp /dev/null ${DESTDIR}/${ADM}/aculog
+< #	chown ${OWNER} ${DESTDIR}/${ADM}/aculog
+< #	chmod 600 ${DESTDIR}/${ADM}/aculog
+---
+> 	install -c -m 4711 -o ${OWNER} -g ${GROUP} tip ${DESTROOT}/usr/bin/tip
+> 	rm -f ${DESTROOT}/usr/bin/cu
+> 	ln ${DESTROOT}/usr/bin/tip ${DESTROOT}/usr/bin/cu
+> #	cp /dev/null ${DESTROOT}/${ADM}/aculog
+> #	chown ${OWNER} ${DESTROOT}/${ADM}/aculog
+> #	chmod 600 ${DESTROOT}/${ADM}/aculog
+84c86
+< 	cd aculib; make ${MFLAGS} clean
+---
+> 	(cd aculib; make ${MFLAGS} clean)
+85a88,102
+> 
+> clobber: clean
+> 	rm -f TODO README *.[hc] *.out remote-file phones-file Makefile
+> 	(cd aculib; make ${MFLAGS} clobber)
+> 
+> sccsinfo:
+> 	sccs info
+> 	(cd aculib; make ${MFLAGS} sccsinfo)
+> 
+> sccsget:
+> 	sccs get SCCS
+> 	(cd aculib; sccs get Makefile; make ${MFLAGS} sccsget)
+> 
+> .DEFAULT:
+> 	sccs get $<

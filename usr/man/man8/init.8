@@ -1,0 +1,193 @@
+.TH init 8
+.SH NAME
+init \- process control initialization
+.SH SYNTAX
+.B /etc/init
+.SH DESCRIPTION
+The ULTRIX system invokes the
+.PN init
+command as the last step in the boot procedure.
+The system 
+normally then runs the automatic reboot sequence, as described in
+reboot(8).
+If 
+.PN reboot 
+succeeds, 
+.PN init
+begins multi-user operation.
+If 
+.PN reboot 
+fails, 
+.PN init
+begins single-user operation by giving
+the superuser a shell on the console.  
+.PP
+You can use the BOOT command 
+so that parameters are passed
+from the boot program to
+.PN init
+so that multi-user operation begins immediately. 
+When the superuser terminates the single-user
+shell (by pressing CTRL-D),
+.PN init
+runs the
+.PN /etc/rc 
+command file
+without the reboot parameter.
+This command file
+performs housekeeping operations
+such as removing temporary files,
+mounting file systems, and starting
+daemons.
+For further information, see reboot(8).
+.PP
+In multi-user operation, 
+.PN init
+creates a process for each
+terminal port where a user may log in.
+To begin such operations, it reads the file /etc/ttys.
+For further information, see ttys(5).
+For each terminal that is marked ``on'' in the 
+.PN ttys
+file, 
+.PN init
+forks and invokes the command specified for the current line. 
+The command is passed the name of the terminal as the
+last argument. 
+The other arguments (if any) are specified after the command
+in the 
+.PN ttys
+file.
+Usually, the command is getty(8), 
+but it may be any command.
+.PP
+The 
+.PN getty
+command reads the user's name and invokes
+.PN login
+to log in the user and execute the shell.
+.PP
+Ultimately, the shell terminates
+because of an end-of-file.  The end-of-file may be 
+typed explicitly or generated as a result of 
+hanging up on a terminal line.
+The main path of
+.PN init ,
+which has been waiting
+for such an event,
+wakes up and removes the appropriate entry from the
+file
+.PN utmp ,
+which records current users.  
+.PN init 
+then makes an entry in /usr/adm/wtmp,
+which maintains a history
+of logins and logouts.
+The
+.PN wtmp
+entry is made only if a user logged in successfully on the line.
+Then the appropriate terminal is reopened and
+.PN getty
+is
+reinvoked.
+.PP
+.PN init
+catches the
+.PN hangup
+signal (signal SIGHUP) and interprets it to mean that
+the file /etc/ttys should be read again.
+The shell process on each line which used to be active
+in
+.PN ttys
+but is no longer there is terminated;
+a new process is created for each added line;
+lines unchanged in the file are undisturbed.
+Thus it is possible to drop or add phone lines without
+rebooting the system by changing the
+.PN ttys
+file and sending a
+.PN hangup
+signal to the
+.PN init
+process: use ``kill \-HUP 1.''
+.PP
+.PN init
+terminates multi-user operations and resumes single-user mode
+if it receives a terminate (TERM) signal.  That is, the
+superuser types ``kill \-TERM 1''.
+If there are processes outstanding which are deadlocked (due to
+hardware or software failure),
+.PN init
+does not wait for them all to die (which might take forever), but
+times out after 30 seconds and prints a warning message.
+.PP
+If 
+.PN init
+receives a terminal stop signal (the superuser types
+``kill \-TSTP 1''),
+.PN init
+stops creating new processes
+and lets the system slowly die away. 
+A later hangup will resume full
+multi-user operations, or a terminate will initiate a single user shell.
+This feature is used by reboot(8) and halt(8).
+.PP
+If
+.PN init
+dies, the system will reboot itself
+automatically.
+If, at bootstrap time, the
+.PN init
+process cannot be located, the system will loop in user mode at location
+0x13.
+.SH DIAGNOSTICS
+\fBWARNING: Something is hung (wont die); ps axl advised\fR.
+.RS
+The system is shutting down, and
+.PN init
+cannot kill a certain process. 
+This usually when a process
+cannot exit a device driver
+due to a persistent device error condition.
+.RE
+.PP
+\fBinit: \fI`command  tty'\fB failing, sleeping.\fR
+.RS
+.PN init
+tried to spawn a new process 
+(use the execve(2) system call)
+for the \fIcommand\fR five times.  Each time, the \fIcommand\fR 
+failed.  This may indicate that the \fIcommand\fR was invoked with
+invalid arguments.  Check the /etc/ttys file for errors.
+This error message is printed at syslog(3) level LOG_ERR.
+.RE
+.LP
+\fBinit: exec failed: cmd=\fI  command reason\fR.
+.RS
+.PN init
+tried to spawn a new process
+using the execve(2)
+system call for the \fIcommand\fR.  The 
+.PN execve 
+failed.
+\fIreason\fR is the explanation produced by the perror(3) 
+routine for why the 
+.PN execve
+failed.
+This error message is printed at 
+syslog(3) level LOG_ERR.
+.RE
+.SH FILES
+.IP /etc/utmp 1i
+Lists current system users
+.IP /usr/adm/wtmp 1i
+History of logins and logouts
+.IP /etc/ttys 1i
+.PN init
+reads this file for a command to execute for
+the terminal line
+.IP /etc/rc 1i
+Command file executed by
+.PN init
+.SH "SEE ALSO"
+ttys(5), getty(8), rc(8), reboot(8)

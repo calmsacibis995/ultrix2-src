@@ -1,0 +1,71 @@
+.TH sizer 8 
+.SH NAME
+sizer \- a program that sizes system hardware
+.SH SYNTAX
+.B /etc/sizer
+[
+.I options
+]
+.SH DESCRIPTION
+The sizer 
+program reports various items of information about a kernel file 
+and the running system.  
+It is also used to create a system configuration file in the 
+doconfig command.
+.PP
+.SH OPTIONS
+.RS 6n
+.TP 8
+.B \-b
+Create a boot command file for the current system disk.  Sizer 
+creates the appropriate defboo and askboo command files in 
+/usr/sys/*.cons.  
+These files can then be used to update the systems console media.  
+This only applies for VAX8600, VAX780, and VAX730 cpus.
+.TP 8
+.B \-c
+Return the CPU type of the running cpu.  It returns one of the
+following strings: VAX8800, VAX8600, VAX8200, VAX780, VAX750, 
+VAX730, MVAX_II, and  MVAX_I.
+.TP 8
+.B \-k \fIimage\fP
+Use the indicated kernel file instead of /vmunix.  This is useful when
+the running system is not /vmunix or you wish information about a
+system that is not running.
+.TP 8
+.B \-r
+Return only the name of the root device and partition.
+.TP 8
+.B \-s
+Return only the CPU subtype of the running cpu.  It returns 
+following values for the following cpus:
+.PP
+.nf
+.in +5
+Returned
+Value		 CPU 
+
+11		VAX8800
+10		VAX8700
+ 9		VAX8550
+ 8		VAX8500
+ 6		VAX8300
+ 5		VAX8200
+ 4		VAXstation 2000
+ 1		MicroVAX II
+
+The value 0 is returned for all other cpu types.
+.in -5
+.fi
+.PP
+.RE
+.SH FILES
+/usr/sys/730cons/defboo.cmd,
+/usr/sys/780cons/defboo.cmd,
+/usr/sys/8600cons/defboo.com,
+/usr/sys/730cons/askboo.cmd,
+/usr/sys/780cons/askboo.cmd,
+/usr/sys/8600cons/askboo.com
+.SH SEE ALSO
+ed(1), config(8), doconfig(8)
+Installation Guide 

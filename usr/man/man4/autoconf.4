@@ -1,0 +1,130 @@
+.TH autoconf 4
+.SH NAME
+autoconf \- diagnostics from the autoconfiguration code
+.SH DESCRIPTION
+When UNIX bootstraps it probes the innards of the machine it is running
+on and locates controllers, drives, and other devices, printing out
+what it finds on the console.  This procedure is driven by a system
+configuration table which is processed by
+config(8)
+and compiled into each kernel.
+.PP
+Devices in NEXUS slots are normally noted, thus memory controllers,
+UNIBUS, MASSBUS, and VAXBI adapters.  Devices which are not supported
+which are found in NEXUS slots are noted also.
+.PP
+VAXBI devices are located by a very deterministic procedure
+since VAXBI space can be probed completely.  Existing devices are noted
+on the console if they are not configured, or if they are
+unsupported devices.
+.PP
+MASSBUS devices are located by a very deterministic procedure since
+MASSBUS space is completely probe-able.  If devices exist which
+are not configured they will be silently ignored; if devices exist of
+unsupported type they will be noted.
+.PP
+UNIBUS devices are located by probing to see if their control-status
+registers respond.  If not, they are silently ignored.  If the control
+status register responds but the device cannot be made to interrupt,
+a diagnostic warning will be printed on the console and the device
+will not be available to the system. 
+.PP
+.SH DIAGNOSTICS
+\fBNo configure routine for cpu type %d\fR.  An attempt was made
+to boot UNIX on a cpu type which it doesn't (or at least this compiled 
+version of UNIX doesn't) understand.
+.PP
+\fBmba%d at address 0x%x\fR.  A MASSBUS adapter was found at
+address 0x%x.  UNIX will call it mba%d.
+.PP
+\fB%d mba's not configured\fR.  More MASSBUS adapters were found on
+the machine than were declared in the machine configuration; the excess
+MASSBUS adapters will not be accessible.
+.PP
+\fBuba%d at address 0x%x\fR.  A UNIBUS adapter was found at
+address 0x%d.  UNIX will call it uba%d.
+.PP
+\fBdr32 unsupported at address 0x%d\fR.  A DR32 interface was found at 
+address 0x%d, for which UNIX does not have a driver.
+.PP
+\fBci unsupported at address 0x%d\fR.  A CI interface was found at
+address 0x%d, for which UNIX does not have a driver.
+.PP
+\fBmcr%d at address 0x%x\fR.  A memory controller was found at
+address 0x%d.  UNIX will call it mcr%d.
+.PP
+\fB5 mcr's unsupported at address 0x%d\fR.  UNIX supports only 
+4 memory controllers per cpu.
+.PP
+\fBmpm unsupported at address 0x%x\fR.  Multi-port memory is 
+unsupported in the sense that UNIX does not know how to poll it for 
+ECC errors.
+.PP
+\fB%s%d at mba%d drive %d\fR.  A tape formatter or a disk was found
+on the MASSBUS; for disks %s%d will look like ``hp0'', 
+for tape formatters like ``ht1''.  
+The drive number comes from the unit plug on the drive
+or in the TM formatter (\fBnot\fR on the tape drive; see below).
+.PP
+\fB%s%d at %s%d slave %d\fR (for MASSBUS devices).
+A tape slave was found on the tape formatter 
+at the indicated drive number (on the front of the tape drive).
+UNIX will call the device, e.g., \fBtu0\fR.
+For example, ``tu0 at ht0 slave 0'',
+where \fBtu0\fR is the name for the tape device and \fBht0\fR is the 
+name for the formatter.  
+.PP
+\fB%s%d at %s%d slave %d\fR (for UNIBUS and VAXBI devices).
+Which would look like ``ra0 at uq0 slave 0'',
+where \fBra0\fR is the name of a disk drive and \fBuq0\fR is the name
+of the port protocol.
+.PP
+\fB%s%d at uba%d csr %o vec %o ipl %x\fR.  The device %s%d, e.g. dz0
+was found on uba%d at control-status register address %o and with
+device vector %o.  The device interrupted at priority level %x.
+.PP
+\fB%s%d at uba%d csr %o zero vector\fR.  The device did not present
+a valid interrupt vector, rather presented 0 (a passive release condition)
+to the adapter.
+.PP
+\fB%s%d at uba%d csr %o didn't interrupt\fR.  
+The device did not interrupt, possibly because it is broken, 
+hung, or not the kind of device it is advertised to be.
+.PP
+\fB%s%d at %s%d csr %o vec %o ipl %x\fR (for UNIBUS and VAXBI
+controllers).  The port %s%d, for example, uq0
+was found on controller %s%d at control-status register address %o 
+and with controller interrupt vector %o.  
+The controller interrupted at priority level %x.
+.PP
+\fB%s%d at %s%d csr %o zero vector\fR (for UNIBUS and VAXBI
+controllers).  The port did not present
+a valid interrupt vector, rather presented 0 (a passive release condition)
+to the adapter.
+.PP
+\fB%s%d at %s%d csr %o didn't interrupt\fR (for UNIBUS and
+VAXBI controllers).  The port did not interrupt, possibly because 
+it is broken, hung, or not the kind of port it is advertised to be.
+.PP
+\fBnbia%d at address %x\fR.  An nbia adapter was found at a NEXUS.
+.PP
+\fBvaxbi%d at address %x\fR.  A vaxbi number was found starting at
+address %x.
+.PP
+\fB%s%d at vaxbi%d node %d\fR.  The device, controller, or adapter
+%s%d was found on vaxbi%d at node%d.
+.PP
+\fBvaxbi%x node%d, unsupported device type 0x%x\fR. On a vaxbi%x at
+node%d there is a device with type number 0x%x that is
+unsupported by this release of ULTRIX.
+.PP
+\fB%s at vaxbi%d node%d option not configured!\fR.  A supported vaxbi
+device %s, found at vaxbi%d node%d was not configured into the
+system.  The device %s will not be seen by the system.  To use
+device %s, configure the system with the device included in the
+configuration file.
+.PP
+\fB%s at vaxbi%d node%d failed to initialize!\fR.  The device did not
+initialize, possibly because it was broken.
+.SH SEE ALSO
+intro(4), config(8)

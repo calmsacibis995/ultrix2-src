@@ -1,0 +1,43 @@
+.TH cmp 1
+.SH NAME
+cmp \- compare two files
+.SH SYNTAX
+.B cmp
+[
+.B -l
+] [
+.B -s
+]
+file1 file2
+.SH DESCRIPTION
+The
+.PN cmp
+command compares two files. 
+If
+.I file1
+is `\-',
+the standard input is used.
+Under default options,
+.PN cmp
+makes no comment if the files are the same.
+If they differ, it announces the byte and line number
+at which the difference occurred.
+If one file is an initial subsequence
+of the other, that fact is noted.
+.SH OPTIONS
+.TP 6
+.B  \-l
+Print the byte number (decimal) and the
+differing bytes (octal) for each difference.
+.TP 6
+.B  \-s
+Print nothing for differing files;
+return codes only.
+.dt
+.SH DIAGNOSTICS
+Exit code 0 is returned for identical
+files, 1 for different files, and 2 for an
+inaccessible or missing argument.
+Only one option may be specified at a time.
+.SH "SEE ALSO"
+diff(1), comm(1)

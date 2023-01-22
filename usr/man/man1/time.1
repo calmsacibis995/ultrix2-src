@@ -1,0 +1,34 @@
+.TH time 1 
+.SH NAME
+time \- time a command
+.SH SYNTAX
+.B time
+command
+.SH DESCRIPTION
+The
+given command is executed; after it is complete,
+.PN time
+prints the elapsed time during the command, the time
+spent in the system, and the time spent in execution
+of the command.
+Times are reported in seconds.
+.PP
+The times are printed on the diagnostic output stream.
+.PP
+The
+.PN time
+is built in to csh(1), using a different output format.
+.SH RESTRICTIONS
+Elapsed time is accurate to the second,
+while the CPU times are measured
+to the 100th second.
+Thus the sum of the CPU times can be up to a second larger
+than the elapsed time.
+.PP
+The
+.PN time
+is a built-in command to csh(1),
+with a much different syntax.  This command is available as
+``/bin/time'' to
+.PN csh
+users.

@@ -1,0 +1,59 @@
+.TH time 3
+.SH NAME
+time, ftime \- get date and time
+.SH SYNTAX
+.nf
+.B long time(0)
+.PP
+.B long time(tloc)
+.B long *tloc;
+.PP
+.B #include <sys/types.h>
+.B #include <sys/timeb.h>
+.B ftime(tp)
+.B struct timeb *tp;
+.fi
+.SH DESCRIPTION
+The
+.PN time
+subroutine
+returns the time since 00:00:00 GMT, Jan. 1, 1970, measured
+in seconds.
+.PP
+If
+.I tloc
+is nonnull,
+the return value is also stored in the
+place to which
+.I tloc
+points.
+.PP
+The
+.PN ftime
+entry fills in a structure pointed to by its argument,
+as defined by < sys/timeb.h >:
+.EX
+
+struct timeb
+{
+        time_t   time;
+        unsigned short millitm;
+        short    timezone;
+        short    dstflag;
+};
+
+.EE
+.PP
+The structure contains the time since the epoch in seconds,
+up to 1000 milliseconds of more-precise interval,
+the local time zone
+(measured in minutes of time westward from Greenwich),
+and a flag that, if nonzero, indicates that
+Daylight Saving time applies locally
+during the appropriate part of the year.
+.SH ENVIRONMENT
+When your program is compiled using the System V environment,
+.PN time
+returns the elapsed time in seconds since system startup on success.
+.SH "SEE ALSO"
+date(1), gettimeofday(2), settimeofday(2), ctime(3)

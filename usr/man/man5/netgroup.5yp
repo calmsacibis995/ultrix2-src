@@ -1,0 +1,84 @@
+.TH netgroup 5yp
+.SH NAME
+netgroup \- list of network groups
+.SH DESCRIPTION
+The
+.PN netgroup
+file defines network wide groups,
+used for permission checking when doing
+remote mounts, remote logins, and remote shells.
+For remote mounts, the information in the 
+.PN netgroup
+file is used to classify machines;
+for remote logins and remote shells,
+it is used to classify users.
+Each line of the
+.PN netgroup
+file defines a group and has the format:
+.IP
+groupname member1...member_n
+.PP
+Each member is either another group name, or a combination
+of the hostname, username, and domainname.
+.PP
+Any of the three fields can be empty,
+in which case it signifies a wild card.
+For instance,
+to define a group to which everyone belongs, the following entry
+could appear in the 
+.PN netgroup
+file:
+.IP
+universal (,,)
+.PP
+Field names that begin with something other
+than a letter, digit or underscore
+(such as ``-'') work in the opposite way.
+For example:
+.IP
+justmachines	(analytica,-,suez)
+.br
+justpeople	(-,babbage,suez)
+.PP
+The machine
+.I analytica
+belongs to the group
+.I justmachines
+in the domain
+.I suez,
+but no users belong to it.
+Similarly, the user
+.I babbage
+belongs to the group 
+.I justpeople
+in the domain
+.I suez,
+but no machines belong to it. 
+.PP
+Network groups are part of the yellow pages data base,
+and are accessed through these files:
+.nf
+/etc/yp/\fIdomainname\fP/netgroup.dir
+/etc/yp/\fIdomainname\fP/netgroup.pag
+/etc/yp/\fIdomainname\fP/netgroup.byuser.dir
+/etc/yp/\fIdomainname\fP/netgroup.byuser.pag
+/etc/yp/\fIdomainname\fP/netgroup.byhost.dir
+/etc/yp/\fIdomainname\fP/netgroup.byhost.pag
+.fi
+These files can be created from /etc/netgroup using makedbm(8yp).
+.SH FILES
+/etc/netgroup
+.br
+/etc/yp/\fIdomainname\fP/netgroup.dir
+.br
+/etc/yp/\fIdomainname\fP/netgroup.pag
+.br
+/etc/yp/\fIdomainname\fP/netgroup.byuser.dir
+.br
+/etc/yp/\fIdomainname\fP/netgroup.byuser.pag
+.br
+/etc/yp/\fIdomainname\fP/netgroup.byhost.dir
+.br
+/etc/yp/\fIdomainname\fP/netgroup.byhost.pag
+.SH SEE ALSO
+getnetgrent(3yp), makedbm(8yp), ypserv(8yp)

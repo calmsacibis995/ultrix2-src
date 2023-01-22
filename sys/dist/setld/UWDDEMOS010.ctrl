@@ -1,0 +1,6 @@
+NAME='ULTRIX Workstation UWDDEMOS010'
+DESC='Demonstration Programs'
+NVOLS=1:21
+MTLOC=1:4
+DEPS="UWDGKS010"
+FLAGS=2

@@ -1,0 +1,46 @@
+# @(#)DECVAX	1.3	(ULTRIX)	6/5/86
+#
+# DECVAX
+# Digital VAX 8200 (Scorpio) multiuser developement machine
+#
+machine		vax
+cpu		"VAX8200"
+ident		DECVAX
+maxusers	32
+maxuprc		40
+physmem		16
+timezone	5 dst 1
+options		INET
+options		QUOTA
+options		LAT
+options		DECNET
+options		DLI
+
+config		vmunix		root on ra0a swap on ra0b
+
+adapter		vaxbi0	at nexus ?
+adapter		uba0	at nexus ?
+
+controller	kdb0	at vaxbi? node?
+controller	uq0	at kdb0 vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+disk		ra2	at uq0 drive 2
+disk		ra3	at uq0 drive 3
+controller	klesib0	at vaxbi? node?
+controller	tmscp0	at klesib0 vector tmscpintr
+tape		tms0	at tmscp0 drive 0
+device		dmc0	at uba? csr 0160070 vector dmcrint dmcxint
+device		de0	at uba? csr 0174510 vector deintr
+device		dz0	at uba? csr 0160100 flags 0x00 vector dzrint dzxint
+device		dz1	at uba? csr 0160110 flags 0x00 vector dzrint dzxint
+device		dz2	at uba? csr 0160120 flags 0x00 vector dzrint dzxint
+
+pseudo-device	pty
+pseudo-device	loop
+pseudo-device	inet
+pseudo-device	ether
+pseudo-device	lat
+pseudo-device	lta
+pseudo-device	decnet
+pseudo-device	dli

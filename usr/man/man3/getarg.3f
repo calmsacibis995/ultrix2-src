@@ -1,0 +1,24 @@
+.TH getarg 3f
+.SH NAME
+getarg, iargc \- return command line arguments
+.SH SYNTAX
+.B subroutine getarg (k, arg)
+.br
+.B character*(*) arg
+.sp 1
+.B function iargc ()
+.SH DESCRIPTION
+A call to
+.PN getarg
+will return the \fBk\fIth\fR command line argument in character string
+.I arg.
+The 0\fIth\fR argument is the command name.
+.PP
+An
+.PN iargc
+call returns the index of the last command line argument.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+execve(2), getenv(3f)

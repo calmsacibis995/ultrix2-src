@@ -1,0 +1,125 @@
+.TH msgget  2
+.\" Last modified by BAM on 29-Jul-85  1300  
+.\"
+.SH NAME
+msgget \- get message queue
+.SH SYNTAX
+.nf
+.ft B
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+.PP
+.ft B
+int msgget (key, msgflg)
+key_t key;
+int msgflg;
+.fi
+.SH DESCRIPTION
+The
+.PN msgget
+system call
+returns the message queue identifier associated with
+.I key.
+.sp
+A message queue identifier and associated message queue and data
+structure 
+are created for
+.I key 
+if one of the following are true:
+.sp
+.IP
+The
+.I key
+is equal to
+.B IPC_PRIVATE
+.IP
+The
+.I key
+does not already have a message queue identifier associated with it,
+and
+.IR (msgflg
+&
+.BR IPC_CREAT)
+is "true".
+For further information, see intro(2). 
+.PP
+Upon creation, the data structure associated with the new message queue
+identifier is initialized as follows:
+.IP
+.BR msg_perm.cuid,
+.BR msg_perm.uid,
+.B msg_perm.cgid
+and 
+.B msg_perm.gid
+are set equal to the effective user ID and effective group ID,
+respectively, of the calling process.
+.IP
+The low-order 9 bits of
+.B msg_perm.mode
+are set equal to the low-order 9 bits of
+.I msgflg.
+.IP
+.BR msg_qnum ,
+.BR msg_lspid ,
+.BR msg_lrpid ,
+.BR msg_stime ,
+and
+.B mgs_rtime
+are set equal to 0.
+.IP
+The
+.B msg_ctime
+is set equal to the current time.
+.IP
+The
+.B msg_qbytes
+is set equal to the system limit.
+.PP
+Upon successful completion, a non-negative integer, namely a message
+queue identifier is returned.  Otherwise, a value of -1 is returned and
+.I errno
+is set to indicate the error.
+.SH DIAGNOSTICS
+The
+.PN msgget
+system call
+will fail if one or more of the following are true:
+.TP 15
+[EACCES]
+A message queue identifier exists for
+.I key
+but operations permission 
+as specified by the low-order 9 bits of
+.I msgflg
+would not be granted. 
+For further information, see intro(2).
+.TP 15
+[ENOENT]
+A message queue identifier does not exist for
+.I key
+and
+.IR (msgflg
+&
+.BR IPC_CREAT)
+is "false". 
+.TP 15
+[ENOSPC]
+A message queue identifier is to be created but the system imposed
+limit on the maximum number of allowed message queue
+identifiers system wide would be exceeded. 
+.TP 15
+[EEXIST]
+A message queue identifier exists for
+.I key
+but
+.RI (( msgflg
+&
+.BR IPC_CREAT )
+&
+.RI ( msgflg
+&
+.BR IPC_EXCL ))
+is "true". 
+.SH SEE ALSO
+msgctl(2), msgop(2), ftok(3)

@@ -1,0 +1,8 @@
+	-if [ ! -d ${DESTROOT}/usr/lib ] ; then \
+		mkdir ${DESTROOT}/usr/lib; \
+		chmod 755 ${DESTROOT}/usr/lib; \
+		chown root ${DESTROOT}/usr/lib; \
+		chgrp system ${DESTROOT}/usr/lib ;\
+	else true; \
+	fi
+	for i in ${PRESUBDIR}; do cd $$i; \

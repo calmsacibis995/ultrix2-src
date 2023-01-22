@@ -1,0 +1,64 @@
+.\" Last modified by MJT on 27-Aug-85  0001
+.\"  Repaired beginning matter to work right in whatis database
+.TH sccsdiff 1
+.SH NAME
+sccsdiff \- compare two versions of an SCCS file
+.SH SYNTAX
+.B sccsdiff
+.BR \-r \s-1SID\s+1\&1
+.BR \-r \s-1SID\s+1\&2
+.RB [ \-p ]
+.RB [ \-s n]
+.I files
+.SH DESCRIPTION
+The
+.PN sccsdiff
+command 
+compares two versions of an
+SCCS
+file and generates the differences between the
+two versions.
+You can specify any number of
+SCCS
+files, but arguments apply to all files.
+.RS 5
+.TP 10
+.BI \-r \s-1SID\s+1?\^
+.IR \s-1SID\s+11 \ and \ \s-1SID\s+12 \ specify
+the deltas of an
+SCCS
+file that are to be compared.
+Versions are passed to
+.PN bdiff(1)
+in the order given.
+.TP 10
+.B \-p
+pipe output for each file through
+pr(1).
+.TP 10
+.BI \-s n\^
+\fIn\fP is the file segment size that
+\fBbdiff\fR
+passes to
+.PN diff(1).
+This is useful when
+\fBdiff\fR
+fails due to a high system load.
+.SH DIAGNOSTICS
+.PD 0
+.TP 25
+.RI `` file ": No differences''"
+If the two versions are the same.
+.PP
+Use
+.PN sccshelp(1)
+for explanations.
+.PD
+.SH FILES
+.TP "\w'/tmp/get?????\ \ 'u"
+/tmp/get?????
+Temporary files
+.SH "SEE ALSO"
+bdiff(1), get(1), pr(1), sccs(1), sccshelp(1)
+.br
+System Management Guide

@@ -1,0 +1,55 @@
+# @(#)VAPOR	1.7	(ULTRIX)	6/26/86
+#
+# VAPOR
+# Digital VAX 8800 (Nautilus) standalone development machine
+#
+machine 	vax
+cpu		"VAX8800"
+ident		VAPOR
+timezone	5 dst
+maxusers	32
+physmem 	32
+processors	2
+options 	QUOTA
+options 	INET
+options 	LAT
+options 	DLI
+
+config		vmunix		root on ra0 swap on ra0 and ra1
+
+adapter		vaxbi0	at nexus ?
+adapter		vaxbi1	at nexus ?
+adapter		vaxbi2	at nexus ?
+adapter		vaxbi3	at nexus ?
+adapter		uba0	at nexus ?
+controller	kdb0	at vaxbi? node?
+controller	uq0	at kdb0			vector uqintr
+controller	kdb1	at vaxbi? node?	
+controller	uq1	at kdb1			vector uqintr
+controller	kdb2	at vaxbi? node?	
+controller	uq2	at kdb2			vector uqintr
+controller	kdb3	at vaxbi? node?	
+controller	uq3	at kdb3			vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+disk		ra2	at uq0 drive 2
+disk		ra3	at uq0 drive 3
+disk		ra4	at uq? drive 4
+disk		ra5	at uq? drive 5
+disk		ra6	at uq? drive 6
+disk		ra7	at uq? drive 7
+device		de0	at uba0 csr 0174510		vector deintr
+device		dmf0	at uba? csr 0160340	 flags 0xff
+	vector dmfsrint dmfsxint dmfdaint dmfdbint dmfrint dmfxint dmflint
+controller	klesib0 at vaxbi? node?
+controller	tmscp0	at klesib0 			vector tmscpintr
+tape		tms0	at tmscp0 drive 0
+controller	aie0	at vaxbi? node?
+device		bvpni0	at aie0 		vector bvpniintr
+pseudo-device	pty
+pseudo-device	loop
+pseudo-device	inet
+pseudo-device	ether
+pseudo-device	lat
+pseudo-device	lta
+pseudo-device	dli

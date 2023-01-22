@@ -1,0 +1,61 @@
+.TH df 1
+.SH NAME
+df \- display free and used disk space
+.SH SYNTAX
+.B df
+[
+.B \-i
+] [ \fIfilesystem\fR... ] [ \fIfile\fR... ]
+.SH DESCRIPTION
+The
+.B df
+command displays the amount of disk space
+available on the specified
+.I filesystem,
+for example,
+/dev/ra0a.
+It will also display the amount of available disk space
+on the file system in which the specified
+.I file
+is contained, $HOME for example.
+If a device is given that has no file systems
+mounted on it,
+.B df
+displays the information for the root file system.
+Without any arguments or options,
+.B df
+displays
+both the used disk space and the free disk space on all of the 
+file systems that have been mounted using the
+.I fstab
+file.  The numbers are reported in kilobytes. 
+.SH EXAMPLES
+.EX 0
+Filesystem    total    kbytes  kbytes  percent
+   node       kbytes    used    free   used    Mounted on
+/dev/ra1a       7429    2085    4602    31%    /tmp
+/dev/ra0e      30519   14817   12651    54%    /usr/spool
+/dev/ra0h     313233  122858  159052    44%    /usr/staff1
+.EE
+.PP
+The total disk space is the total space that was created
+during the making of the file system.
+The addition of the used space, the
+free space and a percentage of reserved space is the total space.
+The default value for the reserved space is 10%.
+.SH OPTIONS
+.PP
+.TP
+.B \-i
+In addition to disk information, report the number of free inodes and
+the number of used inodes.
+.SH RESTRICTIONS
+You can no longer use the 
+.B df
+command to find free space on an unmounted file system using the
+block or character special device name.  Instead, use the
+dumpfs(8) command.
+.SH FILES
+/etc/fstab	list of mounted filesystems
+.SH "SEE ALSO"
+fstab(5), icheck(8), mkfs(8), newfs(8), quot(8)

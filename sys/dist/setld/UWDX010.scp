@@ -1,0 +1,163 @@
+#!/bin/sh
+#
+#	Sccsid "@(#)Xconf.sh	1.13 (ULTRIX) 1/31/86"
+#
+#	Xconf.sh
+#		- configuration for X-WINDOWS-WS Subset
+#
+#			Copyright (c) 1985 by
+#		Digital Equipment Corporation, Maynard, MA
+#			All rights reserved.
+#
+#   This software is furnished under a license and may be used and
+#   copied  only  in accordance with the terms of such license and
+#   with the  inclusion  of  the  above  copyright  notice.   This
+#   software  or  any  other copies thereof may not be provided or
+#   otherwise made available to any other person.  No title to and
+#   ownership of the software is hereby transferred.
+#
+#   The information in this software is subject to change  without
+#   notice  and should not be construed as a commitment by Digital
+#   Equipment Corporation.
+#
+#   Digital assumes no responsibility for the use  or  reliability
+#   of its software on equipment which is not supplied by Digital.
+#
+#	Modification History
+#
+#	000	ccb	8-28-1985
+#	001	ccb	09-04-1985
+#		Add stuff to handle /etc/ttys goodies.
+#	002	ccb	09-06-1985
+#		Add message about ttys
+#		make qdconsole, ptyv0
+#	003	ccb	09-07-1985
+#		Modify line for /etc/ttys
+#		set correct modes for devices.
+#	004	ccb	09-12-1985
+#		Move ptypf to ptyv0,
+#		Move ttypf to ttyv0 for installs and reverse for deletes.
+#		Clobber qconsole at delete.
+#	005	ccb	10-15-1985
+#		remove all device creation, this happens w/QILconf
+#		ask user if system startup of server is desired.
+#	006	ccb	11/13/1985
+#		set up for setld -c, change state of ttys.
+#	007 	jhw	01/30/1985
+#		changed TTDATA to startup with UNIX:0
+#	008	ccb	18-AUG-1986
+#		Convert to ULTRIX V2.0 SCP format
+umask 022
+D=/dev
+U=/usr
+B=/bin
+TTY=$D/tty
+NUL=$D/null
+S=$U/adm/subsets
+TTYS=/etc/ttys
+TTMP=/tmp/ttys
+TF0=ttypf
+PF0=ptypf
+XP0=ptyv0
+XT0=ttyv0		# special device for X login window.
+TF1=ttype
+PF1=ptype
+XP1=ptyv1
+XT1=ttyv1
+
+TT0DATA="$XT0 \"$U$B/xterm -L -r -i -fn 9x15 =80x24+200+300 unix:0\" xterm on secure window=\"$U$B/X 0 -0 000000 -1 FFFFFF\""
+TT1DATA="$XT1 \"$U$B/xterm -L -r -i -fn 9x15 =80x24+200+300 unix:1\" xterm on secure window=\"$U$B/X 1 -0 000000 -1 FFFFFF\""
+
+case $ACT in
+POST_[AL])
+	# kludge xterm for yp
+	[ -f /sys/dist/xterm ] &&
+	{
+		cp /sys/dist/xterm /usr/bin/xterm
+		chmod 4755 /usr/bin/xterm
+	}
+	# set up ttyv0 etc.
+	while :
+	do
+		echo -n "
+Do you want the system to start the X server
+on the console display for you? (y/n) [y] "
+		read JUNK
+		case "$JUNK" in
+		[Yy]*|"")
+			mv $D/$TF0 $D/$XT0
+			mv $D/$PF0 $D/$XP0
+			egrep -v "$XT0" $TTYS > $TTMP
+			echo $TT0DATA >> $TTMP
+			mv $TTMP $TTYS
+			break
+			;;
+		[Nn]*)	break
+			;;
+		esac
+	done
+	NQD=`echo "qdcount/d"|adb /vmunix /dev/kmem|awk 'NR == 2 {print $2}'`
+	case "$NQD" in
+	2)
+		while :
+		do
+			echo -n "
+Do you want the system to start the X server
+on the second display for you? (y/n) [y] "
+			read JUNK
+			case "$JUNK" in
+			[Yy]*|"")
+				mv $D/$TF1 $D/$XT1
+				mv $D/$PF1 $D/$XP1
+				egrep -v "$XT1" $TTYS > $TTMP
+				echo $TT1DATA >> $TTMP
+				mv $TTMP $TTYS
+				break
+				;;
+			[Nn]*)	break
+				;;
+			esac
+		done
+		;;
+	esac
+	# stream edit /etc/hosts
+	sed -f /usr/adm/bin/net.sed </etc/hosts >/tmp/hosts
+	mv /tmp/hosts /etc
+	;;
+	
+POST_D)	
+	# put the pty's back.
+	[ -f $D/$XT0 ] && mv $D/$XT0 $D/$TF0
+	[ -f $D/$XP0 ] && mv $D/$XP0 $D/$PF0
+	[ -f $D/$XT1 ] && mv $D/$XT1 $D/$TF1
+	[ -f $D/$XP1 ] && mv $D/$XP1 $D/$PF1
+	egrep -v "$XT0|$XT1" $TTYS > $TTMP
+	mv $TTMP $TTYS
+	;;
+
+C)	egrep -s "$XT" $TTYS	# lets set up auto-window
+	case "$?" in
+	0)	# found it, remove.
+		mv $D/$XT0 $D/$TF0
+		mv $D/$XP0 $D/$PF0
+		egrep -v "$XT0" $TTYS > $TTMP
+		mv $TTMP $TTYS
+		exit 0
+		;;
+	1)	# not found, add it
+		mv $D/$TF0 $D/$XT0
+		mv $D/$PF0 $D/$XP0
+		echo "$TTDATA" >> $TTYS
+		exit 0
+		;;
+	2)	echo "No /etc/ttys!"
+		exit 1
+		;;
+	esac
+	;;
+
+esac
+exit 0
+
+
+

@@ -1,0 +1,16 @@
+.TH mountd 8nfs
+.SH NAME
+mountd \- NFS mount request server.
+.SH SYNTAX
+.B /etc/mountd
+.SH DESCRIPTION
+The 
+.PN mountd 
+daemon is an NFS server that answers file system mount requests.
+It reads the /etc/exports
+file to determine which file systems are available to which machines
+and which users.  It also provides information as to which clients have
+file systems mounted.  This information can be displayed by using the 
+showmount(8nfs) command.
+.SH SEE ALSO
+exports(5nfs), mount(8nfs), nfsd(8nfs), showmount(8nfs)

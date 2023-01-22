@@ -1,0 +1,228 @@
+#!/bin/sh
+#
+#	gentapes -
+#		generic remote tape production utility
+#
+
+
+#			Copyright (c) 1985 by
+#		Digital Equipment Corporation, Maynard, MA
+#			All rights reserved.
+#								
+#	This software is furnished under a license and may be used and
+#	copied  only  in accordance with the terms of such license and
+#	with the  inclusion  of  the  above  copyright  notice.   This
+#	software  or  any  other copies thereof may not be provided or
+#	otherwise made available to any other person.  No title to and
+#	ownership of the software is hereby transferred.		
+#								
+#	The information in this software is subject to change  without
+#	notice  and should not be construed as a commitment by Digital
+#	Equipment Corporation.					
+#								
+#	Digital assumes no responsibility for the use  or  reliability
+#	of its software on equipment which is not supplied by Digital.
+#
+#	MODS:
+#		000	ccb	15-jul-1986
+#		001	ccb	8-nov-1986
+#			clean up temp files. make it possible to
+#			run several instances simultaneously.
+#
+
+SCCSID="@(#)gentapes	1.7 (ULTRIX) 12/8/86"
+PATH=/bin:/etc:/usr/bin:/usr/ucb:/usr/hosts
+export PATH
+PROG=$0
+TD=/usr/tmp
+TMP=$TD/mttmp$$
+DFS="$IFS"
+NL="
+"
+
+trap 'rm -rf /usr/tmp/*'$$' ;exit $STAT' 0 1 2 3 15
+STAT=1	# assume failure
+
+readonly PROG PATH TMP DFS
+
+WRITE=1 VFY=1
+case "$1" in
+-v)	# verify only.
+	WRITE=0
+	shift
+	;;
+-w)	# write only
+	VFY=0
+	shift
+esac
+
+case $# in
+2)	
+	DEV=$2
+	IFS=:
+	set $1
+	IFS="$DFS"
+	case "$#" in
+	2)	HOST=$1
+		shift
+	esac
+	KITD=$1
+	KIT=${KITD}TK
+	;;
+*)	echo "Use: $PROG kitcode device"
+	exit 1
+	;;
+esac
+
+HERE=`hostname`
+case "$HOST" in
+$HERE|"")
+	RCMD=
+	HOST=$HERE
+	cp /etc/kitcap $TMP
+	;;
+*)
+	grep -s "$HOST" /etc/hosts ||
+	{
+		echo "Host $HOST not in hosts file."
+		exit 1
+	}
+	RCMD="rsh $HOST -n "
+	rcp $HOST:/etc/kitcap $TMP
+	;;
+esac ||
+{
+	echo "Cannot access kitcap."
+	exit 1
+}
+
+UD=`expr $DEV : '.*mt\([0-9][0-9]*.\)'`
+DEV=/dev/nrmt$UD
+
+[ -w $DEV ] ||
+{
+	echo "No write access to $DEV"
+	exit
+}
+
+
+KITDESC=`grep "^$KIT" $TMP` ||
+{
+	echo "$PROG: can't find $KIT kit descriptor in kitcap."
+	exit
+}
+
+IFS=:
+set $KITDESC
+IFS="$DFS"
+echo "Generating $1 Kit from $HOST on $DEV"
+shift
+KD=$1
+$RCMD test -d $KD||
+{
+	echo "$PROG: can't find $HOST:$KD"
+	rm $TMP
+	exit 1
+}
+shift
+
+mt -f $DEV rew &
+echo rewind.
+LIST=$*
+BS=20
+case "$WRITE" in
+1)
+	echo "Write."
+	for K in $LIST
+	{
+		set `echo $K|sed 's/|/ /'`
+		IMAGE=$1
+		case "$2" in
+		"")	;;
+		*)	BS=$2
+			;;
+		esac
+		echo -n "Image $IMAGE..."
+		wait
+		case "$RCMD" in
+		"")
+			dd if=$KD/$IMAGE of=$DEV bs=${BS}b 2> /dev/null
+			;;
+		*)	$RCMD dd if=$KD/$IMAGE ibs=800k obs=2k 2> /dev/null |
+				dd of=$DEV ibs=2k obs=${BS}b 2> /dev/null
+			;;
+		esac ||
+		{
+			echo "Failed."
+			exit 1
+		}
+		echo "done.$NL"
+	}
+	mt -f $DEV rew &
+	echo rewind.
+	STAT=0
+	;;
+esac
+BS=10k
+case "$VFY" in
+1)
+	STAT=1
+	echo "Verify."
+	rcp $HOST:$KD/$KITD.image $TD/$KITD.image$$ ||
+	{
+		echo "$PROG: error accessing checksum file."
+		exit 1
+	}
+	for K in $LIST
+	{
+		IFS='|'
+		set $K
+		IFS="$DFS"
+		IMAGE=$1
+		case "$2" in
+		"")	BS=10k
+			;;
+		esac
+		echo -n "Image $IMAGE..."
+		wait
+
+		grep $K $TD/$KITD.image$$ > $TD/sum$K$$ ||
+		{
+			mt -f $DEV fsf ||
+			{
+				echo "Tape positioning error."
+				STAT=1;exit
+			}
+			echo "done."
+			continue
+		}
+		set x `cat $TD/sum$K$$`
+		shift
+		SUM=$1
+		SIZE=$2
+
+		dd if=$DEV bs=$BS rbuf=0 2> /dev/null |sum > $TD/SUM$$ ||
+		{
+			echo "$PROG: checksum error image $K."
+			STAT=1;exit
+		}
+		set x `cat $TD/SUM$$`
+		shift
+		case "$1$2" in
+		$SUM$SIZE)
+			;;
+		*)
+			echo "$PROG: Image $IMAGE checksum error."
+			STAT=1;exit
+		esac
+		rm -f $TD/sum$K$$
+		rm -f $TD/SUM$$
+		echo "done.$NL"
+	}
+	echo rewind.
+	mt -f $DEV rew
+	STAT=0
+	;;
+esac
+echo "Kit $KITD done."
+

@@ -1,0 +1,43 @@
+.TH kill 1
+.SH NAME
+kill \- send a signal to a process
+.SH SYNTAX
+.B kill
+[
+.BR \- sig
+]
+processid ...
+.br
+.B kill
+.B \-l
+.SH DESCRIPTION
+The
+.PN kill
+command
+sends the TERM (terminate, 15) signal to the specified processes.
+If a signal name or number preceded by `\-' is given
+as first argument, that signal is sent instead of terminate.
+For further information, see sigvec(2).
+The signal names are listed by
+`kill \-l', and are as given in /usr/include/signal.h,
+stripped of the common SIG prefix.
+.PP
+The terminate signal will kill processes that do not catch the signal;
+`kill \-9 ...' is a sure kill, as the KILL (9) signal cannot be caught.
+By convention, if process number 0 is specified, all members
+in the process group (that is, processes resulting from 
+the current login) are signaled. 
+This works only if you use sh(1) and not if not if you use csh(1).
+The killed processes must belong to the current user unless
+he is the super-user.
+.PP
+The process number of an asynchronous process
+started with `&' is reported by the shell.
+Process numbers can also be found by using
+csh(1).
+It allows job specifiers ``%...''
+so process ID's are not as often used as
+.PN kill
+arguments.  See csh(1) for details.
+.SH "SEE ALSO"
+csh(1), ps(1), kill(2), sigvec(2)

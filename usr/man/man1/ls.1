@@ -1,0 +1,148 @@
+.TH ls 1
+.SH NAME
+ls \- list contents of directory
+.SH SYNTAX
+.PP
+.B ls 
+[ \-\fBacdfgilqrstuCFR\fR ] \fIname\fR... 
+.SH DESCRIPTION
+For each directory argument,
+.B ls
+lists the contents of the directory.  For each file
+argument,
+.B ls
+repeats the file name and gives any other information you
+request with the options available.  By default, the list
+is sorted alphabetically.
+When no argument is given, the current directory
+is listed.
+When several arguments
+are given, files are listed first,
+followed by directories and the files
+within each directory.
+Options are listed below.
+.SH OPTIONS
+.IP \fB\-1\fR
+forces the output format to be one entry per line.  This is the
+default when output is not to a terminal.
+.IP \fB\-a\fR
+lists all entries. 
+Without this option, names that begin with a period (.) are not
+listed.
+.IP \fB\-c\fR
+uses the time the file attributes were changed for sorting or printing.
+.IP \fB\-C\fR
+forces multicolumn output.  This is the default when the output
+is to a terminal.
+.IP \fB\-d\fR
+lists only the directory name if an argument is a directory.  Use
+this option
+with \fB\-l\fR to get the status of
+a directory.
+.IP \fB\-f\fR
+lists the files within directories, in
+the order they appear in the directory file (see 
+.MS dir 5 ).
+Entries beginning
+with a period (.) are also listed.  This option overrides the
+\fB\-l, \-t, \-s,\fR and \fB\-r\fR options.
+.IP \fB\-F\fR
+causes directories to be marked with a trailing slash (/), sockets
+with a trailing equal sign (=), symbolic links with a trailing 
+at sign (@),
+and executable files with a trailing asterisk (*).  
+.IP \fB\-g\fR
+includes the group ownership of the file in a long output.
+To be used in conjunction with the \fB\-l\fR option.
+.IP \fB\-i\fR
+prints the i-number for each file in the first column
+of the report.
+.IP \fB\-l\fR
+lists the mode, number of links, owner,
+size in bytes, and time of last modification for each file.
+If the file is a special file, the size field 
+contains the major and minor device numbers instead of the size.
+If the file is
+a symbolic link, the pathname of the linked-to file is printed,
+preceded by ``\->''.
+.IP
+The mode field consists of 11 characters.  The first
+character indicates the type of entry:
+.IP
+\fBd\fR if the entry is a directory
+.br
+\fBb\fR if the entry is a block-type special file
+.br
+\fBc\fR if the entry is a character-type special file
+.br
+\fBl\fR if the entry is a symbolic link
+.br
+\fBs\fR if the entry is a socket
+.br
+\fB\-\fR if the entry is a plain file
+.IP
+The next 9 characters are interpreted as three sets of
+three characters each.  The first set of three characters
+refers to file-access permissions for the user; the next
+set, for the user-group; and the last set, for all others.
+The permissions are indicated as follows:
+.IP
+\fBr\fR if the file is readable
+.br
+\fBw\fR if the file is writable
+.br
+\fBx\fR if the file is executable
+.br
+\fB\-\fR if the indicated permission is not granted.
+.IP
+The group-execute permission character is given as \fBs\fR
+if the file has the set-group-id bit set; likewise, the
+user-execute permission character is given as \fBs\fR if the
+file has the set-user-id bit set.
+.IP
+The last character of the mode (normally `x' or `\-') is
+\fBt\fR if the 1000 bit of the mode is on.  See
+.MS chmod 1
+for the meaning of this mode.
+.IP \fB\-L\fR
+lists the information, if the file is a symbolic link, for
+the file or directory the link references rather than that
+for the link itself.
+.IP \fB\-q\fR
+forces the printing of nongraphic characters in file names as the
+question mark character (?).
+This is the default when output is to a
+terminal.
+.IP \fB\-r\fR
+reverses the order of the sort.
+If used with the \fBt\fR option, 
+.PN ls 
+lists the oldest
+file first.
+.IP \fB\-R\fR
+lists subdirectories recursively.
+.IP \fB\-s\fR
+gives the size in kilobytes of each file.
+This is the first item listed in each entry.
+.IP \fB\-t\fR
+sorts by time modified (latest first) instead of by name.
+.IP \fB\-u\fR
+uses the time of last access instead of last modification for
+sorting (with the \fB\-t\fR option) or printing
+(with the \fB\-l\fR option).
+.SH RESTRICTIONS
+The output device is assumed to be 80 columns wide.
+.PP
+Newline and tab are considered printing characters in file names.
+.PP
+The option setting based on whether the output is a teletype
+is undesirable as "ls -s" is much different than "ls -s |lpr".
+On the other hand, not doing this setting would make old shell
+scripts which used
+.B ls
+almost certain to fail.
+.SH FILES
+.IP \fB/etc/fstab\fR 1i
+Used to obtain user id's for \fBls \-l\fR
+.IP \fB/etc/group\fR 1i
+Used to obtain group id's for \fBls \-g\fR

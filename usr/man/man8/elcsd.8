@@ -1,0 +1,63 @@
+.TH elcsd 8
+.UC 4
+.SH NAME
+elcsd \- error logging daemon 
+.SH SYNTAX
+.B /etc/elcsd 
+.SH DESCRIPTION 
+The 
+.B elcsd
+daemon logs hardware and system-related error packets, or error
+messages, from the kernel errorlog buffer to the file
+syserr.<hostname>.  Hostname is the name of the local system.  At
+system startup, the 
+.B elcsd 
+daemon is invoked out of /etc/rc. 
+For further information, see rc(8).
+The 
+.B elcsd 
+daemon must be running whenever the system is in multiuser
+mode.
+.PP
+To invoke the 
+.B elcsd 
+daemon in single-user mode, use the 
+.B eli 
+command
+with the
+.B \-s 
+option.  
+.PP
+You can configure the 
+.B elcsd 
+daemon to log error packets locally from a
+remote ULTRIX host, or you can configure the 
+.B elcsd 
+daemon to send local error packets to a remote system.  Do this by
+changing the entries in the elcsd.conf file.  For further information, 
+see elcsd.conf(5). 
+The daemon uses an internet datagram socket to log information across
+systems.
+.PP
+Parameters related to 
+.B elcsd,
+such as the desired location for the errorlog file or files, as well
+as instructions for local and remote logging, can be specified in the
+error logging configuration file, 
+/etc/elcsd.conf. 
+For further information, see 
+elcsd.conf(5).  
+.SH RESTRICTIONS
+You must have superuser privileges to invoke the elcsd daemon.
+.SH DIAGNOSTICS 
+The elcsd daemon logs general status and error messages to
+/usr/adm/elcsdlog in multiuser mode.  This file is purged whenever the
+daemon is restarted.
+.SH FILES
+/etc/elcsd.conf	
+.br
+/usr/adm/elcsdlog
+.SH "SEE ALSO"
+elcsd.conf(5), eli(8), uerf(8)
+.br
+System Management Guide

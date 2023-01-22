@@ -1,0 +1,15 @@
+.TH lock 1
+.SH NAME
+lock \- reserve a terminal
+.SH SYNTAX
+.B lock
+.SH DESCRIPTION
+The 
+.B lock
+command requests a password from the user, then asks you to confirm
+the password by typing it in again.  The terminal refuses to
+relinquish the terminal until the password is repeated.  If
+you forget the password, you must 
+log in elsewhere and kill the lock process.
+.SH RESTRICTIONS
+Should time out after 15 minutes.

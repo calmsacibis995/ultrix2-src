@@ -1,0 +1,114 @@
+.TH bind 2
+.SH NAME
+bind \- bind a name to a socket
+.SH SYNTAX
+.nf
+.ft B
+#include <sys/types.h>
+#include <sys/socket.h>
+.PP
+.ft B
+bind(s, name, namelen)
+int s;
+struct sockaddr *name;
+int namelen;
+.PP
+.ft B
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+.PP
+.ft B
+bind(s, name, namelen)
+int s;
+struct sockaddr_un *name; 
+int namelen;
+.fi
+.SH DESCRIPTION
+The
+.PN bind
+system call assigns a name to an unnamed socket.
+When a socket is created 
+with socket(2)
+it exists in a name space (address family)
+but has no name assigned.
+The
+.PN bind
+system call requests the
+.IR name ,
+be assigned to the socket.
+.PP
+Binding a name in the UNIX domain creates a socket in the file
+system which must be deleted by the caller when it is no longer
+needed using unlink(2).
+.PP
+The
+.I sockaddr
+specifies a general address family.
+The
+.I sockaddr_un
+specifies an address family in the UNIX domain.
+.PP
+The rules used in name binding vary between communication domains.
+Consult the manual entries in section 4 for detailed information.
+.PP 
+If the bind is successful, a 0 value is returned.
+A return value of \-1 indicates an error, which is
+further specified in the global \fIerrno\fP.
+.SH DIAGNOSTICS
+The \fIbind\fP call will fail if:
+.TP 20
+[EBADF]
+\fIS\fP is not a valid descriptor.
+.TP 20
+[ENOTSOCK]
+\fIS\fP is not a socket.
+.TP 20
+[EADDRNOTAVAIL]
+The specified address is not available from the local machine.
+.TP 20
+[EADDRINUSE]
+The specified address is already in use.
+.TP 20
+[EINVAL]
+The socket is already bound to an address.
+.TP 20
+[EACCESS]
+The requested address is protected, and the current user
+has inadequate permission to access it.
+.TP 20
+[EFAULT]
+The \fIname\fP parameter is not in a valid part of the user
+address space.
+.PP
+The following errors are specific to binding names in the
+UNIX domain.
+.TP 20
+[ENOTDIR]
+A component of the path prefix is not a directory.
+.TP 20
+[EINVAL]
+The pathname contains a character with the high-order bit set.
+.TP 20
+[ENAMETOOLONG]
+A component of a pathname exceeded 255 characters,
+or an entire pathname exceeded 1023 characters.
+.TP 20
+[ENOENT]
+A prefix component of the path name does not exist.
+.TP 20
+[ELOOP]
+Too many symbolic links were encountered in translating
+the pathname.
+.TP 20
+[EIO]
+An I/O error occurred while making the directory entry
+or allocating the inode.
+.TP 20
+[EROFS]
+The name would reside on a read-only file system.
+.TP 20
+[EISDIR]
+A null pathname was specified.
+.SH SEE ALSO
+connect(2), getsockname(2), listen(2), socket(2)

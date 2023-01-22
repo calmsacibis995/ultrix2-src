@@ -1,0 +1,43 @@
+.TH flcopy 8v
+.SH NAME
+flcopy \- copier for floppy
+.SH SYNTAX
+.br
+.B /etc/flcopy
+[
+.B \-h
+] [
+\fB\-t\fIn\fR
+]
+.SH DESCRIPTION
+The
+.PN flcopy
+command copies the console floppy disk (opened as `/dev/floppy')
+to a file created in the current directory, named \*(lqfloppy\*(rq,
+then prints the message
+\*(lqChange Floppy, hit return when done\*(rq.
+Then
+.PN flcopy
+copies the local file back out to the floppy disk.
+.PP
+The
+.B \-h
+option to 
+.PN flcopy
+causes it to
+open a file named \*(lqfloppy\*(rq in the current directory
+and copy it to /dev/floppy.
+The
+.B \-t
+option
+causes only the first
+.I n
+tracks to participate in a copy.
+.SH RESTRICTIONS
+Floppy errors are handled ungracefully.
+.SH FILES
+/dev/floppy or /dev/rrx??
+.br
+floppy (in current directory)
+.SH SEE ALSO
+cfl(4), rx(4), rxformat(8v)

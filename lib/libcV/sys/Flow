@@ -1,0 +1,69 @@
+1	alarm: int(), <alarm.c 56>
+2		setitimer: <>
+3	creat: int(), <creat.c 15>
+4	getpgrp: int(), <getpgrp.c 11>
+5	gtty: int(), <gtty.c 11>
+6		ioctl: int(), <ioctl.c 121>
+7			new_tty: <>
+8			get_sgttyb: <>
+9			unfudge: <>
+10			set_sgttyb: <>
+11			fudge: <>
+12			unpack: <>
+13			pack: <>
+14			nap: <>
+15			ioctl: 6
+16			select: <>
+17	lockf: int(), <lockf.c 18>
+18	lseek: long(), <lseek.c 20>
+19		getpid: <>
+20		kill: int(), <kill.c 55>
+21			killpg: <>
+22			getpid: 19
+23	mount: int(), <mount.c 16>
+24		geteuid: <>
+25	nice: int(), <nice.c 50>
+26		getpriority: <>
+27		setpriority: <>
+28	open: int(), <open.c 21>
+29	plock: int(), <plock.c 12>
+30	ptrace: int(), <ptrace.c 19>
+31	sbrk: char*(), <sbrk.c 14>
+32		brk: int(), <brk.c 60>
+33			getrlimit: <>
+34	setpgrp: int(), <setpgrp.c 11>
+35		getpid: 19
+36	stime: int(), <stime.c 53>
+37		gettimeofday: <>
+38		settimeofday: <>
+39	stty: int(), <stty.c 11>
+40		ioctl: 6
+41	main: int(), <test.c 6>
+42		printf: <>
+43		ioctl: 6
+44		perror: <>
+45		read: int(), <read.c 19>
+46	times: long(), <times.c 57>
+47		getrusage: <>
+48		time: int(), <time.c 59>
+49			gettimeofday: 37
+50	ulimit: long(), <ulimit.c 58>
+51		getrlimit: 33
+52		setrlimit: <>
+53	umount: int(), <umount.c 14>
+54		getuid: <>
+55	uname: int(), <uname.c 18>
+56		gethostname: <>
+57		strcpy: <>
+58		strncpy: <>
+59	ustat: int(), <ustat.c 18>
+60		strcpy: 57
+61	utime: int(), <utime.c 65>
+62		time: 48
+63		utimes: <>
+64	wait: int(), <wait.c 15>
+65		signal: int*()(), <signal.c 88>
+66			catchsig: <>
+67			sigsetmask: <>
+68			ret_eintr: <>
+69	write: int(), <write.c 19>

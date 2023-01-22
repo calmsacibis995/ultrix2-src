@@ -1,0 +1,32 @@
+.TH talkd 8c
+.SH NAME
+talkd \- inter-terminal communications server
+.SH SYNTAX
+.B /etc/talkd
+.SH DESCRIPTION
+The 
+.PN talkd
+program is the server for the 
+.PN talk(1)
+program.  The server provides a rendezvous method for the
+requesting (possibly remote) 
+.PN talk 
+and the local responding
+.PN talk.
+.PP
+The
+.PN talkd
+server is invoked by 
+.PN inetd(8c)
+when it receives a packet on
+the port indicated in
+the ``talk'' service specification.  For further information, see
+.PN services(5).
+.SH RESTRICTIONS
+The
+.PN talkd
+server does not strictly follow network byte order in its packet format
+any may have difficulty in talking with implementations of talkd
+on other architectures that do not take this into account.
+.SH SEE ALSO
+talk(1), inetd(8c)

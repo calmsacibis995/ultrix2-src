@@ -1,0 +1,214 @@
+#!/bin/sh
+#
+#	Sccsid "@(#)MD.sh	1.13 (ULTRIX) 1/31/86"
+#
+#	MD.sh
+#		- configuration for WS-MD Subset
+#
+#			Copyright (c) 1985 by
+#		Digital Equipment Corporation, Maynard, MA
+#			All rights reserved.
+#
+#   This software is furnished under a license and may be used and
+#   copied  only  in accordance with the terms of such license and
+#   with the  inclusion  of  the  above  copyright  notice.   This
+#   software  or  any  other copies thereof may not be provided or
+#   otherwise made available to any other person.  No title to and
+#   ownership of the software is hereby transferred.
+#
+#   The information in this software is subject to change  without
+#   notice  and should not be construed as a commitment by Digital
+#   Equipment Corporation.
+#
+#   Digital assumes no responsibility for the use  or  reliability
+#   of its software on equipment which is not supplied by Digital.
+#
+#	Modification History
+#
+#	000	jah	06/03/86
+#	001	bms	06/11/86
+
+D=/dev
+U=/usr
+B=/bin
+TTY=$D/tty
+NUL=$D/null
+S=$U/adm/subsets
+TTYS=/etc/ttys
+TTMP=/tmp/ttys
+NEED=BINARY
+NEED2=X-WINDOWS-WS
+MYNAME=WS-MD
+ID=_inv.dist
+LOGFILE=/WS-MD.installation.log
+
+export XWINDOWS LOGFILE
+
+case $ACT in
+A|L)	# look for BINARY
+	[ -f $S/$NEED$ID ] ||
+	{
+		echo "
+The use of this software requires the prior installation of the
+$NEED subset. Because the $NEED subset is absent from your
+system, the $MYNAME subset cannot function properly and is being
+deleted from your system."
+		setld -d $MYNAME
+		exit 1
+	}
+
+	TARGET=`hostname | tr 'a-z' 'A-Z'`
+	if /bin/test -f /usr/sys/conf/$TARGET.dnet
+	then
+		TARGET=$TARGET.dnet
+	fi
+	/bin/rm -f /usr/sys/$TARGET/qd_data.o
+
+	while :
+	do
+		echo -n "
+Do you wish to run the X Windowing System on the additional graphics display?
+[y or n]?"
+
+		read XWINDOWS
+		case "$XWINDOWS" in
+		[YyNn]*)
+			break
+			;;
+		esac
+	done
+
+	# look for X-WINDOWS-WS
+	case "$XWINDOWS" in
+	[yY]*)
+		[ -f $S/$NEED2$ID ] ||
+		{	# XWINDOWS absent !!!!!
+			echo "
+The use of this software requires the prior installation of the
+$NEED2 subset. Because the $NEED2 subset is absent from your
+system, the $MYNAME subset cannot function properly and is being
+deleted from your system."
+		setld -d $MYNAME
+		exit 1
+	}
+	;;
+	esac
+	XWINDOWS=`echo $XWINDOWS|dd conv=lcase 2>/dev/null`
+
+	/bin/chmod 755 /usr/adm/bin/md.update.sh 2>>/dev/null
+	(/usr/adm/bin/md.update.sh) 2>>/dev/null
+	rm -f /usr/adm/bin/md.update.sh
+
+	exit 0
+
+	;;
+D) # The following steps de-install the additional display from a VAXStationII/GPX
+	# If DECnet has been installed, it will use HOSTNAME.dnet TARGET for
+	# the kernel build.
+	# To be run under su.
+	#
+	#	Modifications
+	#
+	#
+
+/bin/echo "
+Deconfiguring the additional display, this will take 10-15 minutes...
+"
+
+	TARGET=`hostname | tr 'a-z' 'A-Z'`
+	if /bin/test -f /usr/sys/conf/$TARGET.dnet
+	then
+		TARGET=$TARGET.dnet
+	fi
+	/bin/echo "Target : $TARGET" >> $LOGFILE 2>&1
+	
+	/bin/echo
+	/bin/echo
+
+	# Edit the system kernel configuration file ( /usr/sys/conf/<target> )
+	# to remove the following line for the second graphics controller:
+	
+	cd /usr/sys/conf
+	
+	/bin/cp $TARGET /tmp/junk$$
+	/usr/ucb/grep -v qd1 /tmp/junk$$ >$TARGET
+	
+	# To inform the system that you want login windows to appear on
+	# the additional display a line must be added to the ttys file for it.
+	# The line to activate the second display is:
+	
+	if /usr/ucb/grep -s ttyv1 /etc/ttys
+	then
+		/bin/cp /etc/ttys /tmp/junk$$
+		/usr/ucb/grep -v ttyv1 /tmp/junk$$ >/etc/ttys
+	fi
+	
+	if /bin/test -f /tmp/junk$$ ; then /bin/rm /tmp/junk$$ ; fi
+
+	if /usr/ucb/grep -s ttyc1 /etc/ttys
+	then
+		/bin/cp /etc/ttys /tmp/junk$$
+		/usr/ucb/grep -v ttyc1 /tmp/junk$$ >/etc/ttys
+	fi
+	
+	if /bin/test -f /tmp/junk$$ ; then /bin/rm /tmp/junk$$ ; fi
+
+	# kill X and the xterm before removing the special files
+
+	/bin/kill -HUP 1
+
+	# remove the special files
+
+	if /bin/test  -f /dev/qd1 ; then /bin/rm /dev/qd1 ; fi
+	if /bin/test  -f /dev/ttyc1 ; then /bin/rm /dev/ttyc1 ; fi
+	if /bin/test -f /dev/ttyv1 ; then /bin/mv /dev/ttyv1 /dev/ttype ; fi
+	if /bin/test -f /dev/ptyv1 ; then /bin/mv /dev/ptyv1 /dev/ptype ; fi
+
+	# Once these changes have been entered, generate a new system image. The
+	# following shows a "sample" kernel build.
+
+	cd /usr/sys/conf
+	/etc/config $TARGET >> $LOGFILE 2>&1
+	cd ../$TARGET
+	/bin/rm -f qd_data.o
+	/bin/echo '
+#!/bin/sh
+( while :
+do 
+/usr/bin/sleep 30
+/bin/echo -n .
+done )&
+PID=$!
+/bin/make depend >>'" $LOGFILE "' 2>&1
+if /bin/make >> make.log 2>&1
+then
+	/bin/kill $PID
+	/bin/echo
+	/bin/echo "Build was successful." >>'" $LOGFILE "'2>&1
+else
+	/bin/kill $PID
+	/bin/echo
+	/bin/echo "Error in build, please check /usr/sys/'"$TARGET"'/make.log."
+	exit
+fi' > ./tmp
+
+	(/bin/sh ./tmp) 2>>/dev/null
+	/bin/rm -f ./tmp
+
+	/bin/cp /vmunix /vmunix.old
+	/bin/mv vmunix /vmunix
+
+	# Now boot the new kernel
+
+	/bin/echo "
+Please reboot the kernel by issuing the command:
+
+		shutdown -r now
+
+The additional display will be deconfigured."
+	;;
+*)	echo "
+$MYNAME configuration argument error: $ACT"
+	exit 1
+esac
+exit 0

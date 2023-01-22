@@ -1,0 +1,22 @@
+.TH pti 1
+.SH NAME
+pti \- phototypesetter interpreter
+.SH SYNTAX
+.B pti
+[ file ... ]
+.SH DESCRIPTION
+.I Pti
+shows the commands in a stream from the standard output of
+.IR troff (1)
+using
+.I troff's
+.B \-t
+option,
+interpreting them as they would act on the typesetter.
+Horizontal motions shows as counts in internal units and
+are marked with `<' and `>' indicating left and right motion.
+Vertical space is called
+.I lead
+and is also indicated.
+.SH SEE ALSO
+troff(1)

@@ -1,0 +1,112 @@
+.\" to produce output: 
+.\" ditroff -Tln01 -t -man filename | lpr -n -Pln &
+.TH radisk 8 dc
+.UC 4
+.SH NAME
+radisk \- DSA disk maintenance
+.SH SYNTAX
+.B /etc/radisk
+.sp
+.B radisk
+.B \-c 
+.I LBN
+.I length
+.I special
+.RE
+.br
+.B radisk
+.B \-r
+.I LBN
+.I special
+.br
+.B radisk
+.B \-s
+.I LBN
+.I length
+.I special
+.SH DESCRIPTION
+The DSA disk maintenance program
+.PN radisk
+provides the essential functions to manage DSA (DIGITAL Storage
+Architecture) disk devices. The
+.PN radisk
+command must be used on unmounted disk partitions to insure correct
+results.
+.PP
+The
+.I LBN 
+is a decimal number that represents the logical block number as
+reported in the errorlog file.  The LBN is the actual disk block number
+starting from the beginning of the disk. The LBN specified with the
+.B \-s 
+option can be 
+.B 0 
+to indicate the first block in the specified partition.
+.PP
+The
+.I length 
+is a decimal number that indicates how many (512 byte) blocks to
+process.  The length specified may be 
+.B \-1 
+to indicate the last block of the specified partition.
+.PP
+For the 
+.B \-c 
+and 
+.B \-r 
+options, the
+.I special
+file specified indicates an unmounted 
+.B c
+partition of a character device special file.  The 
+.B \-s 
+option will accept any valid partition on the disk. This allows any
+partition to be scanned without scanning the entire disk and ensures
+that the specified partition is free of bad blocks. As an example,
+/dev/rra3h indicates the 
+.B h 
+partition of the third logical disk unit.
+.PP
+The following options may be set with 
+.PN radisk:
+.TP 15
+.B \-c    
+Clear a forced error indicator on the range of specified LBNs.  The
+forced error condition indicates that the data in the disk block is
+bad.  The disk block is good but the data can not be read without
+getting a error detection code (EDC) error.  This option will cause the
+forced error condition to be removed.  After the forced error indicator
+is cleared, the EDC error will not be reported nor will the data be
+marked as bad.  All indications that the data is corrupt are lost.  The
+data should be restored either by manual methods or with the 
+.PN restore
+command. The 
+.PN radisk 
+command affects the integrity of the data on a disk and should be
+followed by a file system restore if data is affected.
+.TP 15
+.B \-r
+Replace a block on the disk.  The specified LBN will be replaced.
+.TP 15
+.B \-s
+Start a scan for bad blocks on the specified area on a disk.  Bad blocks
+are disk blocks that have data transfer errors to the extent that they
+cannot be relied on.  When a bad block is found, it is replaced and the
+bad block's LBN is reported.
+.PP
+.DT
+.SH DIAGNOSTICS
+The
+.PN radisk
+command generates messages when the user is not privileged, when the
+LBN is not in the specified partition, and when the length exceeds the
+size of the partition.
+.SH RESTRICTIONS
+The 
+.B \-r 
+option is supported only with those DSA disks which use host-initiated
+dynamic bad block replacement. 
+.SH SEE ALSO
+dkio(4), ra(4), sdc(4), chpt(8), mount(8), restore(8)
+.br
+System Management Guide

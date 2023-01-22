@@ -1,0 +1,4 @@
+cc -o lookup lookup.o PasswordLookup_client.o /usr/new/lib/libcr.a
+cc -O -c PasswordLookup.c
+cc -O -c PasswordLookup_server.c
+cc -o PasswordLookup PasswordLookup.o PasswordLookup_server.o /usr/new/lib/libcr.a

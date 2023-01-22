@@ -1,0 +1,67 @@
+.TH fread 3s
+.SH NAME
+fread, fwrite \- buffered binary input/output
+.SH SYNTAX
+.B #include <stdio.h>
+.PP
+.B fread(ptr, sizeof(*ptr), nitems, stream)
+.br
+.SM
+.B "char *ptr; unsigned nitems, sizeof(*ptr)"
+.br
+.SM
+.B FILE
+.B *stream;
+.PP
+.B fwrite(ptr, sizeof(*ptr), nitems, stream)
+.br
+.SM
+.B "char *ptr; unsigned nitems, sizeof(*ptr)"
+.br
+.SM
+.B FILE
+.B *stream;
+.SH DESCRIPTION
+The
+.PN fread
+function reads into a block beginning at
+.IR ptr ,
+.I nitems
+of data of the type of
+.I *ptr
+from the named input
+.IR stream .
+It returns the number of items actually read.
+.PP
+If
+.I stream
+is
+.B stdin
+and the standard output is line buffered, then any partial output line
+will be flushed before any call to
+.PN read(2)
+to satisfy the
+.PN fread.
+.PP
+The
+.PN fwrite
+function appends, at most,
+.I nitems
+of data of the type of
+.I *ptr
+beginning at
+.I ptr
+to the named output
+.IR stream .
+It returns the number of items actually written.
+.SH DIAGNOSTICS
+The
+.PN fread
+and
+.PN fwrite
+functions return
+0
+upon end of file or error.
+.SH "SEE ALSO"
+read(2), write(2), fopen(3s), getc(3s), gets(3s),
+printf(3s), putc(3s), puts(3s), scanf(3s)

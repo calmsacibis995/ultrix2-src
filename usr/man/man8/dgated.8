@@ -1,0 +1,42 @@
+.TH dgated 8
+.SH NAME
+dgated \- Provide daemon login service via Decnet
+.SH SYNTAX
+.B /etc/dgated 
+.I host
+.SH DESCRIPTION
+The 
+/etc/dgated
+daemon is spawned by 
+dgate(1c)
+on the gateway system (the intermediate ULTRIX DECnet host).
+.PP
+The program maintains the ownership of the master end of a pseudo
+terminal, operating as an intermediary between the DECnet login process
+and the client instantiation of the
+.B dgate
+process.
+.PP 
+The \fBdgated\fR daemon
+also writes a
+.B utmp 
+entry to record activity.
+.SH DIAGNOSTICS
+All diagnostic messages are written through 
+syslog(3).
+.PP
+.IP "All network ports in use." .3i
+A free pseudo terminal could not be found.
+.IP "Cannot fork" .3i
+A fork(2) call failed.
+.IP "Cannot exec /usr/bin/dlogin" .3i
+The \fBdlogin\fR(1C) routine
+could not be found.
+.SH FILES
+/etc/utmp
+.br
+/usr/adm/wtmp
+.SH SEE ALSO
+dgate(1c) 
+.br
+ULTRIX DECnet Documentation

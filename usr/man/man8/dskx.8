@@ -1,0 +1,116 @@
+.TH dskx 8 
+.SH NAME
+dskx \- generic disk exerciser
+.SH SYNTAX
+.B /usr/field/dskx
+[
+.I options
+.B ] 
+.BI \-r dev
+.br
+.B /usr/field/dskx
+.B [
+.I options
+.B ]
+.BI \-p devpart
+.br
+.B /usr/field/dskx [
+.I options
+.B ]
+.BI \-c dev
+.SH DESCRIPTION
+The 
+.PN dskx 
+exerciser tests the disk drives on your system.
+The exerciser has three main options:
+.IP \(bu 0.3i
+Read only 
+.IP \(bu 0.3i
+Write/read/validate data on a partition 
+.IP \(bu 0.3i
+Write/read/validate data of
+a disk. 
+.PP
+The exerciser does ramdom seeks/reads of ramdom block
+sizes and random seeks/writes/reads/validation of random data
+patterns of random block sizes. The exerciser will run 
+until 
+.CT C
+or \fBkill -15 \fIpid\fR is sent to the
+process. 
+.PP
+A logfile is made in /usr/field for you to examine 
+and then remove. If there are errors in the logfile, make sure
+you check the /usr/adm/syserr/syserr.<hostname> file, 
+because that is where the
+driver and kernel error messages are saved.
+.PP
+CAUTION: Both the \fB\-c\fR and \fB\-p\fR options of the
+.PN dskx
+exerciser destroy data on the disk.  Use extreme caution before
+using them on any non-scratch media.  If you are unsure of
+what data is on the disk, contact your system manager before
+running
+.PN dskx
+with either of these options.
+.SH ARGUMENTS
+One of the following function flags and arguments must be specified.
+.IP \fB\-r\fIdev\fR 1i
+Random read-only test, all partitions except the \fBc\fR
+partition.  The \fIdev\fR argument can be a raw or buffered
+device name and number.  For example, rhp0, ra3, hk1.
+.IP \fB\-p\fIdevpart\fR 1i
+Write, read, and validate data from the device name and
+number specified by \fIdev\fR and the partition specified
+by \fIpart\fR.  The \fIdev\fR argument can be a raw or
+buffered device name and number.  For example, rhp0, ra3, hk1.
+The \fIpart\fR argument can be any valid partition from \fBa\fR
+\- \fBh\fR.
+.IP "" 1i
+CAUTION:  Be careful when exercising partitions that overlap other
+partitions, as you may inadvertently destroy data on a
+partition that you do not want to test.  You can use the
+\fB\-q\fR option of the
+.MS chpt 8
+command to see what partitions overlap on the device on your
+system.
+.IP \fB\-c\fIdev\fR 1i
+Write, read, and validate data from all partitions except
+the \fBc\fR partition on the device specified by
+\fIdev\fR.  The \fIdev\fR argument can be a raw or buffered
+device name and number.  For example, rhp0, ra3, hk1.
+.SH OPTIONS
+.LP
+The 
+.PN dskx
+options are:
+.IP \fB\-h\fR 1i
+Print help message for the
+.PN dskx 
+command
+.IP \fB\-o\fIfile\fR 1i
+Save output diagnostics in \fIfile\fR
+.IP \fB\-t\fIn\fR 1i
+Run time in minutes (\fIn\fR).  The
+default is to run until the process receives
+a
+.CT C
+or \fBkill -15 \fIpid\fR.
+.IP \fB\-d\fIm\fR
+Print statistics every \fIm\fR minutes
+.SH EXAMPLES
+The following example exercises RA disk unit 1,
+for 60 minutes in the background.
+.EX
+% /usr/field/dskx -t60 -cra1 &
+.EE
+The following example exercises raw HP disk unit 0,
+partition d, until 
+.CT C
+or
+\fBkill -15 \fIpid\fR.
+.EX
+% /usr/field/dskx -prhp0d
+.EE
+.SH "SEE ALSO"
+System Management Guide

@@ -1,0 +1,21 @@
+.TH groups 1
+.SH NAME
+groups \- show group memberships
+.SH SYNTAX
+\fBgroups [\fIuser\fP]
+.SH DESCRIPTION
+The
+.B groups
+command shows the groups to which you or the optionally specified
+user belong.
+Each user belongs to a group specified in the password file /etc/passwd
+and possibly to other groups as specified in the file /etc/group.
+If you do not own a file but belong to the group which it is owned
+by then you are granted group access to the file.
+.PP
+When a new file is created it is given
+the group of the containing directory.
+.SH FILES
+/etc/passwd, /etc/group
+.SH "SEE ALSO"
+setgroups(2)

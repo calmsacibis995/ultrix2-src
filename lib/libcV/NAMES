@@ -1,0 +1,836 @@
+
+assert.o:
+00000000 T __assert
+         U _abort
+         U _strlen
+         U _write
+
+abort.o:
+         U __cleanup
+00000000 T _abort
+         U _getpid
+         U _kill
+
+clrerr.o:
+00000000 T _clearerr
+
+crypt.o:
+000002ba T _crypt
+000000fc T _encrypt
+00000000 T _setkey
+
+ctermid.o:
+00000000 T _ctermid
+         U _strcpy
+
+ctime.o:
+         U __gettimeofday
+000002a6 T _asctime
+00000000 T _ctime
+000004e8 D _daylight
+         U _getenv
+00000138 T _gmtime
+00000016 T _localtime
+000004e4 D _timezone
+000004ec D _tzname
+000003bc T _tzset
+
+cuserid.o:
+00000000 T _cuserid
+         U _endpwent
+         U _getlogin
+         U _getpwuid
+         U _getuid
+         U _strcpy
+
+dial.o:
+0000081c D __debug
+         U __iob
+         U _access
+         U _alarm
+         U _atoi
+         U _chmod
+         U _close
+         U _creat
+00000022 C _device
+00000000 T _dial
+         U _errno
+         U _fclose
+         U _fcntl
+         U _fgets
+         U _fopen
+         U _fprintf
+         U _geteuid
+         U _getpid
+         U _ioctl
+         U _open
+         U _perror
+         U _signal
+         U _strcat
+         U _strchr
+         U _strcmp
+         U _strcpy
+         U _strlen
+         U _strncpy
+         U _strrchr
+         U _strtok
+00000736 T _undial
+         U _unlink
+         U _utime
+         U _write
+
+execvp.o:
+         U _errno
+00000000 T _execlp
+         U _execv
+00000012 T _execvp
+         U _getenv
+         U _index
+         U _sleep
+
+fgetc.o:
+         U __filbuf
+00000000 T _fgetc
+
+findiop.o:
+00000000 T __findiop
+         U __iob
+         U __lastbuf
+
+fputc.o:
+         U __flsbuf
+00000000 T _fputc
+
+freopen.o:
+         U _close
+         U _creat
+         U _errno
+         U _fclose
+00000000 T _freopen
+         U _lseek
+         U _open
+
+ftell.o:
+00000000 T _ftell
+         U _lseek
+
+ftw.o:
+         U _closedir
+         U _errno
+         U _free
+00000000 T _ftw
+         U _malloc
+         U _opendir
+         U _readdir
+         U _seekdir
+         U _stat
+         U _strcmp
+         U _strcpy
+         U _strlen
+         U _telldir
+
+fwrite.o:
+         U __flsbuf
+00000000 T _fwrite
+
+getchar.o:
+         U __filbuf
+         U __iob
+00000000 T _getchar
+
+getgrgid.o:
+         U _endgrent
+         U _getgrent
+00000000 T _getgrgid
+         U _setgrent
+
+getgrnam.o:
+         U _endgrent
+         U _getgrent
+00000000 T _getgrnam
+         U _setgrent
+         U _strcmp
+
+getlogin.o:
+         U _close
+00000000 T _getlogin
+         U _lseek
+         U _open
+         U _read
+         U _strncpy
+         U _ttyslot
+
+getopt.o:
+00000000 T _getopt
+00000004 C _optarg
+00000224 D _opterr
+00000228 D _optind
+00000004 C _optopt
+         U _strchr
+         U _strcmp
+         U _strlen
+         U _write
+
+getpass.o:
+         U __filbuf
+         U __flsbuf
+         U __iob
+         U _fclose
+         U _fopen
+         U _fputs
+00000000 T _getpass
+         U _getpid
+         U _ioctl
+         U _kill
+         U _setbuf
+         U _signal
+
+fputs.o:
+         U __flsbuf
+00000000 T _fputs
+
+getpgrp.o:
+         U __getpgrp
+00000000 T _getpgrp
+
+_getpgrp.o:
+00000008 T __getpgrp
+         U cerror
+
+getpw.o:
+         U __filbuf
+         U _fopen
+00000000 T _getpw
+         U _rewind
+
+getpwnam.o:
+         U _endpwent
+         U _getpwent
+00000000 T _getpwnam
+         U _setpwent
+         U _strcmp
+
+getpwuid.o:
+         U _endpwent
+         U _getpwent
+00000000 T _getpwuid
+         U _setpwent
+
+getpwent.o:
+         U _atoi
+00000034 T _endpwent
+         U _fclose
+         U _fgets
+         U _fopen
+00000074 T _getpwent
+         U _rewind
+00000000 T _setpwent
+
+gets.o:
+         U __filbuf
+         U __iob
+00000000 T _gets
+
+getut.o:
+         U _close
+0000031a T _endutent
+         U _errno
+         U _fcntl
+00000000 T _getutent
+000000da T _getutid
+00000184 T _getutline
+         U _lseek
+         U _open
+00000202 T _pututline
+         U _read
+000002de T _setutent
+         U _stat
+         U _strcmp
+         U _strcpy
+         U _strlen
+         U _strncmp
+         U _unlink
+00000358 T _utmpname
+         U _write
+
+getw.o:
+         U __filbuf
+00000000 T _getw
+
+getwd.o:
+         U _chdir
+         U _closedir
+         U _errno
+         U _fstat
+00000000 T _getwd
+         U _opendir
+         U _readdir
+         U _stat
+         U _strcat
+         U _strcpy
+         U _sys_errlist
+
+gtty.o:
+00000000 T _gtty
+         U _ioctl
+
+hsearch.o:
+         U _calloc
+         U _free
+00000000 T _hcreate
+00000064 T _hdestroy
+0000007a T _hsearch
+         U _strcmp
+         U urem
+
+initgroups.o:
+         U __iob
+         U _endgrent
+         U _fprintf
+         U _getgrent
+00000000 T _initgroups
+         U _perror
+         U _setgrent
+         U _setgroups
+         U _strcmp
+
+getgrent.o:
+         U _atoi
+00000034 T _endgrent
+         U _fclose
+         U _fgets
+         U _fopen
+00000076 T _getgrent
+         U _rewind
+00000000 T _setgrent
+
+fgets.o:
+         U __filbuf
+00000000 T _fgets
+
+lockf.o:
+         U _errno
+00000000 T _lockf
+
+mon.o:
+000001f0 D ____Argv
+00000004 C __countbase
+         U _close
+         U _creat
+         U _getenv
+         U _getpid
+00000000 T _monitor
+         U _perror
+         U _profil
+         U _strcpy
+         U _strrchr
+         U _write
+
+mount.o:
+         U __mount
+         U _errno
+         U _geteuid
+00000000 T _mount
+
+_mount.o:
+00000008 T __mount
+         U cerror
+
+nice.o:
+         U _errno
+         U _getpriority
+00000000 T _nice
+         U _setpriority
+
+nlist.o:
+         U _close
+         U _fclose
+         U _fopen
+         U _fread
+         U _fseek
+00000000 T _nlist
+         U _strlen
+
+fread.o:
+         U __filbuf
+00000000 T _fread
+
+fseek.o:
+         U __filbuf
+         U _fflush
+00000000 T _fseek
+         U _lseek
+
+perror.o:
+00000004 C _errno
+00000000 T _perror
+         U _strlen
+         U _sys_errlist
+00000004 C _sys_nerr
+         U _writev
+
+plock.o:
+         U _errno
+00000000 T _plock
+
+popen.o:
+         U __exit
+         U _close
+         U _dup2
+         U _execl
+         U _fclose
+         U _fdopen
+         U _fork
+000000ec T _pclose
+         U _pipe
+00000000 T _popen
+         U _signal
+         U _wait
+
+fdopen.o:
+         U __iob
+         U __lastbuf
+00000000 T _fdopen
+         U _getdtablesize
+         U _lseek
+
+printf.o:
+         U __doprnt
+         U __iob
+00000000 T _printf
+
+psignal.o:
+00000000 T _psignal
+         U _strlen
+         U _sys_siglist
+         U _write
+
+ptrace.o:
+         U __ptrace
+         U _errno
+00000000 T _ptrace
+
+_ptrace.o:
+00000000 T __ptrace
+         U _errno
+         U cerror
+
+putchar.o:
+         U __flsbuf
+         U __iob
+00000000 T _putchar
+
+putenv.o:
+         U _environ
+         U _malloc
+         U _memcpy
+00000000 T _putenv
+         U _realloc
+
+putpwent.o:
+         U _fprintf
+00000000 T _putpwent
+
+fprintf.o:
+         U __doprnt
+00000000 T _fprintf
+
+puts.o:
+         U __flsbuf
+         U __iob
+00000000 T _puts
+
+putw.o:
+         U __flsbuf
+00000000 T _putw
+
+rew.o:
+         U _fflush
+         U _lseek
+00000000 T _rewind
+
+sbrk.o:
+         U ___brk__
+         U _brk
+00000000 T _sbrk
+
+brk.o:
+00000060 D ___brk__
+         U __brk
+00000000 T _brk
+         U _end
+         U _errno
+         U _etext
+         U _getrlimit
+
+_brk.o:
+         U SYS_brk
+00000008 T __brk
+         U cerror
+
+scandir.o:
+00000104 T _alphasort
+         U _closedir
+         U _fstat
+         U _malloc
+         U _opendir
+         U _qsort
+         U _readdir
+         U _realloc
+00000000 T _scandir
+         U _strcmp
+
+scanf.o:
+         U __doscan
+         U __iob
+00000018 T _fscanf
+00000000 T _scanf
+0000002c T _sscanf
+
+doscan.o:
+         U __ctype_
+00000000 T __doscan
+         U __filbuf
+000005c0 T __getccl
+000001a2 T __innum
+000004aa T __instr
+00000650 D __sctab
+         U _atof
+         U _tolower
+         U _ungetc
+
+atof.o:
+         U __ctype_
+00000000 T _atof
+         U _ldexp
+
+filbuf.o:
+00000000 T __filbuf
+         U __iob
+         U __sibuf
+         U _fflush
+         U _fstat
+         U _malloc
+         U _read
+
+seekdir.o:
+         U _lseek
+         U _readdir
+00000000 T _seekdir
+         U _telldir
+
+setbuf.o:
+         U _free
+00000000 T _setbuf
+
+setbuffer.o:
+         U __iob
+         U __sobuf
+         U _fflush
+         U _free
+00000000 T _setbuffer
+0000003e T _setlinebuf
+
+setpgrp.o:
+         U __setpgrp
+         U _getpid
+00000000 T _setpgrp
+
+_setpgrp.o:
+00000008 T __setpgrp
+         U cerror
+
+setvbuf.o:
+         U _free
+         U _malloc
+00000000 T _setvbuf
+
+sleep.o:
+         U _alarm
+         U _longjmp
+         U _pause
+         U _setjmp
+         U _signal
+00000000 T _sleep
+
+alarm.o:
+00000000 T _alarm
+         U _setitimer
+
+sprintf.o:
+         U __doprnt
+         U __flsbuf
+00000000 T _sprintf
+
+ssignal.o:
+00000038 T _gsignal
+00000000 T _ssignal
+
+stime.o:
+         U _gettimeofday
+         U _settimeofday
+00000000 T _stime
+
+strout.o:
+         U __flsbuf
+00000000 T __strout
+
+flsbuf.o:
+000001b8 T __cleanup
+00000000 T __flsbuf
+         U __iob
+         U __lastbuf
+         U __sobuf
+         U _close
+000001da T _fclose
+0000015e T _fflush
+         U _free
+         U _fstat
+         U _isatty
+         U _malloc
+         U _write
+
+exit.o:
+         U __cleanup
+         U __exit
+00000000 T _exit
+
+strtod.o:
+         U __ctype_
+         U _ldexp
+00000000 T _strtod
+
+strtol.o:
+         U __ctype_
+00000000 T _strtol
+
+ctype_.o:
+00000004 D __ctype_
+
+stty.o:
+         U _ioctl
+00000000 T _stty
+
+system.o:
+         U __exit
+         U _execl
+         U _signal
+00000000 T _system
+         U _vfork
+         U _wait
+
+tell.o:
+         U _lseek
+00000000 T _tell
+
+telldir.o:
+         U _lseek
+00000000 T _telldir
+
+tempnam.o:
+         U _access
+         U _getenv
+         U _malloc
+         U _mktemp
+         U _strcat
+         U _strcpy
+         U _strlen
+         U _strncat
+00000000 T _tempnam
+
+times.o:
+         U _getrusage
+         U _time
+00000000 T _times
+
+tmpfile.o:
+         U _fopen
+00000000 T _tmpfile
+         U _tmpnam
+         U _unlink
+
+fopen.o:
+         U __iob
+         U __lastbuf
+         U _close
+         U _creat
+         U _errno
+00000000 T _fopen
+         U _lseek
+         U _open
+
+creat.o:
+         U __open
+00000000 T _creat
+
+lseek.o:
+         U __lseek
+         U _errno
+         U _getpid
+         U _kill
+00000000 T _lseek
+
+_lseek.o:
+00000008 T __lseek
+         U cerror
+
+kill.o:
+         U __kill
+         U _errno
+         U _getpid
+00000000 T _kill
+         U _killpg
+
+_kill.o:
+00000008 T __kill
+         U cerror
+
+tmpnam.o:
+         U _mktemp
+         U _strcat
+         U _strcpy
+00000000 T _tmpnam
+
+ttyslot.o:
+         U _close
+         U _open
+         U _read
+         U _strncmp
+         U _strrchr
+         U _ttyname
+00000000 T _ttyslot
+
+ttyname.o:
+         U _closedir
+         U _fstat
+         U _isatty
+         U _opendir
+         U _readdir
+         U _stat
+         U _strcat
+         U _strcpy
+00000000 T _ttyname
+
+closedir.o:
+         U _close
+00000000 T _closedir
+         U _free
+
+isatty.o:
+         U _ioctl
+00000000 T _isatty
+
+ioctl.o:
+         U __ioctl
+00000000 T _ioctl
+         U _select
+
+opendir.o:
+         U _close
+         U _malloc
+         U _open
+00000000 T _opendir
+
+open.o:
+         U __ioctl
+         U __open
+         U _errno
+00000000 T _open
+
+_ioctl.o:
+00000008 T __ioctl
+         U cerror
+
+_open.o:
+00000008 T __open
+         U cerror
+
+readdir.o:
+         U _read
+00000000 T _readdir
+
+read.o:
+         U __read
+         U _errno
+00000000 T _read
+
+_read.o:
+00000008 T __read
+         U cerror
+
+ulimit.o:
+         U _errno
+         U _getrlimit
+         U _setrlimit
+00000000 T _ulimit
+
+umount.o:
+         U __umount
+         U _errno
+         U _getuid
+00000000 T _umount
+
+_umount.o:
+00000008 T __umount
+         U cerror
+
+ungetc.o:
+00000000 T _ungetc
+
+utime.o:
+         U _time
+00000000 T _utime
+         U _utimes
+
+time.o:
+         U _gettimeofday
+00000000 T _time
+
+vfprintf.o:
+         U __doprnt
+00000000 T _vfprintf
+
+vprintf.o:
+         U __doprnt
+         U __iob
+00000000 T _vprintf
+
+data.o:
+00000000 D __iob
+00000190 D __lastbuf
+00002000 C __sibuf
+00002000 C __sobuf
+
+vsprintf.o:
+         U __doprnt
+00000000 T _vsprintf
+
+wait.o:
+         U __wait
+         U _errno
+         U _signal
+00000000 T _wait
+
+_wait.o:
+00000008 T __wait
+         U cerror
+
+signal.o:
+         U __sigvec
+         U _errno
+         U _etext
+00000000 T _signal
+         U _sigsetmask
+
+_sigvec.o:
+00000008 T __sigvec
+         U cerror
+
+write.o:
+         U __write
+         U _errno
+00000000 T _write
+
+_write.o:
+00000008 T __write
+         U cerror

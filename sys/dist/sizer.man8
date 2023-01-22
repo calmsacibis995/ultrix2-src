@@ -1,0 +1,44 @@
+.TH sizer 8 local "Ultrix-32" "ULTRIX Programmer's Manual"
+.SH NAME
+sizer \- a program to perform a rudimentary sizing of a system
+.SH SYNTAX
+\fBsizer\fP [\-\fBc\fP] [\-\fn\fP \fIsystemname\fP][\-\fBr\fP] [\-\fBf \fIfile\fR] [\-\fBn\fP]
+
+.SH DESCRIPTION
+.PP
+.IR sizer (8)
+is a rudimentary program that will report various items of information
+about a kernel file and the running system.  When used with the proper
+switches it can generate a configuration file describing much, but not
+all of the running system configuration.
+.PP
+It hs the following switches:
+.RS 6n
+.TP 8
+.B \-c
+Return only the CPU type of the running cpu.  It returns one of the
+following values: VAX780, VAX750, VAX730, MVAX_I, VAX_MAX.
+.TP 8
+.B \-n \fIsystemname\fP
+Build a file in /tmp/\fIsystemname\fP that contains a configuration
+file description of the fixed address area of the user's system.  Also
+create a directory called /sys/\fIsystemname\fP which is where the
+system configuration will take place.  No comm devices or other devices
+in the floating address area will be in this file.
+.TP 8
+.B \-r
+Return only the name of the root device and partition.
+.TP 8
+.B \-f \fIkfile\fP
+Use the indicated kernel file instead of /vmunix.  This is useful when
+the running system is not /vmunix or you wish information about a
+system that is not running.
+.RE
+
+.SH FILES
+/tmp/???systemname, /sys/???systemname
+
+.SH SEE ALSO
+.IR config (8), doconfig (8),
+\fIULTRIX-32 Installation Guide\fP,
+.IR ed (1).

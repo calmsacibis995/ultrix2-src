@@ -1,0 +1,27 @@
+.TH rmail 1
+.SH NAME
+rmail \- handle remote mail received via uucp
+.SH SYNTAX
+.B rmail
+user ...
+.SH DESCRIPTION
+The
+.B rmail
+command
+interprets incoming mail received via
+uucp(1c),
+collapsing ``From'' lines in the form generated
+by 
+binmail(1)
+into a single line of the form ``return-path!sender'',
+and passing the processed mail on to
+sendmail(8).
+.PP
+The
+.B rmail
+is explicitly designed for use with 
+.B uucp
+and
+.B sendmail.
+.SH "SEE ALSO"
+binmail(1), uucp(1c), sendmail(8)

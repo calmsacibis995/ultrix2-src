@@ -1,0 +1,77 @@
+.TH mkfs 8
+.SH NAME
+mkfs \- construct a file system
+.SH SYNTAX
+.B /etc/mkfs
+special size
+[ nsect ]
+[ ntrack ]
+[ blksize ]
+[ fragsize ]
+[ ncpg ]
+.br
+[ minfree ]
+[ rps ]
+[ nbpi ]
+.SH DESCRIPTION
+File system are normally created with the newfs(8) command.
+.PP
+The
+.PN mkfs
+command constructs a file system
+by writing on the special file
+.I special.
+The numeric size specifies the number of sectors in the file system.
+The
+.PN mkfs
+command builds a file system with a root directory and a
+.I lost+found
+directory.
+For further information, see fsck(8).
+The number of i-nodes is calculated
+as a function of the file system size.
+No boot program is initialized by
+.PN mkfs .
+For further information, see newfs(8).
+.PP
+The optional arguments allow fine tune control over the
+parameters of the file system.
+The
+.B nsect
+specify the number of sectors per track on the disk.
+The
+.B ntrack 
+specify the number of tracks per cylinder on the disk.
+The
+.B blksize 
+gives the primary block size for files on the file system.
+It must be a power of two, currently selected from 4096 or 8192.
+The
+.B fragsize
+gives the fragment size for files on the file system.
+The
+.B fragsize
+represents the smallest amount of disk space
+that will be allocated to a file.
+It must be a power of two currently selected from the range 512 to 8192.
+The
+.B ncpg
+specifies the number of disk cylinders per cylinder group.
+This number must be in the range 1 to 32.
+The
+.B minfree
+specifies the minimum percentage of free disk space allowed.
+Once the file system capacity reaches this threshold, only
+the super-user is allowed to allocate disk blocks.  The default
+value is 10%.
+If a disk does not revolve at 60 revolutions per second, the
+.B rps
+parameter may be specified.
+Users with special demands for their file systems are referred to
+the paper cited below for a discussion of the tradeoffs in using
+different configurations.
+.B nbpi
+specifies the number (ratio) of bytes per inode. 
+The default is 2048 bytes.
+.SH "SEE ALSO"
+dir(5), fs(5), fsck(8), newfs(8), tunefs(8)

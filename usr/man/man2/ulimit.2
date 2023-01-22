@@ -1,0 +1,43 @@
+.TH ulimit 2
+.SH NAME
+ulimit \- get and set user limits
+.SH SYNTAX
+.nf
+.ft B
+long ulimit (cmd, newlimit)
+int cmd;
+long newlimit;
+.fi
+.SH DESCRIPTION
+This function provides for control over process limits.
+The
+.I cmd
+values available are:
+.TP 5
+Get the process's file size limit.
+The limit is in units of 512-byte blocks
+and is inherited by child processes.
+Files of any size can be read.
+.TP 5
+Set the process's file size limit to the value of
+.IR newlimit .
+Any process may decrease this limit,
+but only a process with an effective user ID
+of super-user may increase the limit.
+The
+.PN ulimit
+system call
+will fail and the limit will be unchanged
+if a process with an effective user ID
+other than super-user attempts
+to increase its file size limit.
+[EPERM]
+.TP 5
+Get the maximum possible break value.  For further information, see
+brk(2).
+Upon successful completion, a non-negative value is returned.
+Otherwise, a value of \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH SEE ALSO
+brk(2), write(2)

@@ -1,0 +1,27 @@
+.TH stime 2 
+.SH NAME
+stime \- set time
+.SH SYNTAX
+.B int stime (tp)
+.br
+.B long *tp;
+.SH DESCRIPTION
+The 
+.PN stime
+system call sets the system's time and date.
+The
+.I tp
+argument points to the value of time as
+measured in seconds from 00:00:00 GMT January 1, 1970.
+.PP
+Upon successful completion, a value of 0 is returned.
+Otherwise, a value of \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH DIAGNOSTICS
+.TP 15
+[EPERM]
+The effective user ID
+of the calling process is not superuser.
+.SH "SEE ALSO"
+time(3).

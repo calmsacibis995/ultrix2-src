@@ -1,0 +1,25 @@
+.TH kmem 4
+.SH NAME
+kmem \- virtual main memory
+.SH DESCRIPTION
+The
+.PN kmem
+special file is an image of the virutal main memory
+of the computer.
+It may be used, for example, to examine
+(and even to patch) the running system.
+.PP
+Byte addresses in
+.PN kmem
+are interpreted as virtual memory addresses.
+The per-process data for the current process is at virtual address
+7f\&f\&f\&f\&000(16).
+.SH RESTRICTIONS
+The
+.PN kmem
+memory file is accessed one byte
+at a time.
+.SH FILES
+/dev/kmem
+.SH SEE ALSO
+MAKEDEV(8)

@@ -1,0 +1,104 @@
+.TH shutdown 8
+.SH NAME
+shutdown \- close down the system at a given time
+.SH SYNTAX
+.B /etc/shutdown
+[
+.B \-k
+] [
+.B \-r
+] [
+.B \-h
+] [
+.B \-o
+]
+time [ warning-message ... ]
+.SH DESCRIPTION
+The
+.PN shutdown
+command
+provides an automated shutdown procedure that a superuser
+can use to notify users
+when the system is shutting down.
+.LP
+The
+.I time
+is the time at which
+.PN shutdown
+will bring the system down. 
+It may be the word
+``now'',
+indicating an immediate shutdown,
+or specify a future time in one of two formats:
+.BR + number
+or
+.RB hour : min.
+The first form brings the system down in
+.I number
+minutes.
+The second brings the system down at the time of day indicated,
+using a 24\-hour clock format.
+.PP
+At intervals which get shorter as shutdown nears,
+warning messages are displayed at the terminals of all users on the
+system. 
+Warning messages are also sent to
+users who are logged in to a remote system that has
+mounted a file system or directory from the local system using NFS.
+Five minutes before shutdown, or immediately if
+shutdown is timed for less than five minutes, logins 
+are disabled by creating
+/etc/nologin
+and writing a message there.
+If this file exists when a user attempts to log in,
+login(1)
+prints its contents
+and exits.
+The file is removed just before
+.PN shutdown
+exits.
+.PP
+At shutdown time, a
+message is written in the file /usr/adm/shutdownlog. 
+This message contains the  
+time of shutdown, who ran shutdown and the reason.
+Then, a terminate signal is sent at
+.I init
+to bring the system to single-user state.
+.PP
+If the
+.B \-r,
+.B \-h,
+or
+.B \-k
+options are used,
+then
+.PN shutdown
+executes
+reboot(8),
+halt(8),
+or avoids shutting the system down (respectively).
+The
+.B \-o
+option is for use by 
+.I opser 
+only.  It indicates to
+.PN shutdown
+that it is being called by
+.I opser
+and not to return to the user.
+.PP
+You should place the time of the shutdown and the warning message
+in /etc/nologin.  Use the message to
+inform the users about when the system will be back up
+and why it is going down. 
+.SH RESTRICTIONS
+You can kill the system only between now and 23:59, if
+you use the absolute time for shutdown.
+.SH FILES
+.DT
+/etc/nologin			tells login not to let anyone log in
+.br
+/usr/adm/shutdownlog		log file for successful shutdowns.
+.SH "SEE ALSO"
+login(1), wall(1), opser(8), reboot(8), rwalld(8c)

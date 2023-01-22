@@ -1,0 +1,46 @@
+.TH quota 1 
+.SH NAME
+quota \- display disc usage and limits
+.SH SYNTAX
+.B quota
+[
+.B \-qv
+] [
+user
+]
+.SH DESCRIPTION
+The
+.B quota
+command displays users' disc usage and limits. 
+Only the super-user may use the optional
+.I user
+argument to view the limits of users other than
+himself.
+.PP
+The
+.B \-q
+flag prints a more terse message,
+containing only information
+on file systems where usage is over quota.
+.PP
+If a
+.B \-v
+flag is supplied, 
+.B quota
+will also display user's quotas on file systems
+where no storage is allocated.
+.PP
+The
+.B quota
+command reports only on file systems which have
+disc quotas. 
+If 
+.B quota
+exits with a non-zero status, one or more file
+systems are over quota.
+.SH "SEE ALSO"
+quota(2), edquota(8), quotaon(8), 
+.br
+"Disk Quotas in a UNIX Environment",
+.I ULTRIX-32 Supplementary Documents
+Vol. III:System Manager 

@@ -1,0 +1,26 @@
+.TH vipw 8 
+.SH NAME
+vipw \- edit the password file
+.SH SYNTAX
+.B vipw
+.SH DESCRIPTION
+The
+.PN vipw
+command
+edits the password file while setting the appropriate locks
+and doing any necessary processing after the password file is unlocked.
+If the password file is already being edited, then you will be told
+to try again later.  The 
+.PN vi
+editor will be used unless the environment variable EDITOR indicates
+an alternate editor.  
+The
+.PN vipw
+command
+performs a number of consistency checks on the password entry for
+root, and does not allow a password file with a corrupted root entry
+to be installed.
+.SH FILES
+/etc/ptmp
+.SH SEE ALSO
+chfn(1), chsh(1), passwd(1), passwd(5yp), adduser(8)

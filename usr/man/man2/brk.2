@@ -1,0 +1,104 @@
+.\" Last modified by BAM on 14-Nov-1985 1300.
+.\"
+.\" Revision history:
+.\"   BAM on 8-Aug-85  1300  
+.\"   BAM on 19-Jul-85  1100  
+.\"   BAM on 28-Oct-85 1300
+.\"
+.TH brk 2
+.SH NAME
+brk, sbrk \- change data segment size
+.SH SYNTAX
+.nf
+.ft B
+#include <sys/types.h>
+.PP
+.ft B
+caddr_t brk(addr)
+caddr_t addr;
+.PP
+.ft B
+caddr_t sbrk(incr)
+int incr;
+.fi
+.SH DESCRIPTION
+The
+.PN brk
+system call sets the system's idea of the lowest data segment 
+location not used by the program (called the break)
+to
+.I addr
+(rounded up to the next multiple of the system's page size).
+Locations greater than
+.I addr
+and below the stack pointer
+are not in the address space and will thus
+cause a memory violation if accessed.
+.PP
+In the alternate function
+.PN sbrk ,
+.I incr
+more bytes are added to the
+program's data space and a pointer to the
+start of the new area is returned.
+.PP
+When a program begins execution using
+.PN execve ,
+the break is set at the
+highest location defined by the program
+and data storage areas.
+Ordinarily, therefore, only programs with growing
+data areas need to use
+.PN sbrk .
+.PP
+The
+.B getrlimit
+system call may be used to determine
+the maximum permissible size of the
+.I data
+segment;
+it will not be possible to set the break
+beyond the
+.I rlim_max
+value returned from a call to
+.PN getrlimit ,
+for example, \*(lqetext + rlp\(->rlim_max.\*(rq
+See
+end(3)
+for the definition of
+.IR etext .
+.PP
+Zero is returned if the 
+.B brk
+could be set;
+\-1 if the program requests more
+memory than the system limit.
+The
+.PN sbrk
+call returns \-1 if the break could not be set.
+.SH RESTRICTIONS
+Setting the break may fail due to a temporary lack of
+swap space.  It is not possible to distinguish this
+from a failure caused by exceeding the maximum size of
+the data segment without consulting 
+.PN getrlimit .
+.SH DIAGNOSTICS
+The
+.PN sbrk
+call will fail and no additional memory will be allocated if
+one of the following is true:
+.TP 15
+[ENOMEM]
+The limit, as set by
+.MS setrlimit 2 ,
+is exceeded.
+.TP 15
+[ENOMEM]
+The maximum possible size of a data segment (compiled into the
+system) is exceeded.
+.TP 15
+[ENOMEM]
+Insufficient space exists in the swap area
+to support the expansion.
+.SH "SEE ALSO"
+execve(2), getrlimit(2), end(3), malloc(3)

@@ -1,0 +1,135 @@
+.TH chown 2
+.\" Last modified by Michaud on 16-Sept-1986 1000.
+.\"
+.\" Last modified by BAM on 27-Nov-1985 1300.
+.\"
+.\" Last modified by BAM on 30-Oct-1985 1300.
+.\"
+.\" Last modified by BAM on 2-Aug-85  1000  
+.\"
+.SH NAME
+chown, fchown \- change owner and group of a file
+.SH SYNTAX
+.nf
+.ft B
+chown(path, owner, group)
+char *path;
+int owner, group;
+.PP
+.ft B
+fchown(fd, owner, group)
+int fd, owner, group;
+.fi
+.SH DESCRIPTION
+The file
+which is named by \fIpath\fP or referenced by \fIfd\fP
+has its
+.I owner
+and 
+.I group
+changed as specified.
+Only the super-user may
+execute this call,
+because if users were able to give files away,
+they could defeat the file-space accounting procedures.
+.PP
+On some systems,
+.PN chown
+clears the set-user-id and set-group-id bits
+on the file
+to prevent accidental creation of
+set-user-id and set-group-id programs
+owned by the super-user.
+.PP
+The
+.PN fchown
+system call
+is particularly useful when used in conjunction
+with the file locking primitives.  For further information, see
+flock(2).
+.PP
+Only one of the owner and group id's
+may be set by specifying the other as \-1.
+.PP
+Zero is returned if the operation was successful;
+\-1 is returned if an error occurs, with a more specific
+error code being placed in the global variable \fIerrno\fP.
+.SH ENVIRONMENT
+Differs from the System V definition in that only
+the superuser may change the ownership.  Also, 
+\fBELOOP\fP is a possible error condition.
+.SH DIAGNOSTICS
+The
+.PN chown
+system call
+will fail and the file will be unchanged if:
+.TP 15
+[ENOTDIR]
+A component of the path prefix is not a directory.
+.TP 15
+[ENAMETOOLONG]
+A component of a pathname exceeded 255 characters, or an
+entire pathname exceeded 1023 characters.
+.TP 15
+[EINVAL]
+The argument contains a character with the high-order bit set.
+.TP 15
+[ENOENT]
+The named file does not exist.
+.TP 15
+[EACCES]
+Search permission is denied for a component of the path prefix.
+.TP 15
+[EPERM]
+The effective user ID is not the super-user.
+.TP 15
+[EROFS]
+The named file resides on a read-only file system.
+.TP 15
+[EFAULT]
+The
+.I path
+points outside the process's allocated address space.
+.TP 15
+[ELOOP]
+Too many symbolic links were encountered in translating the pathname.
+.TP 15
+[EIO]
+An I/O error occurred while reading from or writing to the
+file system.
+.TP 15
+[ESTALE]
+The file handle given in the argument is invalid.  The file referred
+to by that file handle no longer exists or has been revoked.
+.PP
+The
+.PN fchown
+system call
+will fail if:
+.TP 15
+[EBADF]
+The
+.I fd
+does not refer to a valid descriptor.
+.TP 15
+[EINVAL]
+.I Fd
+refers to a socket, not a file.
+.TP 15
+[EPERM]
+The effective user ID is not the super-user.
+.TP 15
+[EROFS]
+The named file resides on a read-only file system.
+.TP 15
+[EIO]
+An I/O error occurred while reading from or writing to the
+file system.
+.TP
+[ETIMEDOUT]
+A "connect" request or remote file operation failed
+because the connected party
+did not properly respond after a period
+of time which is dependent on the communications protocol.
+.SH "SEE ALSO"
+chmod(2), flock(2)

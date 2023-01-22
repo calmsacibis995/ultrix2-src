@@ -1,0 +1,27 @@
+.TH pause 3
+.SH NAME
+pause \- stop until signal
+.SH SYNTAX
+.B pause()
+.SH DESCRIPTION
+The
+.B pause
+subroutine never returns normally.
+It is used to give up control while waiting for
+a signal from kill(2)
+or an interval timer, see setitimer(2).
+Upon termination of a signal handler started during a
+.PN pause,
+the
+.PN pause
+call will return.
+.SH DIAGNOSTICS
+The
+.PN pause
+subroutine always returns:
+.TP 15
+[EINTR]
+The call was interrupted, that is,
+always returns \-1.
+.SH "SEE ALSO
+kill(2), select(2), sigpause(2)

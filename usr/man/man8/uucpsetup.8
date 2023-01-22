@@ -1,0 +1,68 @@
+.\" Last modified by liza sanford-crane on 5-Aug-86  1040
+.\"  Fixed whatis problem
+.TH uucpsetup 8 
+.SH NAME
+uucpsetup \- set up uucp files
+.SH SYNTAX
+.B /etc/uucpsetup [ \-moia ]
+.SH DESCRIPTION
+The
+.PN uucpsetup
+command provides an interactive facility for setting up
+and updating the
+.PN uucp
+files necessary to configure your system for 
+.PN uucp
+connections.
+.LP
+To set up
+.PN uucp
+initially,
+run the
+.PN uucpsetup
+command with the
+.B \-a
+option and answer the questions.
+To update the
+.PN uucp
+files and directories,
+run
+.PN uucpsetup
+with the \fB\-m\fR, \fB\-o\fR, and or \fB\-i\fR options.
+as appropriate.
+If no options are specified,
+the \fB\-o\fR and \fB\-i\fR options are the default.
+.LP
+You must be superuser to run
+.PN uucpsetup .
+.SH
+OPTIONS
+.LP
+.IP \fB\-m\fR
+Adds modems,
+configuring the dialers for
+.PN uucp
+and
+.PN tip .
+.IP \fB\-i\fR
+Adds incoming systems;
+that is,
+systems that are allowed to call your local system.
+.IP \fB\-o\fR
+Adds outgoing systems;
+that is, systems that your local system is allowed to call.
+.IP \fB\-a\fR
+Adds the modems and incoming and outgoing systems to
+.PN uucp .
+The \fB\-a\fR option implies the \fB\-m\fR,
+\fB\-i\fR, and \fB\-o\fR options.
+.SH FILES
+.nf
+.ta 2.5i
+/usr/lib/uucp/L.sys	Systems called out to
+/usr/lib/uucp/L-devices	Device information
+/usr/lib/uucp/USERFILE	Systems which call in
+/usr/lib/uucp/L.cmds	Command execution protections
+.fi
+.SH SEE ALSO
+Network Management Guide

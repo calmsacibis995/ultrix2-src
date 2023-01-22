@@ -1,0 +1,76 @@
+
+Title:			Binary USENET
+
+	This is a binary for the USENET software by Matt Glickman
+and Mark Horton.  The following parameters were selected when
+building the binaries making up the USENET software.
+
+	Owner of binaries:		news
+	Group of binaries:		news
+	Spool directory:		/usr/spool/news
+	Library directory:		/usr/lib/news
+	Unbatcher utility:		/usr/lib/news/unbatch
+	Batch directory:		/usr/spool/batch
+	Uid who can cancel anything:	1
+	Default subscription:		general,all.general
+	Mandatory subscription:		general,all.general
+	Expiration time:		2 weeks
+	Pager:				/usr/ucb/more
+	Mailer:				/usr/ucb/Mail
+	Default Editor:			vi
+	Newsgroup negation character:	!
+	Mask for umask call:		000
+
+The incoming rmgroup message will not remove the subdirectories,
+but will remove the group line from your active file.  Removal must
+be done manually.
+
+Installation:
+
+o In the directory containing the USENET binary kit su to superuser.
+
+o edit /etc/group to include the entry, filling in the capitalized
+  parameter.
+
+  news:*:NEWS_GID:uucp
+
+o edit /etc/passwd to include the entry, filling in the capitalized
+  parameters.
+
+  news:NoLogin:NEWS_UID:NEWS_GID:Usenet News System:/usr/spool/netnews:/bin/sh
+
+o edit /usr/lib/aliases to include the entry, filling in the
+  capitalized parameter.
+
+  usenet:OWNER'S_NAME
+
+o update the alias database.
+
+  newaliases
+
+o make the necessary directories and place the binaries, help file,
+  and man pages in the appropriate directories by executing the
+  following command.
+
+  make install
+
+o edit /usr/lib/news/sys changing oopsvax to the name of the system
+  you plan to link to.
+
+  eg:
+  decvax:net.all,fa.all,to.decvax::
+
+o logout as superuser.
+
+  <CTRL>D
+
+This completes the installation of the binary form of the USENET
+software.
+
+	For further information concerning establishing the USENET
+link, setup of USENET support files (ie., format of sys file, format
+of .newsrc file, etc), and USENET maintenance see the file
+maintenance.doc.
+	
+	
+	

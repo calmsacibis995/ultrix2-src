@@ -1,0 +1,283 @@
+.TH fsck 8
+.SH NAME
+fsck \- file system consistency check and interactive repair utility.
+.SH SYNTAX
+.B /etc/fsck
+[ \-p|\-P ]
+[
+filesystem ...
+]
+.br
+.B /etc/fsck
+[
+.B \-b
+block#
+] [
+.B \-y
+] [
+.B \-n
+] [
+filesystem 
+] ...
+.SH DESCRIPTION
+The
+.PN fsck
+command checks and corrects either a standard set of filesystems or the
+specified file systems for consistency.  This command is normally used
+in the script /etc/rc during automatic reboot.
+In this case,
+.PN fsck
+reads the /etc/fstab 
+table to determine which file systems to check.
+It uses the 
+.PN fstab 
+information to inspect groups of disks in parallel, taking
+advantage of i/o overlap to check the file systems
+as quickly as possible.
+.PP
+The 
+.PN fsck
+command makes a number of passes to check the file systems
+for consistency.
+Usually, the root file system is checked on pass 1, other
+root (partition a) file systems on pass 2, other
+small file systems on separate passes (for example, the d file systems
+on pass 3 and the e file systems on pass 4), and the large 
+user file systems on the final pass.
+A pass number of 0 in /etc/fstab 
+causes a disk to not be checked.  Similarly,
+partitions which are not shown to be mounted rw or ro are not checked.
+.PP
+The
+.B \-p
+option should be used to check filesystems since now with
+the generic file system interface,
+gfsi(5),
+.PN fsck
+realizes when a file system
+is unmounted cleanly and does not do the check.
+File systems are unmounted cleanly only when an error-free shutdown 
+has been performed.
+If the
+.B \-P
+option is used, the parallel consistency checks
+are performed like the \-p
+option regardless of how the file system was unmounted,
+cleanly or otherwise.
+.PP
+The system ensures that only a restricted class of filesystem
+inconsistencies can occur unless hardware or software failures
+intervene.
+The inconsistencies are limited to:
+.IP
+Unreferenced inodes
+.ns
+.IP
+Link counts in inodes are too large
+.ns
+.IP
+Missing blocks in the free list
+.ns
+.IP
+Blocks in the free list are also in files
+.ns
+.IP
+Counts in the super-block are wrong
+.PP
+These are the only inconsistencies that 
+.PN fsck
+with either the
+.B \-p
+or 
+.B \-P
+option will correct.
+If it encounters other inconsistencies, it exits
+with an abnormal return status and an automatic reboot will then fail.
+For each corrected inconsistency one or more lines will be printed
+identifying the file system on which the correction will take place,
+and the nature of the correction.  
+If any inconsistencies occur, the message "**** FILE SYSTEM MODIFIED,
+VERIFYING" is printed and 
+.PN fsck
+runs again to verify that the appropriate
+changes were made.
+After successfully correcting a file
+system,
+.B fsck
+will print the number of files on that file system and the number of
+used and free blocks.
+Also, a clean byte is set for the checked file system, except the
+root, indicating that the file system is clean.
+.PP
+Without the
+.B \-p
+or 
+.B \-P
+options,
+.B fsck
+audits and interactively repairs inconsistent conditions for 
+file systems. 
+If the file system is inconsistent the operator is prompted
+for concurrence before each correction is attempted.
+It should be noted that a number of the corrective actions which are not
+fixable using the
+.B \-p
+or 
+.B \-P
+options will result in some loss of data.
+The amount and severity of data lost may be determined from
+the diagnostic output.
+The default action for each consistency correction
+is to wait for the operator to respond \fByes\fP or \fBno\fP.
+If the operator does not have write permission 
+.B fsck
+will default to a 
+.BR "\-n " action.
+.PP
+If no filesystems are given to 
+.B fsck
+then a default list of file systems is read from
+the file
+/etc/fstab.
+The
+.B fsck
+command
+will only check file systems of type
+.I ufs.
+.PP
+.ne 10
+Inconsistencies checked are as follows:
+.TP 6
+1.  
+Blocks claimed by more than one inode or the free list.
+.br
+.br
+.ns
+.TP 6
+2.
+Blocks claimed by an inode or the free list outside the range of
+the file system.
+.br
+.br
+.ns
+.TP 6
+3.
+Incorrect link counts.
+.br
+.br
+.ns
+.TP 6
+4.
+Size checks:
+.br
+.ns
+.IP "" 12
+Directory size not of proper format.
+.br
+.br
+.ns
+.TP 6
+5.
+Bad inode format.
+.br
+.br
+.ns
+.TP 6
+6.
+Blocks not accounted for.
+.br
+.br
+.ns
+.TP 6
+7.
+Directory checks:
+.br
+.br
+.ns
+.IP "" 12
+File pointing to unallocated inode.
+.br
+Inode number out of range.
+.br
+.br
+.ns
+.TP 6
+8.
+Super Block checks:
+.br
+.br
+.ns
+.IP "" 12
+More blocks for inodes than there are in the file system.
+.br
+.br
+.ns
+.TP 6
+9.
+Bad free block list format.
+.br
+.br
+.ns
+.TP 6
+10.
+Total free block and/or free inode count incorrect.
+.PP
+Allocated but unreferenced files and directories are
+reconnected by
+placing them in the 
+.B lost+found
+directory with the operator's concurrence.
+The name assigned is the inode number. The only restriction
+is that the directory 
+.B lost+found
+must preexist
+in the root of the filesystem being checked and
+must have empty slots in which entries can be made.
+This is accomplished by making 
+.BR lost+found ,
+copying a number of files to the directory, and then removing them
+before
+.B fsck
+is executed.
+.SH OPTIONS
+.TP 6
+.B \-b
+Use the block specified immediately after the flag as
+the super block for the file system.  Block 32 is always
+an alternate super block.
+.TP 6
+.B  \-y
+Assume a yes response to all questions asked by 
+.B fsck;
+this should be used with great caution as this is a free license
+to continue after essentially unlimited trouble has been encountered.
+.TP 6
+.B  \-n
+Assume a no response to all questions asked by 
+.B fsck;
+do not open the file system for writing.
+.TP 6
+.B \-p
+Check a file system that was unmounted cleanly for consistency.
+.TP 6
+.B \-P
+Check a file system for consistency regardless of how it was unmounted.
+.SH RESTRICTIONS
+Inode numbers for
+.BR . ""
+and
+.BR .. ""
+in each directory should be checked for validity.
+The
+.B fsck
+command
+will not allow checking a raw device if the block device is mounted.
+.SH FILES
+.br
+.ns
+.TP 21
+/etc/fstab
+contains default list of file systems to check.
+.SH "SEE ALSO"
+getmnt(2), fstab(5), ufs(5), crash(8v), mkfs(8), mklost+found(8),
+mount(8), newfs(8), reboot(8)

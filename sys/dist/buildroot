@@ -1,0 +1,144 @@
+#!/bin/sh
+#
+#  Usage: sh buildroot
+#  Description: build the miniroot file system in a dumpimage
+#------------------------------------------------------------------
+#
+#  001 - June, 1986 - Lea Fottfredsen & Tung-Ning Cherng
+#	   Added in the network remote support.
+#
+#  000 - March, 31, 1986 - Tung-Ning Cherng
+#	   Revised for V2.0.
+#
+#   	Based on V1.2 'buildroot' - by Greg Tarsa and Bob Fontaine 
+#
+PATH=.:/etc:/bin:/usr/bin:/usr/ucb
+export PATH
+umask 0
+
+Ultrixroot=${Ultrixroot-ra3a}
+Ultrixusr=${Ultrixusr-ra3h}
+genroot=${genroot-ra4a}
+genroottype=${genroottype-ra81}
+MASTERROOT=${MASTERROOT-'/usr/release/build'}
+DEST=${DEST-'/usr/release/ULT'}
+UPGRADE=upgrade2
+
+echo "
+* * * Making the root on device ${root} * * *"
+umount /dev/${genroot}	
+echo "Mounting the ${MASTERROOT} partitions"
+mount -r /dev/${Ultrixroot} ${MASTERROOT}
+mount -r /dev/${Ultrixusr} ${MASTERROOT}/usr
+
+echo "Making and checking filesystem ${genroot}" 
+newfs -s 8192 -b 4096 -f 512 r${genroot} ${genroottype}
+fsck /dev/r${genroot}
+
+echo "Mounting "${genroot}" on /mnt."
+mount /dev/${genroot} /mnt
+cd /mnt
+rm -rf lost+found
+
+#
+# The shell file that calls this shell file (buildmini)
+# changes directory to the destination of the miniroot.
+[ `pwd` = '/' ] &&
+{
+	echo You just '(almost)' destroyed the root
+	exit 1
+}
+
+echo "Starting the build of the root."
+#
+# copy generic kernel
+
+cp ${MASTERROOT}/genvmunix vmunix
+
+for prog in ultrixboot vmb.exe pcs750.bin
+do
+	cp ${MASTERROOT}/$prog  .
+done
+
+cp ${MASTERROOT}/usr/sys/dist/upgrade/${UPGRADE} upgrade
+cp ${MASTERROOT}/usr/sys/dist/.rootprofile .profile
+cp ${MASTERROOT}/.profile real.profile
+
+
+#
+# make top level directories
+for K in bin etc tmp usr dev install.tmp mnt
+{
+	mkdir $K
+}
+chmod 777 tmp
+
+#
+# copy the needed programs 
+
+cp $MASTERROOT/etc/disktab etc
+
+###net
+for prog in ifconfig protocols rshd services 
+do
+    cp ${MASTERROOT}/etc/$prog etc
+done
+
+for prog in rsh rcp grep whoami 
+do
+	cp ${MASTERROOT}/usr/ucb/$prog install.tmp
+done
+cp ${MASTERROOT}/usr/bin/egrep install.tmp
+cp ${MASTERROOT}/usr/bin/sleep install.tmp
+
+for prog in newfs mkfs restore halt init mount mknod fsck umount dump \
+	ufs_mount chpt radisk passwd
+do
+    cp ${MASTERROOT}/etc/$prog etc
+done
+
+for prog in fverify sizer doconfig setld
+do
+	cp ${MASTERROOT}/etc/$prog install.tmp
+done
+
+for prog in sh ls mv sync cat mkdir stty echo rm cp expr awk make test \
+	ed true false ln tee date chmod sed pwd passwd mt hostname ps df
+do
+    cp ${MASTERROOT}/bin/$prog bin
+done
+
+cp ${MASTERROOT}/bin/tar install.tmp  # this has to be here.
+cp ${MASTERROOT}/bin/dd install.tmp  # this has to be here.
+cp ${MASTERROOT}/etc/eli install.tmp  # this has to be here.
+
+ln bin/test bin/[	#put the square bracket into the directory
+ln bin/stty bin/STTY
+
+cp ${MASTERROOT}/dev/MAKEDEV dev	
+
+cd dev
+MAKEDEV console kmem kUmem tty null pty0 pty1 errlog
+ls -l console
+cd .. 
+
+cp ${MASTERROOT}/usr/adm/bin/ready install.tmp
+
+for prog in ask_part delet_part size_part finder ask_filesys
+do
+    cp ${MASTERROOT}/usr/sys/dist/$prog install.tmp
+done
+
+sync
+echo "Root build is complete."
+
+cd ${DEST}
+echo "Unmounting ${genroot}."
+umount /dev/${genroot}
+echo "Checking space on ${genroot}"
+df /dev/${genroot}
+echo "Checking ${genroot}."
+fsck /dev/r${genroot}
+echo "Dumping /dev/r${genroot} to genrootdump."
+dump 0f genrootdump /dev/r${genroot}
+echo "`date` done."

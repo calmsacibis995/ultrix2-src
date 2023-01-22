@@ -1,0 +1,18 @@
+.TH errlog 4
+.SH NAME
+errlog \- error logging interface
+.SH DESCRIPTION
+This is a special character device which provides an interface to the
+error logging daemon process, /etc/elcsd.
+This device is also accessed by
+other system utilities, such as the error
+log administration utility, /etc/eli.
+.SH RESTRICTIONS
+This device should be readable and writable by root only,
+to protect access by non-system processes.
+The major number assigned to this device must correlate with
+the corresponding major number designation in the system kernel.
+.SH FILES
+/dev/errlog
+.SH SEE ALSO
+MAKEDEV(8)

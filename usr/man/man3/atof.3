@@ -1,0 +1,131 @@
+.TH atof 3 dc 
+.\" Last modified by BAM on 8-Aug-85  1300  
+.\"
+.SH NAME
+atof, atoi, atol, strtol, strtod \- convert ASCII to numbers
+.SH SYNTAX
+.nf
+.B double atof(nptr)
+.B char *nptr;
+.PP
+.B atoi(nptr)
+.B char *nptr;
+.PP
+.B long atol(nptr)
+.B char *nptr;
+.PP
+.B strtol(nptr, eptr, base)
+.B char *nptr, **eptr;
+.B int base;
+.PP
+.B double strtod (nptr, eptr)
+.B char *nptr, **eptr;
+.fi
+.SH DESCRIPTION
+These functions convert a string pointed to by
+.I nptr
+to floating, integer, and long integer representation respectively.
+The first unrecognized character ends the string.
+.PP
+The
+.PN atof
+function recognizes an optional string of spaces, 
+then an optional sign, then
+a string of digits optionally containing a decimal
+point, then an optional `e' or `E' followed by an 
+optionally signed integer.
+.PP
+The
+.PN atoi
+and
+.PN atol
+functions recognize an optional string of spaces, 
+then an optional sign, then a
+string of digits.
+.PP
+The
+.PN strtol
+function
+returns as a long integer, the value represented by the 
+character string
+.I nstr.
+The string is scanned up to the first character
+inconsistent with the base.  Leading white-space
+characters are ignored.
+.PP
+If the value of 
+.I eptr
+is not (char **) NULL, a pointer to the 
+character terminating the scan is returned in
+.I **eptr. 
+If no integer can be formed, 
+.I **eptr
+ is set to 
+.I nstr,
+and zero is returned.
+.PP
+If \fIbase\fP is positive and not greater than 36,
+it is used as the base for conversion.  After an
+optional leading sign, leading zeros are ignored,
+and "0x" or "0X" is ignored if \fIbase\fP is 16.
+.PP
+If \fIbase\fP is zero, the string itself determines 
+the base thus:  After an optional leading sign, a
+leading zero indicates octal conversion, and a 
+leading "0x" or "0X" hexadecimal conversion.
+Otherwise, decimal conversion is used.
+.PP
+Truncation from long to int can take place upon 
+assignment, or by an explicit cast.
+.PP
+The
+.PN strtod
+function returns as a double-precision floating point number,
+the value represented by the character string pointed to by
+.I nptr.
+The string is scanned up to the first unrecognized character.
+.PP
+The
+.PN strtod 
+function recognizes an optional string of white-space characters,
+as defined by \fIisspace\fP is ctype(3), then
+a string of digits optionally containing a decimal point,
+then an optional sign, then a string of digits
+optionally containing a decimal point, then an optional
+.B e
+or
+.B E
+followed by an optional sign or space, followed by an integer.
+.PP
+If the value if
+.I eptr
+is not (char **)NULL, a pointer to the character
+terminating the scan is returned in the location pointed to by
+.I eptr.
+If no number can be formed, \fI*eptr\fP is set to \fInptr\fP,
+and zero is returned.
+.SH DIAGNOSTICS
+The
+.PN atof
+function returns 
+.B HUGE
+if an overflow occurs, and a 0 value if an
+underflow occurs.
+.PP
+The
+.PN strtod
+function returns 
+.B HUGE
+(according to the sign of the value), if the 
+correct value would cause overflow, and 
+.I errno
+is set to 
+.B ERANGE.
+.PP
+If the correct value would cause underflow, zero 
+is returned and
+.I errno
+is set to 
+.B ERANGE.
+.SH SEE ALSO
+scanf(3s)

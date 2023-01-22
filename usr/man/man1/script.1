@@ -1,0 +1,31 @@
+.TH script 1
+.SH NAME
+script \- make typescript of terminal session
+.SH SYNTAX
+.B script
+[
+.B \-a
+] [ file ]
+.SH DESCRIPTION
+The
+.B script
+command makes a typescript of everything printed on your terminal.
+The typescript is written to 
+.IR file ,
+or appended to
+.IR file
+if the
+.B \-a
+option is given.
+It can be sent to the line printer later with
+.B lpr.
+If no file name is given, the typescript
+is saved in the file
+.IR typescript .
+.PP
+The script ends when the forked shell exits.
+.PP
+This program is useful when using a crt and a hard-copy
+record of the dialog is desired, as for a student handing
+in a program that was developed on a crt when hard-copy
+terminals are in short supply.

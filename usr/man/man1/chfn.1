@@ -1,0 +1,66 @@
+.TH chfn 1
+.SH NAME
+chfn \- change finger entry
+.SH SYNTAX
+.B chfn
+[loginname]
+.SH DESCRIPTION
+The
+.PN chfn
+command
+is used to change information about users.  This information is used
+by the finger program, among others.
+It consists of the user's
+real name, office room number, office phone number, and home
+phone number.
+The
+.PN chfn
+command prompts the user for each field.
+Included in the prompt is a default value,
+which is enclosed between brackets.
+The default value is accepted simply by typing <return>.
+To enter a blank field,
+type the word 'none'.
+This is an example:
+.EX
+Name [Biff Studsworth II]:
+.br
+Office number (no colons) [ABC-1/K0]:
+DEF-2/K1
+.br
+Office Phone (Exs: 1234 or 123-4567) []:
+1863
+.br
+Home Phone (Ex: 123-4567) [5771546]:
+none
+.EE
+.PP
+The
+.PN chfn
+command allows phone numbers to be entered with or without hyphens.
+Office entries cannot contain colons or newlines.
+.PP
+It is a good idea to run finger after running
+.PN chfn
+to make sure everything is the way you want it.
+.PP
+The optional argument
+.B loginname
+is used to change another person's finger information.
+This can only be done by the superuser.
+.SH RESTRICTIONS
+The encoding of the office and extension
+information is installation dependent.
+.PP
+Because two users may try to write the 
+passwd file at once, a synchronization
+method was developed.
+On rare occasions, a message that the password file
+is "busy" will be printed.
+In this case,
+.PN chfn
+sleeps for a while and then tries to write to the passwd file again.
+.SH FILES
+/etc/passwd, /etc/ptmp
+.SH SEE\ ALSO
+finger(1), passwd(5yp)

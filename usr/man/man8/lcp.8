@@ -1,0 +1,202 @@
+.\" Last revised by MJT  10-Apr-85  1729
+.\" GCT last update: 4/5/85
+.\" to produce output: 
+.\" ditroff -Tln01 -t -man filename | lpr -n -Pln &
+.TH lcp 8 dc
+.SH NAME
+lcp \- Local Area Transport server (LAT) control program
+.SH SYNTAX
+.B /etc/lcp
+[
+.I options
+]
+.SH DESCRIPTION
+The LAT control program,
+lcp,
+provides the essential functions
+to control and manage LAT terminal service. 
+It allows you to
+start and stop LAT service, modify and display configuration
+characteristics, and
+display and zero error counters.
+The command
+lcp \-s 
+is usually included in the 
+/etc/rc.local 
+file to automatically restart LAT service
+during reboot. 
+.SH OPTIONS
+The following options may be set with 
+.IR lcp :
+.TP 15
+.B \-s
+Start LAT service. Enable connections from LAT terminal servers to 
+host. If LAT parameters have not been set, they take on default values
+specified in the \-r option. 
+.TP 15
+.B \-r
+Reset LAT parameters to the following default values:
+.br
+multicast timer: 30 seconds
+.br
+nodename: hostname
+.br
+node description: ``ULTRIX-32''
+.br
+servicename: hostname
+.br
+service description: ``ULTRIX LAT SERVICE''
+.br
+.TP 15
+.B \-g
+Set groups to \fIgrp1\fR, \fIgrp2\fR, ... , \fIgrpn\fR.
+For example, lcp -g 128 or lcp -g 56,5,102 sets these groups.
+The groups are separated by commas with no spaces and a line
+cannot be carried over in a shell script.
+.TP
+.B \-h
+Only available to host-initiated connects.  The groups are
+separated by commas with no spaces and a line cannot be carried
+over in a shell script.
+.TP
+.B \-H
+Only available to terminal server initiated connects.  The groups
+are separated by commas with no spaces and therefore a line 
+cannot be carried over in a shell script.
+.TP 15
+.B \-m    
+Sets multicast transmission timer to the specified time
+(next argument).
+A node advertises its presence
+to the LAT servers
+by sending out a multicast message over the network. The
+.I time 
+variable sets the interval between transmissions. Valid
+intervals range from 10 to 255 seconds, with a default of 30 seconds.
+.TP 15
+.B \-n    
+Sets node to the specified name (next argument).
+Specifies the name that your node will be
+known by. Although the Terminal Server keeps track of nodes without an
+associated nodename, a LAT node must have a nodename in order for a
+terminal user to establish a connection. A node can have a list of
+associated services and service ratings, specified 
+by up to 16 alphanumeric
+characters. Dollar ($) and underscore (_) characters are valid, but
+leading underscores and trailing colons are removed. The nodename must
+be unique on the Ethernet. The Terminal Server displays the nodename as
+a service if you type the ``show services'' command, 
+and as a node if you
+type the ``show nodes'' command. The nodename default is the hostname.
+.TP 15
+.B \-N    
+Sets node description to the specified message (next
+argument).
+The node description allows for a
+short message to 
+be displayed to LAT users,
+providing news or additional node information.
+Specify up to 64 alphanumeric characters. 
+Dollar ($) and underscore (_) characters are valid, but
+leading underscores and trailing colons are removed.
+Leading ampersands (&) are not
+allowed. The default is ``ULTRIX-32''.
+You must enclose the string in double quotes (") if it
+contains one or more spaces. 
+.TP 15
+.B \-v    
+Sets service name to the specified name (next argument).
+Service names allow a service
+node to be known by more than just the nodename. The default is
+the nodename. 
+.TP 15
+.B \-V    
+Sets services description to specified message (next
+argument).
+It can be up to 64
+characters in length.
+You must enclose the string in double quotes (") if it
+contains one or more spaces. 
+.TP 15
+.B \-t	  
+Stop LAT service. Disable connections from LAT terminal servers to 
+host.
+.TP 15
+.B \-d    
+Display LAT characteristics. Shows the LAT parameters at their current
+setting. The following is an example of the output of the \-d option:
+.EX
+% /etc/lcp \-d
+
+Node name: NODE 	Service name: NODE
+Node Identification: ULTRIX LAT service
+Service Identification: ULTRIX-32
+Groups: 0
+Multicast timer: 30 seconds
+LAT version: 5 eco: 0  LAT Protocol is active
+.EE
+.TP 15
+.B \-z    
+Reinitializes (zeroes out) error counters.
+To test system performance over a period of
+time, zero the counters and observe the information that accumulates.
+.TP 15
+.B \-c    
+Displays error counters in vertical format.  If an
+interval also is specified (next argument), displays
+error counters in horizontal format every interval seconds.
+The following is an example of the output of the \-c option:
+.EX
+% /etc/lcp \-c
+67413 Frames received (rcv)
+   32 Duplicate frames received (rcvdup)
+89005 Frames transmitted (xmit)
+   62 Retransmissions (rexmit)
+    0 Illegal messages received (illmesg)
+    0 Illegal slots received (illslots)
+.EE
+.TP 15
+.B interval 
+Continuously display error counters in horizontal format,
+waiting 
+.I interval
+seconds between each iteration. Quit by sending a keyboard interrupt.
+The following is an example of the output of the interval
+option: 
+.EX
+% /etc/lcp 10
+rcv     rcvdup  xmit    rexmit  illmesg  illslots
+67474   32      89066   62      0        0
+67483   32      89067   62      0        0
+67491   32      89073   62      0        0
+67502   32      89089   62      0        0
+.EE
+.SH Error Counters
+The meaning of each error counter is explained below.
+.IP \fBrcv\fR 15
+number of Ethernet LAT messages.
+.br
+.IP \fBrcvdup\fR 15
+number of duplicate messages received (normally
+indicates a system slowdown).
+.br
+.IP \fBxmit\fR 15
+number of transmitted Ethernet LAT messages.
+.br
+.IP \fBrexmit\fR 15
+number of transmit frames that are sent more than once.
+.br
+.IP \fBillmesg\fR 15
+number of bad messages flagged by the LAT driver.
+.IP \fBillslots\fR 15
+number of bad transmission slots flagged by the driver.
+.SH DIAGNOSTICS
+Messages indicating that user is not privileged or that LAT
+service is not loaded.
+.SH FILES
+.DT
+/etc/ttys
+.br
+/etc/rc.local
+.SH SEE ALSO
+lta(4), ttys(5) 

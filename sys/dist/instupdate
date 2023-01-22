@@ -1,0 +1,665 @@
+#! /bin/sh
+#
+#	Program Name:	instupdate
+#	Author:		Greg Tarsa
+#	Date Written:	28-Dec-84
+#	SCCS ID:	@(#)instupdate	1.3 (Ultrix) 10/21/85
+#	Last Edit:	10/21/85
+#
+# This shell script is used to install the various distribution software
+# for ULTRIX V1.1.  
+#
+# USAGE: sh instupdate type /dev/xxxx
+#
+#
+# This script assumes that the necessary help files are found in
+# /tmp/tmpinstall.
+#
+# For disks, the temporary mount directory is assumed to be
+# /tmp/tmpdisk.
+#
+# This script assumes that the first file on the first installation
+# volume is the file containing the table of contents and the .help files.
+#
+# Modification History
+# ~~~~~~~~~~~~~~~~~~~~
+# 04	31-Aug-85, Bob Fontaine
+#	Added a specific path for the call to which so that the
+#	program would be found regardless of the path value.
+#
+# 03	24-Jun-85, Greg Tarsa
+#	Added a query to verify that the user does not want to add
+#	missing "Mandatory" update sets as he may have added them already.
+#	Added code to make update volume to be mounted read-only.
+#
+# 02	10-Jan-85, Greg Tarsa
+#	Changed temporary directories to be in /tmp rather than /sys/dist
+#	because /sys/dist is not mounted in RC25/RK07 installations!
+#	Added code to check for /usr being mounted and mount it if not.
+#
+# 01	28-Dec-84, Greg Tarsa
+#	Wrote Original code.
+#
+
+#CODETOP
+# define PATH!
+PATH=.:/bin:/usr/bin:/etc:/usr/ucb;export PATH
+
+#
+# Define some program wide constants
+#
+USAGE="
+Usage: sh instupdate type [/dev/xxxx]
+type is one of: tape, ra60, rc25, rl02 or rk07
+if unit is not a tape, then the device name must
+be specified.
+"
+
+INSTALLFROM="/"
+#INSTALLFROM="/testdisk"
+#umount /dev/hp1h 2> /dev/null
+#rm -rf ${INSTALLFROM}
+#mkdir ${INSTALLFROM}
+#mount /dev/hp1h ${INSTALLFROM}
+
+INSTALLBASE="/tmp"
+#INSTALLBASE="/usr/staff1/tarsa/inst/code/inst/test"
+INSTALLAREA="${INSTALLBASE}/tmpinstall"
+INSTALLDIR="${INSTALLBASE}/tmpdisk"
+
+SUBSETFILE="${INSTALLAREA}/subsets.info"
+
+case $1 in
+"")	#we're doing an installation, no arguments
+	CONFIGTOOLS="tmp"
+	if test -s /${CONFIGTOOLS}/tapedrive
+	then
+		set `cat /${CONFIGTOOLS}/tapedrive`
+		case $2 in
+		ra|rb|rl|hk)
+			#its a disk
+			MEDIUM="$1"
+			INSTDEVICE="/dev/$2$3c"
+			;;
+		*)	#its a tape
+			MEDIUM="tape"
+			INSTDEVICE="/dev/rmt12"
+			;;
+		esac
+	else
+		echo "$USAGE"
+		exit 1
+	fi
+	;;
+   *)	# we're doing a user call, get arguments
+	#
+	# Get the type of the installation device
+	#
+	case $1 in
+	tape|ra60|rc25|rk07|rl02)
+		MEDIUM=$1
+		;;
+	*)	echo "$USAGE"
+		exit 1
+		;;
+	esac
+	
+	# Get the installation device name
+	#
+	case ${MEDIUM} in	#force second arg of tape to be /dev/rmt12
+	tape)	set $MEDIUM /dev/rmt12
+		;;
+	esac
+	case $2 in
+	"")	echo "$USAGE"
+		exit 1
+		;;
+	*)	case ${MEDIUM} in
+		tape)	#tape is always the same, user input is ignored
+			INSTDEVICE="$2"
+			;;
+		*)	if test -r $2
+			then
+				INSTDEVICE="$2"
+			else
+				echo "$USAGE"
+				exit 1
+			fi
+			;;
+		esac
+		;;
+	esac
+	;;
+esac
+
+#
+# Mount everything, if it has not been mounted
+#
+mount -a 2> /dev/null
+
+# Have the user mount the proper volume
+#
+case $MEDIUM in
+rl02)	echo "
+Please mount the first RL02 volume that contains
+the ULTRIX software update. "
+	;;
+*)	echo "
+Please mount the ${MEDIUM} volume that contains
+the ULTRIX software update. "
+	;;
+esac
+
+echo -n "
+Press RETURN when the unit is online and ready: "
+read X
+
+# Setup housekeeping in the /tmp area
+#
+rm -rf ${INSTALLAREA}
+trap '	echo "Cleaning up.";
+	umount ${INSTDEVICE} 2> /dev/null;
+	rm -rf ${INSTALLAREA} ${INSTALLDIR};
+	exit 1' 0 1 2 3 4
+
+mkdir ${INSTALLAREA}
+cd ${INSTALLAREA}
+
+# Every type of volume should have, as its first file, a tar
+# fileset of the stuff we need to do the installation.
+#
+case $MEDIUM in
+tape)	TARTAPE="${INSTDEVICE}"
+	mt -f $TARTAPE rew
+	;;
+*)	mkdir ${INSTALLDIR}
+
+	# umount kludge, presumably mounted elsewhere.
+	umount ${INSTDEVICE} 2>/dev/null
+	mount -r ${INSTDEVICE} ${INSTALLDIR}
+	TARTAPE="${INSTALLDIR}/installation"
+	;;
+esac
+
+(cd ${INSTALLAREA};tar xf ${TARTAPE})	# unload the install stuff
+
+# Round up the fileset files and descriptions and display them
+#
+# File information is in the subset file and is in three columns:
+#	subsetname	type (Mandatory or Optional)	volume #
+#
+SUBSETS=`awk '{print $1}' $SUBSETFILE`
+TYPE=`awk '{print $2}' $SUBSETFILE`
+VOLUME=`awk '{print $3}' $SUBSETFILE`
+
+set ${TYPE}
+for SUBSET in ${SUBSETS}
+do
+	eval TYPEOF${SUBSET}="$1"
+	shift
+
+	#set the helpfiles, while were scanning the subsets. . .
+	eval HELPFOR${SUBSET}="${INSTALLAREA}/help.${SUBSET}"
+done
+
+set ${VOLUME}
+for SUBSET in ${SUBSETS}
+do
+	eval VOLOF${SUBSET}="$1"
+	shift
+done
+
+# Now display the "menu" for the files.  Note that the .help
+# file's first line is the one-line description and the rest of
+# the file is for detailed description, if any.
+#
+echo "
+Here are the software subsets that you may now
+update on your ULTRIX-32 system.  The subsets
+marked with an '*' are required subsets;
+therefore, you must update them the first time you
+perform an update installation.  You need not
+update them again, if you perform subsequent
+update installations.
+
+"
+
+cd ${INSTALLFROM}	# move to "root"
+
+#
+# This "set" just has to have more entries in ALPHABETICAL ORDER than there
+# are filesets.
+#
+set A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j
+
+COUNT=1
+for SUBSET in ${SUBSETS}
+do
+	eval TAPEPOSOF${SUBSET}=$COUNT
+	eval SORTPOSOF${SUBSET}=$1
+	shift
+
+	eval TMP=\$TYPEOF${SUBSET}
+	case $TMP in
+	Mandatory)
+		STAR="*  "
+		MANDLIST="$MANDLIST $SUBSET"
+		;;
+	Optional)
+		STAR="	   "
+		;;
+	*)	STAR="?	  "
+		;;
+	esac
+
+	eval HELPFILE=\$HELPFOR${SUBSET}
+	echo " ${COUNT})	${SUBSET}${STAR}	`sed 1q ${HELPFILE}`"
+
+	COUNT=`expr $COUNT + 1`
+done
+
+while : true
+do
+	set ${SUBSETS}
+	echo -n "
+Please specify the number of each subset you wish
+to update.  Separate each number you type with a
+space.  If you would like more detailed
+descriptions, type 'help'.
+
+For example, if you type 1 2 4 the update script
+updates the $1 $2 and $4 subsets.
+If you type 'help', the update script displays
+more detailed instructions for each entry.
+
+Please enter your selections: "
+
+	read SELECTIONS
+	SELECTIONS=`echo $SELECTIONS | tr a-z A-Z`
+
+	# Process the help
+	case $SELECTIONS in
+	H*)	COUNT=1
+		for SUBSET in ${SUBSETS}
+		do
+			eval TYPE=\$TYPEOF${SUBSET}
+			eval HELPFILE=\$HELPFOR${SUBSET}
+			echo  "
+${COUNT})	${SUBSET} (${TYPE}) "
+			sed -n '2,$s/^/	/p' ${HELPFILE}
+
+			COUNT=`expr $COUNT + 1`
+		done
+		continue
+		;;
+	esac
+
+	#verify the selections and add new ones.
+	#
+	LOADLIST="" ADDLIST=""
+	for ITEM in ${SELECTIONS}
+	do
+		COUNT=1
+		FOUND="false"
+
+		for SUBSET in ${SUBSETS}
+		do
+			case ${ITEM} in
+			${COUNT}|${SUBSET})
+				LOADLIST="$LOADLIST $SUBSET"
+				FOUND="true"
+				break
+				;;
+			esac
+
+			COUNT=`expr $COUNT + 1`
+		done
+
+		case $FOUND in	#not found, ignore it.
+		false)	echo "$ITEM: invalid option value.  Ignored."
+			;;
+		esac
+	done
+
+	# Search the list for mandatory entries, if they are not there
+	# then add them.
+	#
+	for ITEM in ${MANDLIST}
+	do
+		FOUND="false"
+
+		for ENTRY in ${LOADLIST}
+		do
+			case ${ENTRY} in
+			${ITEM})
+				FOUND="true"
+				break
+				;;
+			esac
+		done
+
+		case ${FOUND} in
+		false)	ADDLIST="$ADDLIST $ITEM"
+			;;
+		esac
+	done
+
+	echo -n "
+You chose to add the following: ${LOADLIST}
+
+Is this correct (y/n) [n]: "
+
+	read RESP
+	case $RESP in
+	[Yy]*)	case ${ADDLIST} in
+		"")	;;
+		*)	set ${ADDLIST}
+			case $# in
+			1)	SUFFIX=""
+				;;
+			*)	SUFFIX="s"
+				;;
+			esac
+			echo -n "
+You did not specify the following required software subset${SUFFIX}:
+
+	${ADDLIST}
+
+Do you wish to add these required software subsets to your current
+selections? (y/n) [y]? "
+			read RESP
+			case ${RESP} in
+			    [Nn]*)	FORCEMANDATORY="false" ;;
+			    *)		FORCEMANDATORY="true" ;;
+			esac
+			;;
+		esac
+		break
+		;;
+	esac
+done
+
+# Now put the user's load list together with any
+# mandatory sets not specified and then sort the
+# entries so that the mandatory sets are first, followed
+# by the other sets, in volume number order.
+#
+case ${FORCEMANDATORY} in
+    true)	LOADLIST="$ADDLIST $LOADLIST" ;;
+esac
+
+SORTLIST=""
+for ITEM in $LOADLIST
+do
+	eval SORTLIST=\"$SORTLIST \$TYPEOF${ITEM} \$VOLOF${ITEM} \$SORTPOSOF${ITEM}	${ITEM}\"
+done
+
+LOADLIST=`
+	echo ${SORTLIST} |
+	awk '{	for (i = 1; i <= NF; i = i + 4)
+			print $(i), $(i+1), $(i+2), $(i+3)}' |
+	sort |
+	awk '{	print $NF }'
+	`
+
+#echo "The sorted load list is: $LOADLIST"
+
+# update set, start on volume 1 for all media
+CURVOL=1
+
+case ${MEDIUM} in	#at end of file 0 on tape
+tape)	mt -f $TARTAPE rew
+	TAPEPOS=0
+	;;
+esac
+
+# hide all of the images that are currently running so that we can clobber
+# them successfully.
+TAR=/bin/tar.$$
+SLEEP=/usr/bin/sleep.$$
+ECHO=/bin/echo.$$
+RUNNING=`ps ax|awk 'NR != 1 {print $5}'|sort|sed 's/^-//'|uniq`
+RUNNING="$RUNNING /bin/tar /bin/sh /usr/bin/sleep /bin/echo"
+LIVE=
+for IMAGE in $RUNNING
+do
+	IMAGE=`/usr/ucb/which $IMAGE`
+	case $IMAGE in
+	/*)	LIVE="$LIVE $IMAGE"
+		mv $IMAGE ${IMAGE}.$$
+		;;
+	esac
+done
+	
+
+
+for SUBSET in ${LOADLIST}
+do
+	# Build the tartape name.  Load the appropriate
+	# volume if necessary.
+	#
+	case ${MEDIUM} in
+	tape)	# Position the tape to the proper place
+		# Do this by assuming that the current tape position
+		# of the 
+		TARTAPE="/dev/rmt12"
+		eval FILEPOS=\$TAPEPOSOF${SUBSET}
+		MVCNT=`expr $FILEPOS - $TAPEPOS`
+		case $MVCNT in
+		0)	;;
+		*)	case $MVCNT in
+			1)	SUFFIX=""
+				;;
+			*)	SUFFIX="s"
+				;;
+			esac
+			${ECHO} -n "
+Skipping $MVCNT fileset${SUFFIX}. . ."
+			mt -f $TARTAPE fsf $MVCNT
+			TAPEPOS=`expr $TAPEPOS + $MVCNT`
+			;;
+		esac
+		;;
+	*)	TARTAPE=${INSTALLDIR}/$SUBSET
+		eval VOLUME=\$VOLOF${SUBSET}
+		case ${VOLUME} in
+		${CURVOL})
+			;;
+		*)	# mount correct volume.
+			while : 'true'
+			do
+				umount ${INSTDEVICE}
+				${ECHO} -n "
+Please dismount the current volume and insert
+the volume labelled:
+	Additional software #$VOLUME
+
+Press RETURN when ready: "
+				read X
+				CURVOL=${VOLUME}
+				mount -r ${INSTDEVICE} ${INSTALLDIR}
+				# check volume #
+				case `${ECHO} ${INSTALLDIR}/volume*` in
+				${INSTALLDIR}/volume${VOLUME})
+					break
+					;;
+				esac
+			done
+			;;
+		esac
+		;;
+	esac
+
+	${ECHO} "
+Updating ${SUBSET}. . ."
+	LCSUB=`${ECHO} $SUBSET|tr '[A-Z]' '[a-z]'`
+	TTHOLD=`${ECHO} $TARTAPE | tr A-Z a-z`
+	TARTAPE=$TTHOLD
+
+	# tar off the subset namefiles.
+	cd /
+	case $MEDIUM in
+	tape)	$TAR xpf $TARTAPE ./tmp/${LCSUB}.obs ./tmp/${LCSUB}.mand ./tmp/${LCSUB}.opt
+		mt -f $TARTAPE bsf;mt -f $TARTAPE fsf
+		;;
+	*)	for EXT in obs mand opt
+		do
+			$TAR xpf ${TARTAPE}.${EXT} ./tmp/${LCSUB}.${EXT}
+		done
+		;;
+	esac
+	${ECHO} "Deleting obsolete files for ${SUBSET}..."
+	cat /tmp/${LCSUB}.obs |
+	while read FILE
+	do
+		${ECHO} $FILE
+		rm -rf $FILE
+	done
+	
+	${ECHO} -n "
+Updating mandatory files for ${SUBSET}..."
+	case $MEDIUM in
+	tape)	;;
+	*)	TARTAPE=${TTHOLD}.mand
+		;;
+	esac
+
+	# set up message dots to keep user HAPPY :-)
+	while : #true
+	do
+		trap 'break' 1
+		${SLEEP} 15
+		${ECHO} -n "."
+	done &
+	BGPID=$!
+
+	# split the mandatory namelist to avoid cmdline overflow.
+	split -200 /tmp/${LCSUB}.mand /tmp/${LCSUB}.mand.
+
+	for FILE in /tmp/${LCSUB}.mand.??
+	do
+		case $MEDIUM in
+		tape)	# TAPE- we have a background tape pos running.
+			$TAR xpf $TARTAPE `cat $FILE`
+			mt -f $TARTAPE bsf;mt -f $TARTAPE fsf
+			;;
+		*)	$TAR xpf $TARTAPE `cat $FILE`
+			;;
+		esac
+		# eliminate message dots
+	done
+	# cool it with the dots..........
+	kill -1 $BGPID
+	wait $BGPID
+
+	case `cat /tmp/${LCSUB}.opt` in
+	"")	${ECHO} "
+No user customizable files for ${SUBSET}."
+		;;
+	*)	${ECHO} -n "
+Updating user customizable system data files for ${SUBSET}.
+Reading..."
+		# setup message dots.
+		while : #true
+		do
+			trap 'break' 1
+			$SLEEP 15
+			${ECHO} -n "."
+		done &
+		BGPID=$!
+
+		case $MEDIUM in
+		tape)	;;
+		*)	TARTAPE=${TTHOLD}.opt
+			;;
+		esac
+		cd /tmp
+		mkdir optdir;cd optdir
+
+
+		tar xf $TARTAPE `cat /tmp/${LCSUB}.opt`
+
+		kill -1 $BGPID
+		wait $BGPID
+
+		for FILE in `cat /tmp/${LCSUB}.opt`
+		do
+			FILE=`${ECHO} $FILE|sed 's/^\.//'`
+			while : 'true'
+			do
+				${ECHO} -n "Update ${FILE} (y/n)[n]? "
+				read RESP
+		
+				case $RESP in
+				[Yy]*)	cp /tmp/optdir$FILE $FILE &
+				case ${FILE} in
+					/etc/rc.local)
+						HNAME=`/bin/hostname`
+NETNUM=`/bin/grep "${HNAME}" /etc/hosts | /bin/awk 'BEGIN {FS = "."}\
+{print $1}'`
+						ed rc.local << EOF > /dev/null
+/NETNUM/s//${NETNUM}/
+w
+q
+EOF
+					;;
+				esac
+					BGPID=$!
+					break
+					;;
+				[Nn]*|"")
+					case ${FILE} in
+					/etc/rc.local)
+					HNAME=`/bin/hostname`
+NETNUM=`/bin/grep "${HNAME}" /etc/hosts | /bin/awk 'BEGIN {FS = "."}\
+{print $1}'`
+					ed /etc/rc.local << EOF > /dev/null
+/\/etc\/ifconfig lo0 localhost/
+i
+/etc/ifconfig qe0 \`/bin/hostname\` broadcase ${NETNUM}.0 netmask 255.0
+.
+w
+q
+EOF
+					;;
+					esac
+					break
+					;;
+				esac
+			done
+		done
+		;;
+	esac
+	cd /
+	wait $BGPID
+	rm -rf /tmp/optdir &
+	rm -f /tmp/${LCSUB}* &
+	${ECHO} "Finished updating ${SUBSET}."
+done
+
+# retrieve/clobber hidden live files as necessary.
+for FILE in $LIVE
+do
+	if test -f $FILE
+	then
+		rm -f ${FILE}.$$
+	else
+		mv ${FILE}.$$ $FILE
+	fi
+done &
+
+cd /
+
+# filesets are complete
+#
+case ${MEDIUM} in
+tape)	echo "Rewinding tape"
+	mt -f $TARTAPE offl
+	exit 1
+	;;
+*)	umount ${INSTDEVICE}
+	;;
+esac
+
+wait
+echo "All selected subsets have been loaded."

@@ -1,0 +1,13 @@
+bin	/usr/new/mh
+bboards	off
+etc	/usr/new/lib/mh
+mail	/usr/spool/mail
+manuals	local
+mts	sendmail/smtp
+options BANG ATZ ISI MHRC WHATNOW
+options	BSD42 BERK TTYD DUMB
+options	MHE NETWORK BIND RPATHS
+options	SBACKUP='"\\043"'
+pop	off
+ldoptions -ns -O
+remove rm -f

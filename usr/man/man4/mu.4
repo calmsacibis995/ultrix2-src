@@ -1,0 +1,52 @@
+.TH mu 4
+.SH NAME
+mu \- TM78/TU78 MASSBUS magtape interface
+.SH SYNTAX
+.B master mt0 at mba? drive ?
+.br
+.B tape mu0 at mt0 slave 0
+.SH DESCRIPTION
+Prior to Version 2.0, this device was referenced by 
+mt(4).
+.PP
+The TM78/TU78 combination provides a standard tape drive
+interface as described in
+mtio(4).
+Only 1600 and 6250 bpi are supported; the
+TU78 runs at 125 ips and autoloads tapes.
+.SH RESTRICTIONS
+Only the raw tape is supported.
+.SH DIAGNOSTICS
+\fBmu%d: no write ring\fR.
+.br
+An attempt was made to write on the tape drive when no write ring
+was present.
+.PP
+\fBmu%d: not online\fR.
+.br
+An attempt was made to access the tape while it
+was offline.
+.PP
+\fBmu%d: hard error bn%d\fR.
+.br
+A tape error occurred at block \fIbn\fR.
+When possible the driver will have retried
+the operation which failed several times before reporting the error.
+Additional register information may be gathered from the system
+error log file,
+/usr/adm/syserr/syserr.<hostname>.
+.PP
+\fBmu%d: blank tape\fP.
+.br
+An attempt was made to read a blank tape (a tape without even
+end-of-file marks).
+.PP
+\fBmu%d: offline\fP.
+.br
+During an i/o operation the device was set offline.
+.SH FILES
+/dev/rmt???
+.br
+/dev/nrmt???
+.SH SEE ALSO
+mtio(4), nbuf(4), MAKEDEV(8), uerf(8)

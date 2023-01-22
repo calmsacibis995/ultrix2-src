@@ -1,0 +1,177 @@
+.TH rdump 8c
+.SH NAME
+rdump \- file system dump across the network
+.SH SYNTAX
+.B /etc/rdump
+[ \-key [
+.I argument
+\&... ] filesystem ]
+.SH DESCRIPTION
+The
+.B rdump
+command
+copies to magnetic tapes, disks, or a dump image file all files
+changed after a certain date
+in the
+.I filesystem.
+The command is identical in operation to
+dump(8)
+except the 
+.I f
+key must be specified and the file
+supplied should be of the form
+remote-system-name:device-or-file
+.PP
+The
+.B rdump
+command
+initiates a remote server,
+/etc/rmt,
+on the remote system to access the remote
+device or file.
+.SH OPTIONS 
+With the
+.PN dump
+command, you specify a string of one or more of the
+options described below.  If no options 
+are specified, the
+.I key
+.B 9u
+is assumed.
+.TP 8 
+.B  0\-9
+This number is the ``dump level.''
+All files 
+are dumped that have been modified 
+since the last date stored
+in the file
+/etc/dumpdates
+for the filesystem at the same or lesser dump levels.
+If no date is determined by the level,
+the beginning of time is assumed.
+Thus, the level 
+.B 0
+causes the entire filesystem to be dumped, a level 5 is used
+for a weekly backup and a level 9 for a daily backup.
+.TP 8
+.B B
+The next
+.I argument
+is a number that specifies the size, in 1024-byte blocks,
+of a storage medium, such as a diskette or a removable disk.
+See the first example.
+.TP 8
+.B d
+The density of the tape, expressed in bits per inch, is taken
+from the next
+.I argument.
+This density is used in calculating the amount of tape
+used per reel.  The default density is 1600 bpi.
+.TP 8 
+.B f
+Place the dump on the file or device specified by the next
+.I argument.
+This file is specified as remote-system-name:device-or-file.
+.TP 8
+.B n
+Notify, by means similar to a
+.MS wall 1
+command,
+all users in the group ``operator'' when
+.PN dump
+needs operator attention.
+.TP 8
+.B S
+Displays amount of space used by 
+.PN dump
+without performing the dump operation.  This is used
+for presizing either for file preallocation or to ensure
+the correct number of tapes or disks are on hand.
+.TP 8
+.B s
+The next
+.I argument
+specifies the size of the dump tape (in feet).  When
+the specified size is reached,
+.PN dump
+waits for the reel to be changed.  The default tape size
+is 2300 feet.
+.TP 8 
+.B u
+If the dump completes successfully,
+writes the date of the beginning of the dump to
+file
+.PN /etc/dumpdates.
+This file records a separate date for
+each filesystem and each dump level.
+The format of
+.PN /etc/dumpdates
+consists of one
+free format record per line:
+filesystem name, increment level
+and
+.MS ctime 3
+format dump date.  
+The superuser can carefully edit
+.PN /etc/dumpdates
+to change any of the fields.
+.TP 8 
+.B W
+The
+.PN dump
+utility tells the operator what file systems need to be dumped.
+This information is taken from the files
+.PN /etc/dumpdates
+and
+.PN /etc/fstab .
+The
+.B W
+option causes
+.PN dump
+to print out, for each file system in
+.PN /etc/dumpdates ,
+the most recent dump date and level,
+and highlights those file systems that should be dumped.
+If the 
+.B W
+option is used, all other options are ignored, and
+.PN dump
+exits immediately.
+.TP 8 
+.B w
+Unlike 
+.BR W , 
+.B w 
+lists only those filesystems that need to be dumped.
+.SH EXAMPLES
+This example reports number of bytes to be output for a
+level 0 dump of the root file system.  Please note: the file
+test is not created.
+.EX
+rdump OSf system:test /
+.EE
+This example dumps the root(/) file system from the local
+system to a remote system named ``nihil''.  A level 0
+dump to tape is performed and the /etc/dumpdates file is
+updated.
+.EX
+rdump 0uf nihil:/dev/rmt0h /
+.EE
+.PP
+This example dumps the user (/usr) file system from the local
+system to a remote system named ``dickens'' using the RX50
+device named /dev/rra1a for output.  A level 0 dump is
+performed, but the /etc/dumpdates file is not updated.
+.EX
+rdump 0f dickens:/dev/rra1a /usr
+.EE
+.PP
+If you want to use / and /usr, you must have these entries
+in the /etc/fstab file.
+.SH DIAGNOSTICS
+Same as 
+dump(8)
+with a few extra related to the network.
+.SH "SEE ALSO"
+dump(8),
+rmt(8c)

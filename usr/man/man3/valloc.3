@@ -1,0 +1,29 @@
+.TH valloc 3
+.SH NAME
+valloc \- aligned memory allocator
+.SH SYNTAX
+.nf
+.B char *valloc(size)
+.B unsigned size;
+.fi
+.SH DESCRIPTION
+The
+.PN valloc
+subroutine allocates
+.I size
+bytes aligned on a page boundary.
+It is implemented by calling malloc(3)
+with a slightly larger request, saving the true beginning of the block
+allocated, and returning a properly aligned pointer.
+.SH RESTRICTIONS
+The
+.IR vfree
+isn't implemented.
+.SH DIAGNOSTICS
+The
+.PN valloc
+subroutine
+returns a null pointer (0) if there is no available memory
+or if the arena has been detectably
+corrupted by storing outside the bounds
+of a block.

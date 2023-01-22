@@ -1,0 +1,65 @@
+.TH close 2
+.\" Last modified by BAM on 30-Oct-1985 1300.
+.\"
+.\" Last modified by BAM on 2-Aug-85  1000  
+.\"
+.SH NAME
+close \- delete a descriptor
+.SH SYNTAX
+.B close(d)
+.br
+.B "int d;"
+.SH DESCRIPTION
+The
+.PN close
+call deletes a descriptor from the per-process object
+reference table.
+If this is the last reference to the underlying object, then
+it will be deactivated.
+For example, on the last close of a file
+the current \fIseek\fP pointer associated with the file is lost;
+on the last close of a socket(2)
+associated naming information and queued data are discarded;
+on the last close of a file holding an advisory lock
+the lock is released. 
+For further information, see further flock(2).
+.PP
+A close of all of a process's descriptors is automatic on
+.IR exit ,
+but since
+there is a limit on the number of active descriptors per process,
+.I close
+is necessary for programs which deal with many descriptors.
+.PP
+When a process forks 
+all descriptors for the new child process reference the same
+objects as they did in the parent before the fork.
+For further information, see fork(2).
+If a new process is then to be run using execve(2),
+the process would normally inherit these descriptors.  Most
+of the descriptors can be rearranged with dup2(2) or deleted with
+.I close
+before the
+.PN execve
+is attempted, but if some of these descriptors will still
+be needed if the execve fails, it is necessary to arrange for them
+to be closed if the execve succeeds.
+For this reason, the call ``fcntl(d, F_SETFD, 1)'' is provided
+which arranges that a descriptor will be closed after a successful
+execve; the call ``fcntl(d, F_SETFD, 0)'' restores the default,
+which is to not close the descriptor.
+.PP
+Upon successful completion, a value of 0 is returned.
+Otherwise, a value of \-1 is returned and the global integer variable
+.I errno
+is set to indicate the error.  
+.SH DIAGNOSTICS
+The
+.PN close
+system call will fail if:
+.TP 15
+[EBADF]
+\fID\fP is not an active descriptor.
+.SH "SEE ALSO"
+accept(2), execve(2), fcntl(2), flock(2),
+open(2), pipe(2), socket(2), socketpair(2),

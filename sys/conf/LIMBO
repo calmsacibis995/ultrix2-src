@@ -1,0 +1,56 @@
+# @(#)LIMBO	1.6	(ULTRIX)	7/1/86
+#
+# LIMBO
+# Digital VAX 11/750 (Comet) standalone development machine
+#
+machine 	vax
+cpu		"VAX750"
+ident		LIMBO
+maxusers	64
+maxuprc 	25
+physmem 	6
+timezone	5 dst 1
+options 	QUOTA
+options 	INET
+options 	LAT
+options 	DLI
+
+config		vmunix		root on hp0 swap on hp0
+
+adapter 	mba0	at nexus ?
+adapter 	mba1	at nexus ?
+adapter 	uba0	at nexus ?
+adapter 	uba1	at nexus ?
+disk		hp0	at mba0 drive 0
+disk		hp2	at mba0 drive 2
+master		ht0	at mba1 drive 0
+tape		tu0	at ht0 slave 0
+tape		tu1	at ht0 slave 1
+controller	uda0	at uba0
+controller	uq0	at uda0 csr 0172150		vector uqintr
+disk		ra0	at uq0 drive 0
+controller	uda1	at uba0
+controller	uq1	at uda1 csr 0160354		vector uqintr
+disk		ra2	at uq1 drive 0
+disk		ra3	at uq1 drive 1
+controller	uda3	at uba1
+controller	uq3	at uda3 csr 0172150		vector uqintr
+disk		ra7	at uq3 drive 1
+controller	hk0	at uba1 csr 0177440		vector rkintr
+disk		rk0	at hk0 drive 0
+controller	hl0	at uba0 csr 0174400		vector rlintr
+disk		rl2	at hl0 drive 2
+device		dz0	at uba0 csr 0160100 flags 0xff	vector dzrint dzxint
+device		lp0	at uba0 csr 0177514		vector lpintr
+device		de0	at uba0 csr 0174510		vector deintr
+
+pseudo-device	ether
+pseudo-device	loop
+
+pseudo-device	inet
+pseudo-device	pty	16
+
+pseudo-device	lat
+pseudo-device	lta	16
+
+pseudo-device	dli

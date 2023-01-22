@@ -1,0 +1,33 @@
+.TH alarm 3 
+.SH NAME
+alarm \- schedule signal after specified time
+.SH SYNTAX
+.nf
+.B alarm(seconds)
+.B unsigned seconds;
+.fi
+.SH DESCRIPTION
+The
+.PN alarm
+subroutine
+causes signal SIGALRM, see signal(3),
+to be sent to the invoking process
+in a number of seconds given by the argument.
+Unless caught or ignored, the signal terminates the process.
+.PP
+Alarm requests are not stacked.  Successive calls reset the alarm clock.
+If the argument is 0, any alarm request is canceled.
+Because of scheduling delays,
+resumption of execution of when the signal is
+caught may be delayed an arbitrary amount.
+The longest specifiable delay time is 2147483647 seconds.
+.PP
+The return value is the amount of time
+previously remaining in the alarm clock.
+.SH ENVIRONMENT
+When your program is compiled using the System V environment,
+.PN alarm
+returns unsigned int, and rounds the number of seconds
+returned by the number of microseconds.
+.SH "SEE ALSO"
+sigpause(2), sigvec(2), signal(3), sleep(3)

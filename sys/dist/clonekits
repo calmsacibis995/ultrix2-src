@@ -1,0 +1,353 @@
+#! /bin/sh
+#		PROGRAM NAME:  CLONEKITS
+#		ORIGINAL CODE BY     GREG TARSA
+#		MODIFIED BY BOB FONTAINE
+#		SCCSID:  @(#)clonekits	1.2 (ULTRIX) 10/21/85
+#		LAST EDIT:  10/21/85
+#			4/5/84  -   added tape capability
+#
+# clonekit	- script to clone the various installation media from
+#		  a single ra60
+#
+# Usage: clonekit [rk07 rc25 rl02 rm05 tape]
+#
+#
+# Assumptions:
+#	- The file subsets.info.<device> exists for the kit to be made.
+#	  <device> is one of: rk07 rc25 rl02
+#
+#	- The help for each save set is in /sys/dist/help.*
+#
+#	- Both the subsets.info table of contents and the master
+#	  kit are up to date.
+#
+#
+# This script makes the following implicit assumptions for the layout of the
+# kits:
+#		rk07, rc25: volume one contains the following files
+#		from the ra60: boot mini root usr kernel
+#
+#		rl02: volume one contains the following files
+#		from the ra60: boot mini root
+#
+#		rl02: volume two contains the following files
+#		from the ra60: usr kernel
+#
+#
+unit=${newmaster-6}
+pack=${newmasterkit-ra}
+
+MASTERKITDEVICE=${pack}${unit}c
+
+USAGE="Usage: clonekits [rl02 | rk07 | rc25 | tape | rm05 | ra60] clone device"
+
+case $# in
+    2) ;;
+    *) echo "Error: Invalid argument
+${USAGE}"
+    	exit 1
+	;;
+esac
+DESTDEVICE=$2
+ORIGDIR=`pwd`
+trap 'cd ${ORIGDIR}; umount /dev/${MASTERKITDEVICE}' 0
+trap 'cd ${ORIGDIR};exit 2' 1 2 3 4 14
+
+cd /sys/dist
+
+SUBSETFILES="`echo /sys/dist/subsets.info.*`"
+
+case ${SUBSETFILES} in
+	"")
+		sh ${ORIGDIR}/makeoptionals $1 -toconly
+	;;
+esac
+
+for I in ${SUBSETFILES}
+do
+    THISCLONE=`echo $I | sed 's/.*\.//'`
+    CLONETYPES="${CLONETYPES} ${THISCLONE}"
+done
+
+ILLEGAL="true"
+for CLONE in ${CLONETYPES}
+do
+    case $1 in
+	${CLONE})
+	    ILLEGAL="false"
+	    THISCLONE=${CLONE}
+	    shift
+	    break
+	    ;;
+    esac
+done
+
+case ${ILLEGAL} in
+    true)
+		sh ${ORIGDIR}/makeoptionals $1 -toconly
+		THISCLONE=$1
+	;;
+esac
+
+#
+# OK, argument checking is finished. Start business.
+#
+echo -n "
+Pack cloning script started: "
+date
+
+echo "
+Cloning from the master kit pack /dev/${MASTERKITDEVICE}
+
+Clone destination type: ${THISCLONE}
+"
+
+#
+# Make the help files
+#
+echo "
+- - - Making the help files - - -
+"
+if sh ${ORIGDIR}/makeoptionals test -helponly
+then
+    echo "Help files made"
+else
+    echo "Build of help failed: cannot continue"
+    exit 1
+fi
+
+#
+# OK, now mount the masterkit
+#
+echo "Mounting the master kit read only"
+umount /dev/${MASTERKITDEVICE} 2> /dev/null
+if mount -r /dev/${MASTERKITDEVICE} /mnt
+then
+    echo "Mounted"
+else
+    echo "Can't mount master kit on /dev/${MASTERKITDEVICE}.  Cannot continue"
+    exit 1
+fi
+
+#
+# Set the clone-specific parameters
+#
+# DESTDEVICE is the name of the /dev device
+# SEQUENCE is a sequence string for kit packs,
+#	   one for each volume.
+# FIRSTOPTIONAL is the sequence number of the first
+#	   optional volume
+#
+case ${THISCLONE} in
+    rc25)
+	SEQUENCE="1 2 3"
+	FIRSTOPTIONAL="2"
+	;;
+
+    rk07)
+	SEQUENCE="1 2 3"
+	FIRSTOPTIONAL="2"
+	;;
+
+    rl02)
+	SEQUENCE="1 2 3 4 5 6"
+	FIRSTOPTIONAL="3"
+	;;
+
+    tape)
+	SEQUENCE="1 2"
+	FIRSTOPTIONAL="2"
+	;;
+	ra60)
+		SEQUENCE="1"
+		FIRSTOPTIONAL="1"
+		;;
+    *)		echo "Invalid device for cloning"; exit 1 ;;
+esac
+
+#
+# Make the clone directory, if necessary
+case ${THISCLONE} in
+	tape)
+		;;
+	*)
+		mkdir /clone 2> /dev/null
+		;;
+esac
+
+
+#
+# Run through each sequence step
+#
+for STEP in ${SEQUENCE}
+do
+    echo -n "
+Please put volume ${STEP} of the ${THISCLONE} on unit ${DESTDEVICE}.
+
+** This volume will be completely overwritten. **
+
+Press RETURN when ready: "
+
+    read RESP
+    case ${RESP} in
+	exit)	break ;;
+		next | skip)
+			continue;;
+    esac
+
+    case ${THISCLONE} in
+	tape)
+		;;
+	*)
+	    umount /dev/${DESTDEVICE} 2> /dev/null
+	    case ${THISCLONE} in
+		rk07)
+	           bad144 rk07 hk0
+	           newfs -b 8192 -f 1024 -s 53724 /dev/r${DESTDEVICE} ${THISCLONE}
+			;;
+		*)
+		   newfs -b 8192 -f 1024 /dev/r${DESTDEVICE} ${THISCLONE}
+			;;
+	    esac
+	    if mount /dev/${DESTDEVICE} /clone
+	    then
+		echo "${DESTDEVICE} mounted"
+	    else
+		echo "Cannot mount ${DESTDEVICE}.  Cannot continue."
+		exit 1
+	    fi
+	    ;;
+    esac
+
+    #
+    # Write out the installation subset, if it is time
+    case ${STEP} in
+	${FIRSTOPTIONAL})
+	    echo "Creating and adding the installation subset"
+	    cp subsets.info.${THISCLONE} /tmp/subsets.info
+	    case ${THISCLONE} in
+		tape)
+		    tar cvf installation \
+	    	    -C /tmp subsets.info -C /sys/dist help.*
+		    dd if=installation of=/dev/${DESTDEVICE} bs=20b 
+		    ;;
+		*)
+		    tar cvf /clone/installation \
+	    	    -C /tmp subsets.info -C /sys/dist help.*
+		    ;;
+	    esac
+	    rm /tmp/subsets.info
+	    ;;
+    esac
+
+    #
+    # Get the files to copy for this step
+    case ${THISCLONE}-${STEP} in
+	rc25-1) FILES="boot mini root usr kernel" ;;
+	rc25-2) FILES="subsets.info" ;;
+	rc25-3)	FILES="subsets.info" ;;
+	rk07-1)	FILES="boot mini root usr kernel" ;;
+	rk07-2)	FILES="subsets.info" ;;
+	rk07-3)	FILES="subsets.info" ;;
+	rl02-1)	FILES="boot mini root" ;;
+	rl02-2) FILES="usr kernel" ;;
+	rl02-3)	FILES="subsets.info" ;;
+	rl02-4)	FILES="subsets.info" ;;
+	rl02-5)	FILES="subsets.info" ;;
+	rl02-6)	FILES="subsets.info" ;;
+	tape-1)	FILES="boot mini root usr kernel" ;;
+	tape-2) FILES="subsets.info" ;;
+	ra60-1) FILES=`ls /mnt`  ;;
+    esac
+
+    #
+    # See if we have to scan the subset info file
+    case ${FILES} in
+	subsets.info)
+	    FILES=`grep "${STEP}\$" subsets.info.${THISCLONE} |
+	    		awk '{print $1}' |
+			tr A-Z a-z`
+
+	    case ${FILES} in
+		"")
+		    echo "
+? ? ? Problem: no files scanned from subsets.info.${THISCLONE}
+Check contents of file and try again.
+"
+		    umount /dev/${DESTDEVICE} 2> /dev/null
+		    exit 1
+		    ;;
+	    esac
+	    ;;
+    esac
+
+
+    case ${THISCLONE} in
+
+	tape)
+		for I in ${FILES}
+		do
+			echo  "Copying $I "
+			if 
+			test $I = "boot"
+			then
+				dd if=/mnt/$I of=/dev/${DESTDEVICE} bs=512 2>&1 >/tmp/ddout.$$
+			else
+				dd if=/mnt/$I of=/dev/${DESTDEVICE} bs=20b 2>&1 >/tmp/ddout.$$
+			fi
+			if
+				test -s /tmp/ddout.$$
+			then
+				echo "* * Could not copy! * *  Clone failed."
+				mt -f /dev/${DESTDEVICE} rew
+				exit 1
+			else
+				echo "Done."
+			fi
+		done
+		mt -f /dev/${DESTDEVICE} rew
+		;;
+
+	*)
+	    for FILE in ${FILES}
+	    do
+		echo  "Copying ${FILE}"
+		if
+			test ${FILE} = "boot"
+		then
+			dd if=/mnt/${FILE} of=/clone/${FILE} bs=512
+		else
+			dd if=/mnt/${FILE} of=/clone/${FILE} bs=20b
+		fi
+
+		if 
+			test $? -eq 0
+		then
+		    echo "Done"
+		else
+		    echo "* * Could not copy! * *  Clone failed."
+		    umount /dev/${DESTDEVICE} 2> /dev/null
+		    exit 1
+		fi
+	    done
+
+	    ls -lFsi /clone | sort
+	    echo "							"
+	    umount /dev/${DESTDEVICE} 2> /dev/null
+	    df /dev/${DESTDEVICE}
+	    echo "							"
+	    if fsck /dev/r${DESTDEVICE}
+	    then
+		echo "Finished cloning volume ${STEP}."
+	    else
+		echo "Bad copy.  Cannot continue"
+		exit 1
+	    fi
+	    ;;
+
+    esac
+done
+
+umount /dev/${MASTERKITDEVICE} 2> /dev/null
+
+echo "Cloning is completely finished"

@@ -1,0 +1,41 @@
+.TH fmt 1
+.SH NAME
+fmt \- simple text formatter
+.SH SYNTAX
+.B fmt
+[
+name ...
+]
+.SH DESCRIPTION
+The
+.B fmt
+command
+is a simple text formatter which reads the concatenation of input
+files (or standard input if none are given) and produces on
+standard output a version of its input with lines as close to
+72 characters long as possible.  The spacing at the beginning
+of the input lines is preserved in the output, as are blank lines
+and interword spacing.
+.PP
+The
+.B fmt
+command
+is meant to format mail messages prior to sending,
+but may also be useful for other simple tasks.
+For instance,
+within visual mode of the
+.B ex
+editor (for example,
+.B vi)
+the command
+.br
+	!}fmt
+.br
+will reformat a paragraph,
+evening the lines.
+.SH RESTRICTIONS
+The program was designed to be simple and fast \- for more complex
+operations, the standard text processors are likely 
+to be more appropriate.
+.SH "SEE ALSO"
+mail(1), nroff(1)

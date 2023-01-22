@@ -1,0 +1,89 @@
+.TH rwhod 8c
+.SH NAME
+rwhod \- system status server
+.SH SYNTAX
+.B /etc/rwhod
+.SH DESCRIPTION
+The
+.PN rwhod
+command
+is the server which maintains the database used by the rwho(1c)
+and ruptime(1c)
+programs.  Its operation is predicated on the ability to
+.I broadcast
+messages on a network.
+.PP
+The
+.PN rwhod
+command
+operates as both a producer and consumer of status information.
+As a producer of information it periodically
+queries the state of the system and constructs
+status messages which are broadcast on a network.
+As a consumer of information, it listens for other
+.PN rwhod
+servers' status messages, validating them, then recording
+them in a collection of files located in the directory
+/usr/spool/rwho.
+.PP
+The
+.PN rwho
+server transmits and receives messages at the port indicated
+in the ``rwho'' service specification, see services(5).
+The messages sent and received, are of the form:
+.EX
+struct  outmp {
+        char    out_line[8];       /* tty name */
+        char    out_name[8];       /* user id */
+        long    out_time;          /* time on */
+};
+struct  whod {
+        char    wd_vers;
+        char    wd_type;
+        char    wd_fill[2];
+        int     wd_sendtime;
+        int     wd_recvtime;
+        char    wd_hostname[32];
+        int     wd_loadav[3];
+        int     wd_boottime;
+        struct  whoent {
+                struct  outmp we_utmp;
+                int     we_idle;
+        } wd_we[1024 / sizeof (struct whoent)];
+};
+.EE
+All fields are converted to network byte order prior to
+transmission.  The load averages are as calculated by the
+w(1)
+program, and represent load averages over the 5, 10, and 15 minute 
+intervals prior to a server's transmission.  The host name
+included is that returned by the gethostname(2) system call.
+The array at the end of the message contains information about
+the users logged in to the sending machine.  This information 
+includes the contents of the utmp(5)
+entry for each non-idle terminal line and a value indicating the
+time since a character was last received on the terminal line.
+.PP
+Messages received by the
+.PN rwho
+server are discarded unless they originated at a
+.PN rwho
+server's port.  In addition, if the host's name, as specified
+in the message, contains any unprintable ASCII characters, the
+message is discarded.  Valid messages received by
+.PN rwhod
+are placed in files named whod . hostname
+in the directory /usr/spool/rwho.
+These files contain only the most recent message, in the
+format described above.
+.PP
+Status messages are generated approximately once every
+60 seconds.  
+The
+.PN rwhod
+command performs an nlist(3)
+on /vmunix every 10 minutes to guard against
+the possibility that this file is not the system
+image currently operating.
+.SH "SEE ALSO"
+ruptime(1c), rwho(1c)

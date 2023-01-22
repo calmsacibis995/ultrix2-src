@@ -1,0 +1,164 @@
+.TH setbuf 3s 
+.SH NAME
+setbuf, setbuffer, setlinebuf, setvbuf \- assign buffering to a stream
+.SH SYNTAX
+.B #include <stdio.h>
+.PP
+.B setbuf(stream, buf)
+.br
+.SM
+.B FILE
+.B *stream;
+.br
+.B char *buf;
+.PP
+.B setbuffer(stream, buf, size)
+.br
+.SM
+.B FILE
+.B *stream;
+.br
+.B char *buf;
+.br
+.B int size;
+.PP
+.B setlinebuf(stream)
+.br
+.SM
+.B FILE
+.B *stream;
+.PP
+.B int setvbuf(stream, buf, type, size)
+.br
+.B FILE *stream;
+.br
+.B char *buf;
+.br 
+.B int type, size;
+.SH DESCRIPTION
+The three types of buffering available are unbuffered, block buffered,
+and line buffered.
+When an output stream is unbuffered, information appears on the
+destination file or terminal as soon as written;
+when it is block buffered many characters are saved up and written as a block;
+when it is line buffered characters are saved up until a newline is
+encountered or input is read from stdin.
+The routine
+.PN fflush,
+may be used to force the block out early.
+Normally all files are block buffered.
+For further information, see fclose(3s).
+A buffer is obtained from malloc(3)
+upon the first
+.PN getc
+or
+.PN  putc
+on the file.
+If the standard stream
+.B stdout
+refers to a terminal it is line buffered.
+The standard stream
+.B stderr
+is always unbuffered.
+.PP
+The
+.PN setbuf
+routine is used after a stream has been 
+opened but before it is read or written.
+The character array
+.I buf
+is used instead of an automatically allocated buffer.  If
+.I buf
+is the constant pointer
+.SM
+.B NULL,
+input/output will be completely unbuffered.
+A manifest constant 
+.SM BUFSIZ
+tells how big an array is needed:
+.IP
+.B char
+buf[BUFSIZ];
+.PP
+The
+.PN setbuffer
+routine, an alternate form of 
+.PN setbuf,
+is used after a stream has been opened but before it is read or written.
+The character array
+.I buf
+whose size is determined by the 
+.I size
+argument is used instead of an automatically allocated buffer.  If
+.I buf
+is the constant pointer
+.SM NULL ,
+input/output will be completely unbuffered.
+.PP
+The
+.PN setlinebuf
+routine is used to change
+.I stdout
+or
+.I stderr
+from block buffered or unbuffered to line buffered.
+Unlike
+.PN setbuf
+and
+.PN setbuffer
+it can be used at any time that the file descriptor is active.
+.PP
+The
+.PN setvbuf
+routine may be used after a stream has been opened but
+before it is read or written.
+.I Type
+determines how \fIstream\fP will be buffered.
+Legal values for \fItype\fP, defined in stdio.h are:
+.TP 15
+.B _IOFBF
+causes input/output to be fully buffered.
+.TP 15
+.B _IOLBF
+causes output to be line buffered; the buffer will be
+flushed when a newline is written, the buffer is full, 
+or input is requested.
+.TP 15
+.B _IONBF
+causes input/output to be completely unbuffered.
+.PP
+If \fIbuf\fP is not the \fBNULL\fP pointer, the array it points to 
+will be used for buffering,
+instead of an automatically allocated buffer.
+.I Size
+specifies the size of the buffer to be used.  The constant
+BUFSIZ
+in <stdio.h> is suggested as a good buffer size.
+If input/output is unbuffered, \fIbuf\fP and \fIsize\fP
+are ignored.
+.PP
+By default, output to a terminal is line buffered
+and all other input/output is fully buffered.
+.PP
+A file can be changed from unbuffered or line buffered to block buffered
+by using
+.PN freopen .
+For further information, see fopen(3s).
+A file can be changed from block buffered or line buffered to unbuffered
+by using
+.PN freopen
+followed by
+.PN setbuf
+with a buffer argument of 
+.SM NULL .
+.SH RESTRICTIONS
+The standard error stream should be line buffered by default.
+.LP
+The
+.PN setbuffer
+and
+.PN setlinebuf
+functions are not portable to non 4.2 BSD versions of UNIX.
+.SH SEE ALSO
+malloc(3), fclose(3s), fopen(3s), fread(3s), 
+getc(3s), printf(3s), putc(3s), puts(3s).

@@ -1,0 +1,171 @@
+.TH rmt 8c 
+.SH NAME
+rmt \- remote mass storage device protocol module
+.SH SYNTAX
+.B /etc/rmt
+.SH DESCRIPTION
+The
+.B rmt
+program is used by the remote dump and restore programs
+to manipulate remote mass storage devices and files
+through an interprocess
+communication connection.
+The 
+.B rmt
+program is normally started with an
+rexec(3x) or rcmd(3x) call.
+.PP
+The 
+.B rmt
+program remotely ties its standard input and output to a socket,
+accepts commands that manipulate
+remote devices or files, performs the commands, and then responds with
+a status indication.  All commands and responses are in ASCII and in
+one of two forms. 
+Successful commands have responses of
+an ``ack'' as
+.PP
+.ti +0.5i
+\fBA\fInumber\fR\en
+.PP
+where 
+.I number
+is an ASCII representation of a decimal number.
+Unsuccessful commands are responded to with
+.PP
+.ti +0.5i
+\fBE\fIerror-number\fR\en\fIerror-message\fR\en,
+.PP
+where
+.I error-number
+is one of the possible error
+numbers described in
+intro(2)
+and
+.I error-message
+is the corresponding error string as printed
+from a call to
+perror(3).
+The protocol is comprised of the
+following commands (a newline (\\n)
+is present between each token).
+.TP 17
+\fBO \fIdevice mode\fR
+Open the specified 
+.I device
+using the indicated
+.IR mode .
+The 
+.I device
+is a full pathname and
+.I mode
+is an ASCII representation of a decimal
+number suitable for passing to
+open(2).
+If a device had already been opened, it is
+closed before a new open is performed.
+Device can be a regular file.
+.TP 17
+\fBC \fIdevice\fR
+Close the currently open device or file.  The
+.I device
+specified is ignored.
+.TP 17
+.B D
+Returns generic device information for the open device. A
+DEVIOCGET
+ioctl(2)
+call is performed and the data returned. If the operation
+is successful, an ``ack'' is sent with the size of the information
+buffer.
+.TP 17
+\fBL \fIwhence offset\fR
+Perform an
+lseek(2)
+operation using the specified parameters.
+The response value is that returned from the
+.B lseek
+call.
+.TP 17
+.B P
+Returns disk partition information of the open device. A
+DIOCDGTPT
+ioctl(2)
+call is performed and the data returned. If the operation
+is successful, an ``ack'' is sent with the size of the information
+buffer.
+.TP 17
+\fBT \fIfilename\fR
+Returns file status information for the specified file. A
+stat(2)
+call is performed and the data returned. If the operation
+is successful, an ``ack'' is sent with the size of the information
+buffer.
+.TP 17
+\fBW \fIcount\fR
+Write data onto the open device.
+The
+.B rmt
+program reads
+.I count
+bytes from the connection, aborting if
+a premature end-of-file is encountered.
+The response value is that returned from
+the
+write(2)
+call.
+If the operation was successful and ``ack'' is sent containing
+the number of bytes written.
+.TP 17
+\fBR \fIcount\fR
+Read
+.I count
+bytes of data from the open device.
+If
+.I count
+exceeds the size of the data buffer (10 kilobytes), it is
+truncated to the data buffer size.
+The
+.B rmt
+program then performs the requested 
+read(2)
+and responds with 
+\fBA\fIcount-read\fR\en if the read was
+successful.  Otherwise an error in the
+standard format is returned.  If the read
+was successful, the data read is then sent.
+.TP 17
+\fBI \fIoperation count\fR
+Perform a MTIOCTOP 
+ioctl(2)
+command using the specified parameters.
+The parameters are interpreted as the
+ASCII representations of the decimal values
+to place in the 
+.I mt_op
+and
+.I mt_count
+fields of the structure used in the
+.B ioctl
+call.  The return value is the
+.I count
+parameter when the operation is successful.
+.TP 17
+.B S
+Return the status of the open device, as
+obtained with a MTIOCGET 
+.B ioctl
+call.  If the operation was successful,
+an ``ack'' is sent with the size of the
+status buffer, then the status buffer is
+sent (in binary).
+.PP
+Any other command causes 
+.B rmt
+to exit.
+.SH RESTRICTIONS
+Do not use this for a remote file access protocol.
+.SH DIAGNOSTICS
+All responses are of the form described above.
+.SH "SEE ALSO"
+rcmd(3x), rexec(3x), mtio(4), rdump(8c), rrestore(8c)

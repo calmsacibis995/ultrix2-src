@@ -1,0 +1,190 @@
+.TH semctl 2
+.\" Last modified by BAM on 31-Oct-1985 1300.
+.\"
+.\" Last modified by BAM on 29-Jul-85  1300  
+.\"
+.SH NAME
+semctl \- semaphore control operations
+.SH SYNTAX
+.nf
+.ft B
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+.PP
+.ft B
+int semctl (semid, semnum, cmd, arg)
+int semid, cmd;
+int semnum;
+union semun {
+	int val;
+	struct semid_ds *buf;
+	ushort array[];
+} arg;
+.fi
+.in -8
+.SH DESCRIPTION
+The
+.PN semctl
+system call
+provides a variety of semaphore control operations as specified by 
+.I cmd.
+.PP
+The following 
+.I cmds
+are executed with respect to the semaphore specified by
+.I semid
+and
+.IR semnum:
+.TP 15
+.B GETVAL
+Return the value of semval.  For further information, see
+intro(2).
+.TP 15
+.B SETVAL
+Set the value of semval to arg.val.  When this command is successfully
+executed the semadj value corresponding to the specified semaphore in all
+processes is cleared.
+.TP 15
+.B GETPID
+Return the value of sempid. 
+.TP 15
+.B GETNCNT
+Return the value of semncnt. 
+.TP 15
+.B GETZCNT
+Return the value of semzcnt. 
+.PP
+The following
+.I cmds
+return and set, respectively, every semval in the set of semaphores.
+.TP 15
+.B GETALL
+Place semvals into array pointed to by
+.I arg.array
+.TP 15
+.B SETALL
+Set semvals according to the array pointed to by
+.I arg.array
+When this command is successfully executed
+the semadj values corresponding
+to each specified semaphore in all processes are cleared.
+.PP
+The following 
+.I cmds
+are also available:
+.TP 15
+.B IPC_STAT
+Place the current value of each member of the data structure associated with 
+.I semid 
+into the  structure pointed to by
+.IR arg.buf.
+The contents of this structure are defined in 
+intro(2).
+.TP 15
+.B IPC_SET
+Set the value of the following members of the data structure associated with
+.I semid 
+to the corresponding value found in the structure pointed to by
+.IR arg.buf:
+.EX
+sem_perm.uid
+sem_perm.gid
+sem_perm.mode /* only low 9 bits */
+.EE
+.PP
+This command can only be executed by a process that has an effective 
+user ID equal to either that of superuser or to the value of
+.B sem_perm.uid
+in the data structure associated with
+.IR semid.
+.TP 15
+.B IPC_RMID
+Remove the semaphore identifier specified by 
+.I semid
+from the system and destroy the set of semaphores and data structure associated
+with it.  This cmd can only be executed by a process that has an effective user
+ID equal to either that of superuser or to the value of
+.B sem_perm.uid
+in the data structure associated with
+.IR semid.
+.PP
+Upon successful completion, the value returned depends on 
+.I cmd
+as follows:
+.RS 8
+.TP 15
+.B GETVAL
+The value of semval.
+.TP 15
+.B GETPID
+The value of sempid.
+.TP 15
+.B GETNCNT
+The value of semncnt.
+.TP 15
+.B GETZCNT
+The value of semzcnt.
+.TP 15
+All other
+A value of 0.
+.RE
+.PP
+Otherwise, a value of -1 is returned and
+.I errno
+is set to indicate the error.
+.SH DIAGNOSTICS
+The
+.PN semctl
+system call
+will fail if one or more of the following are true:
+.TP 15
+[EINVAL]
+The
+.I semid
+is not a valid semaphore identifier. 
+.TP 15
+[EINVAL]
+The
+.I semnum
+is less than zero or greater than
+.B sem_nsems.
+.TP 15
+[EINVAL]
+The
+.I cmd
+is not a valid command. 
+.TP 15
+[EACCES]
+Operation permission is denied to the calling process.
+For further information, see intro(2). 
+.TP 15
+[ERANGE]
+.I Cmd
+is 
+.B SETVAL
+or
+.B SETALL
+and the value to which semval is to be set
+is greater than the system imposed maximum. 
+.TP 15
+[EPERM]
+The
+.I cmd
+is equal to 
+.B IPC_RMID
+or
+.B IPC_SET 
+and the effective user ID of the calling
+process is not equal to that of superuser
+and it is not equal to the value of
+.B sem_perm.uid
+in the data structure associated with
+.IR semid.
+.TP 15
+[EFAULT]
+The
+.I arg.buf
+points to an illegal address. 
+.SH SEE ALSO
+semget(2), semop(2)

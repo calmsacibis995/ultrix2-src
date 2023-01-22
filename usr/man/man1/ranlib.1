@@ -1,0 +1,36 @@
+.TH ranlib 1
+.SH NAME
+ranlib \- convert archives to random libraries
+.SH SYNTAX
+.B ranlib
+archive ...
+.SH DESCRIPTION
+The
+.B ranlib
+command
+converts each
+.I archive
+to a form which the loader can load more rapidly.
+The
+.B ranlib
+command
+does this by adding a table of contents called 
+.B _.SYMDEF
+to the beginning of the archive.
+the
+.B ranlib
+command uses ar(1)
+to reconstruct the archive, so that sufficient temporary file space must
+be available in the file system which contains the current directory.
+.SH RESTRICTIONS
+Because generation of a library by
+.B ar
+and randomization of the library by
+.B ranlib
+are separate processes, phase errors are possible.  The loader,
+.B ld,
+warns when the modification date of a library is more recent than the
+creation date of its dictionary;  but this means that you get the
+warning even if you only copy the library.
+.SH "SEE ALSO"
+ar(1), ld(1), lorder(1)

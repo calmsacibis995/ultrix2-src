@@ -1,0 +1,28 @@
+.TH true 1
+.SH NAME
+true, false \- provide truth values
+.SH SYNTAX
+.B true
+.br
+.B false
+.SH DESCRIPTION
+The
+.B true
+and
+.B false
+commands are usually used in a Bourne shell script.
+They test for the appropriate status "true" or "false" before running 
+(or failing to run) a list of commands.  
+.SH EXAMPLE
+.EX
+     while true 
+     do
+          command list 
+     done
+.EE
+.SH DIAGNOSTICS
+The
+.B true 
+command has exit status zero.
+.SH "SEE ALSO"
+csh(1), false(1), sh(1)

@@ -1,0 +1,279 @@
+#!/bin/sh
+#
+#	gentapes -
+#		generic remote tape production utility
+#
+
+
+#			Copyright (c) 1985 by
+#		Digital Equipment Corporation, Maynard, MA
+#			All rights reserved.
+#								
+#	This software is furnished under a license and may be used and
+#	copied  only  in accordance with the terms of such license and
+#	with the  inclusion  of  the  above  copyright  notice.   This
+#	software  or  any  other copies thereof may not be provided or
+#	otherwise made available to any other person.  No title to and
+#	ownership of the software is hereby transferred.		
+#								
+#	The information in this software is subject to change  without
+#	notice  and should not be construed as a commitment by Digital
+#	Equipment Corporation.					
+#								
+#	Digital assumes no responsibility for the use  or  reliability
+#	of its software on equipment which is not supplied by Digital.
+#
+#	MODS:
+#		000	ccb	15-jul-1986
+#
+
+SCCSID="@(#)genra	1.3 (ULTRIX-32) 12/8/86"
+PATH=/bin:/etc:/usr/bin:/usr/ucb:/usr/hosts
+export PATH
+PROG=$0
+TD=/usr/tmp
+TMP=$TD/mttmp$$
+DFS="$IFS"
+NL="
+"
+
+trap 'rm -rf /usr/tmp/*'$$' ;exit $STAT' 0 1 2 3 15
+STAT=1	# assume failure
+
+readonly PROG PATH TMP DFS
+
+WRITE=1 VFY=1
+case "$1" in
+-v)	# verify only.
+	WRITE=0
+	shift
+	;;
+-w)	# write only
+	VFY=0
+	shift
+esac
+
+case $# in
+2)	
+	DEV=$2
+	IFS=:
+	set $1
+	IFS="$DFS"
+	case "$#" in
+	2)	HOST=$1
+		shift
+	esac
+	KITD=$1
+	KIT=${KITD}RA
+	;;
+*)	echo "Use: $PROG kitcode device"
+	exit 1
+	;;
+esac
+
+HERE=`hostname`
+case "$HOST" in
+$HERE|"")
+	RCMD=
+	HOST=$HERE
+	cp /etc/kitcap $TMP
+	;;
+*)
+	grep -s "^$HOST" /etc/hosts ||
+	{
+		echo "Host $HOST not in hosts file."
+		exit 1
+	}
+	RCMD="rsh $HOST"
+	rcp $HOST:/etc/kitcap $TMP
+	;;
+esac ||
+{
+	echo "Cannot access kitcap."
+	exit 1
+}
+
+
+
+KITDESC=`grep "^$KIT" $TMP` ||
+{
+	echo "$PROG: can't find $KIT kit descriptor in kitcap."
+	exit
+}
+
+IFS=:
+set $KITDESC
+IFS="$DFS"
+echo "Generating $1 Kit from $HOST on $DEV"
+shift
+KD=$1
+$RCMD test -d $KD||
+{
+	echo "$PROG: can't find $HOST:$KD"
+	rm $TMP
+	exit 1
+}
+shift
+PART=$1
+shift
+UD=`expr $DEV : '.*ra\([0-9][0-9]*\).'`
+DEV=/dev/ra$UD$PART
+RAW=/dev/rra$UD$PART
+[ -w $DEV ] ||
+{
+	echo "No write access to $DEV"
+	exit
+}
+[ -w $RAW ] ||
+{
+	echo "No write access to $RAW"
+	exit
+}
+
+
+LIST=$*
+case "$WRITE" in
+1)
+	echo -n "
+WARNING: this will annihilate the information stored
+on the disk in $DEV. Are you sure you want to do this? "
+	read ANS
+	case "$ANS" in
+	y|Y)	;;
+	*)	exit 1
+		;;
+	esac
+	echo -n "
+Last chance: you want to genra $DEV: "
+	read ANS
+	case "$ANS" in
+	y|Y)	;;
+	*)	exit 1
+	esac
+	echo "Preparing $DEV"
+	newfs -b 8192 -f 1024 $RAW ra60 ||
+	{
+		echo "Cannot newfs."
+		exit
+	}
+	echo "done.$NL${NL}Checking $DEV"
+
+	fsck $RAW ||
+	{
+		echo "Cannot fsck."
+		exit
+	}
+	echo "done.$NL${NL}Mounting $DEV."
+	mkdir $TD/ra$$
+	mount $DEV $TD/ra$$ ||
+	{
+		echo "Cannot mount."
+		exit
+	}
+	STATE=0
+	for K in $LIST
+	{
+		echo -n "Image $K..."
+		case "$STATE" in
+		0)	rcp -r $KD/$K $TD/ra$$ &
+			PID=$!
+			STATE=1
+			SAVE=$K
+			echo "backgrounded."
+			sleep 3
+			;;
+		1)	rcp -r $KD/$K $TD/ra$$ ||
+			{
+				echo "Failed."
+				wait;sync;sync;sync
+				echo "Unmounting $DEV"
+				umount $DEV || echo "WARNING: umount failed."
+				exit
+			}
+			STATE=0
+			echo "done.$NL"
+			wait ||
+			{
+				echo "$SAVE failed."
+				sync;sync;sync
+				echo "Unmounting $DEV"
+				umount $DEV
+				exit
+			}
+			echo "$SAVE done"
+			;;
+		esac
+	}
+	case "$STATE" in
+	1)	wait ||
+		{
+			echo "$SAVE failed"
+			sync;sync;sync
+			echo "Unmounting $DEV"
+			umount $DEV
+			exit
+		}
+	esac
+	sync;sleep 2;sync;sleep 2;sync
+	echo "Unmounting $DEV"
+	umount $DEV
+	STAT=0
+	;;
+esac
+case "$VFY" in
+1)
+	STAT=1
+	echo "Verify."
+	rcp $HOST:$KD/$KITD.image $TD/$KITD.image$$ ||
+	{
+		echo "$PROG: error accessing checksum file."
+		exit 1
+	}
+	echo "Checking $DEV"
+	fsck $RAW ||
+	{
+		echo "Cannot Fsck"
+		exit
+	}
+	mkdir $TD/ra$$ 2> /dev/null
+	mount -r $DEV $TD/ra$$ ||
+	{
+		echo "Cannot mount"
+		exit
+	}
+	for K in $LIST
+	{
+		echo -n "Image $K..."
+
+		grep $K $TD/$KITD.image$$ > $TD/sum$K$$ ||
+		{
+			echo "done."
+			continue
+		}
+		set x `cat $TD/sum$K$$`
+		shift
+		SUM=$1
+		SIZE=$2
+
+		sum $TD/ra$$/$K > $TD/SUM$$ ||
+		{
+			echo "sum program error image $K."
+			continue
+		}
+		set x `cat $TD/SUM$$`
+		shift
+		case "$1$2" in
+		$SUM$SIZE)
+			;;
+		*)	echo -n "bad checksum."
+		esac
+		echo "done.$NL"
+	}
+	echo "Unmounting $DEV"
+	sync;sleep 2;sync;sleep 2;sync;sleep 2
+	umount $DEV
+	STAT=0
+	;;
+esac
+echo "Kit $KITD done."
+exit 0

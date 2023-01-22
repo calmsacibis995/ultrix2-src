@@ -1,0 +1,30 @@
+.TH intro 3x
+.SH NAME
+intro \- introduction to miscellaneous library functions
+.SH DESCRIPTION
+These functions constitute minor libraries and other miscellaneous
+run-time facilities.  Most are available only when programming in
+C.  The list below includes libraries which provide
+device independent plotting functions,
+terminal independent screen management routines
+for two dimensional non-bitmap display terminals, 
+functions for managing data bases with inverted indexes,
+and sundry routines used in executing commands on remote
+machines.  The routines
+.IR getdiskbyname ,
+.IR rcmd ,
+.IR rresvport ,
+.IR ruserok ,
+and
+.I rexec
+reside in the standard C run-time library \*(lq\-lc\*(rq.
+All other functions are located in separate libraries
+indicated in each manual entry.
+.SH FILES
+.nf
+/lib/libc.a
+/usr/lib/libdbm.a
+/usr/lib/libtermcap.a
+/usr/lib/libcurses.a
+/usr/lib/lib2648.a
+/usr/lib/libplot.a

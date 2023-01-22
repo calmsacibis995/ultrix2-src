@@ -1,0 +1,65 @@
+.TH ferror 3s 
+.SH NAME
+ferror, feof, clearerr, fileno \- stream status inquiries
+.SH SYNTAX
+.B #include <stdio.h>
+.PP
+.B feof(stream)
+.br
+.SM
+.B FILE
+.B *stream;
+.PP
+.B ferror(stream)
+.br
+.SM
+.B FILE
+.B *stream
+.PP
+.B clearerr(stream)
+.br
+.SM
+.B FILE
+.B *stream
+.PP
+.B fileno(stream)
+.br
+.SM
+.B FILE
+.B *stream;
+.SH DESCRIPTION
+The
+.PN ferror
+function returns non-zero when an error has 
+occurred reading or writing the named
+.IR stream ,
+otherwise zero.
+Unless cleared by
+.PN clearerr,
+the error indication lasts until
+the stream is closed.
+.PP
+The
+.PN feof
+function returns non-zero when end of file is read on the named input
+.IR stream ,
+otherwise zero.
+.PP
+The
+.PN clearerr
+function resets the error indication on the named
+.IR stream .
+.PP
+The
+.PN fileno
+function returns the integer file descriptor
+associated with the
+.IR stream ,
+see
+.PN open(2).
+.PP
+These functions
+are implemented as macros;
+they cannot be redeclared.
+.SH "SEE ALSO"
+open(2), fopen(3s)

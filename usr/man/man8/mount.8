@@ -1,0 +1,110 @@
+.TH mount 8
+.SH NAME
+mount, umount \- General description to mount or unmount a file system
+.SH SYNTAX
+/etc/mount [ \fIoptions\fR ] [ \fIspecial\fR ] [ \fIname\fR ]
+.PP
+/etc/umount [ \fIoptions\fR ] [ \fIspecial\fR ] [ \fIname\fR ]
+.SH DESCRIPTION
+This is a general description of the 
+.B mount 
+command.
+Additional 
+.B mount 
+descriptions,
+such as
+mount(8nfs)
+and 
+mount(8ufs)
+are provided to 
+define the 
+.B mount
+syntax and options for each specific file system.
+.LP
+Each invocation of the
+.B mount
+command announces to the system that a file system
+is present on the device \fIspecial\fR.
+The file system
+may be local or remote.
+File
+.PN name
+must already exist as a directory file.
+It becomes the name of the newly mounted root.
+.PP
+If invoked without arguments,
+.B mount
+prints the list of mounted file systems. 
+.PP
+Physically write-protected disks and magnetic tape file
+systems must be mounted read-only
+or an error will occur at mount time.
+.PP
+The 
+.B umount
+command announces to the system that the removable
+file system previously mounted on device
+.I special
+is to be removed.
+.SH OPTIONS
+.TP 12
+.B \-a
+Read the file
+.I /etc/fstab
+and mount all file systems listed there.
+.TP 12
+.B \-r
+Indicates that the file system
+is to be mounted read-only.
+.TP 12
+\fB\-t\fR \fItype\fR
+Specify what type of file system is being mounted.
+When used with the 
+.B \-a
+option, the
+\fB\-t\fR \fItype\fR
+option specifies mounting all file systems of the given type found in
+the
+.PN /etc/fstab
+file.
+For specific file system types,
+refer to the file system-specific
+.B mount
+description,
+such as 
+mount(8nfs).
+.TP 12
+.B \-v
+Verbose flag to tell what did or did not happen.
+.TP 12
+\fB\-o\fR \fIoptions\fR
+The
+.I options
+is a string that is passed to the kernel and used by
+the specific file system's mount routine in the kernel.
+For specific options,
+refer to the file system-specific 
+.B mount 
+description, such as 
+mount(8nfs).
+.PP
+The options for
+.B umount
+are:
+.TP 12
+.B \-a
+Unmount all currently mounted file systems.
+It may be necessary to execute
+.B umount
+.B \-a
+twice to 
+accomplish unmounting of all mounted file systems.
+.TP 12
+.B \-v
+Verbose output format to tell what did or did not happen.
+.SH RESTRICTIONS
+Mounting corrupted file systems will crash the system.
+.SH FILES
+/etc/fstab	File systems information table
+.SH "SEE ALSO"
+getmnt(2), mount(2), fstab(5), fsck(8), mount(8nfs), mount(8ufs)

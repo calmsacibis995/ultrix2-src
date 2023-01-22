@@ -1,0 +1,69 @@
+.TH implog 8c
+.SH NAME
+implog \- IMP log interpreter
+.SH SYNTAX
+.B /etc/implog
+[
+.B \-D
+] [
+.B \-f
+] [
+.B \-c
+] [
+.B \-l
+[
+.I link
+] ] [
+.B \-h
+.I host#
+] [
+.B \-i
+.I imp#
+] [
+.B \-t
+.I message-type
+]
+.SH DESCRIPTION
+The
+.PN implog
+program interprets the message log produced by implogd(8c).
+.PP
+If no arguments are specified, 
+.PN implog
+interprets and prints every message present in the message
+file.  Options may be specified to force printing only a
+subset of the logged messages.
+.TP
+.B \-D
+Do not show data messages. 
+.TP
+.B \-f
+Follow the logging process in action.  This flags causes
+.PN implog
+to print the current contents of the log file, then
+check for new logged messages every 5 seconds. 
+.TP
+.B \-c
+In addition to printing any data messages logged, show the
+contents of the data in hexadecimal bytes.
+.TP
+\fB\-l\fP [ \fIlink\fP# ]
+Show only those messages received on the specified ``link''.  If
+no value is given for the link, the link number of the IP protocol
+is assumed.
+.TP
+\fB\-h\fP \fIhost\fP#
+Show only those messages received from the specified host.
+(Usually specified in conjunction with an imp.)
+.TP
+\fB\-i\fP \fIimp\fP#
+Show only those messages received from the specified imp.
+.TP
+\fB\-t\fP \fImessage-type\fP
+Show only those messages received of the specified message type.
+.SH RESTRICTIONS
+Can not specify multiple hosts, imps, etc.
+Can not follow reception of messages without looking at
+those currently in the file.
+.SH "SEE ALSO"
+imp(4p), implogd(8c)

@@ -1,0 +1,101 @@
+.TH getmnt 2
+.SH NAME
+getmnt \- get information on mounted file systems.
+.SH SYNTAX
+.nf
+.ft B
+#include <sys/types.h>
+#include <h/mount.h>
+.PP
+.ft B
+getmnt(context, buffer, nbytes)
+int 		*context;
+struct fs_data	*buffer;
+int		 nbytes;	
+.fi
+.SH DESCRIPTION
+The
+.PN getmnt
+system call retrieves the names and statistics of mounted file systems.
+.PP
+The 
+.I context
+argument is the current logical location within the
+internal system mount table and
+must be initially set to 0.  The
+.I nbytes
+argument defines the size of 
+.I buffer
+into which file system information is returned.
+Buffer sizes must be a multiple of 
+.B sizeof(struct fs_data)
+bytes.  Larger buffer sizes should be used to allow return of 
+information about multiple file systems.
+.PP
+The number of file systems described by the information
+placed in
+.I buffer
+is returned by
+.PN getmount.
+The 
+.I context
+argument is also updated to reflect the current logical
+location within the system mount table, allowing successive
+.PN getmounts
+to retrieve information about all file systems.
+The 
+.I context
+argument is set to 0 when information about all file
+systems has been retrieved.  Errors initialize 
+.I errno
+to appropriate diagnostic values and return statuses of -1.
+.PP
+Large size buffers allow information about multiple file
+systems to be retrieved by a single 
+.PN getmnt.
+Such information is returned within consecutive 
+.I buffer
+locations.  The information for each file system
+is described by the structure
+.I fs_data:
+.EX 0
+struct fs_data {
+	struct	fs_data_req	fd_req;	/* required data */
+	u_int	fd_spare[113];		/* spare */
+};	/* 2560 bytes */
+
+struct fs_data_req {      /* required part for all file systems */
+	u_int   flags;    /* how mounted */
+	u_int	mtsize;   /* max transfer size in bytes */
+	u_int	otsize;   /* optimal transfer size in bytes */
+	u_int	bsize;    /* fs block size in bytes for vm code */
+	u_int	fstype;   /* see ../h/fs_types.h  */
+	u_int	gtot;     /* total number of gnodes */
+	u_int	gfree;    /* # of free gnodes */
+	u_int	btot;     /* total number of 1K blocks */
+	u_int	bfree;    /* # of free 1K blocks */
+	u_int	bfreen;   /* user consumable 1K blocks */
+	u_int	pgthresh; /* min size in bytes before paging*/
+	int	uid;      /* uid that mounted me */
+	dev_t	dev;      /* major/minor of fs */
+	dev_t	pad;      /* alignment: dev_t is a short*/
+	char	devname[MAXPATHLEN + 4];  /* name of dev */
+	char	path[MAXPATHLEN + 4];     /* name of mount point */
+}
+.EE
+.SH DIAGNOSTICS
+.TP 15
+[EFAULT]
+Either
+.I buffer
+or
+.I context
+causes an illegal address to be referenced.
+.TP 15
+[EINVAL]
+.I context
+is invalid or the
+.I buffer
+is too small.
+.SH "SEE ALSO"
+gfsi(5)

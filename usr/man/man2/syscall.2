@@ -1,0 +1,32 @@
+.TH syscall 2
+.SH NAME
+syscall \- indirect system call
+.SH SYNTAX
+.nf
+.BR "syscall(number, arg, ...)" \  \  (VAX-11)
+.fi
+.SH DESCRIPTION
+The
+.PN syscall
+system call
+performs the system call whose assembly language
+interface has the specified
+.I number,
+register arguments
+.I r0
+and
+.I r1
+and further arguments
+.IR arg .
+.PP
+The r0 value of the system call is returned.
+.SH RESTRICTIONS
+There is no way to simulate system calls
+such as pipe(2), which return values in register r1.
+.SH DIAGNOSTICS
+When the C-bit is set,
+.PN syscall
+returns \-1 and sets the
+external variable 
+.I errno .
+For further information, see intro(2).

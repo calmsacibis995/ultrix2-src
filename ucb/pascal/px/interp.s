@@ -1,0 +1,2659 @@
+.data
+.data
+_sccsid:.long	0x29232840
+.long	0x65746e69
+.long	0x632e7072
+.long	0x332e3120
+.long	0x2f322030
+.long	0x33382f39
+.long	0x0
+.comm	_display,160
+.comm	_frtn,168
+.comm	__display,160
+.comm	__dp,4
+.data
+.align	2
+.globl	__lino
+__lino:.long	0
+.comm	__argc,4
+.comm	__argv,4
+.comm	__mode,4
+.align	2
+.globl	__runtst
+__runtst:.long	1
+.align	2
+.globl	__nodump
+__nodump:.long	0
+.align	2
+.globl	__stlim
+__stlim:.long	500000
+.align	2
+.globl	__stcnt
+__stcnt:.long	0
+.align	2
+.globl	__seed
+__seed:.long	1
+.align	2
+.globl	__minptr
+__minptr:.long	2147483647
+.align	2
+.globl	__maxptr
+__maxptr:.long	0
+.align	2
+.globl	__pcpcount
+__pcpcount:.long	0
+.align	2
+.globl	__cntrs
+__cntrs:.long	0
+.align	2
+.globl	__rtns
+__rtns:.long	0
+.comm	__inwin,1
+.comm	__outwin,1
+.comm	__errwin,1
+.align	2
+.globl	__err
+__err:.long	__errwin
+.long	0
+.long	2147483647
+.long	__iob+40
+.long	0
+.long	2147483633
+.data	2
+L146:.ascii	"Message file\0"
+.data
+.long	L146
+.long	0x20061
+.long	1
+.space	76
+.align	2
+.globl	_output
+_output:.long	__outwin
+.long	0
+.long	2147483647
+.long	__iob+20
+.long	__err
+.long	2147483633
+.data	2
+L147:.ascii	"standard output\0"
+.data
+.long	L147
+.long	0x10061
+.long	1
+.space	76
+.align	2
+.globl	_input
+_input:.long	__inwin
+.long	0
+.long	2147483647
+.long	__iob
+.long	_output
+.long	2147483633
+.data	2
+L148:.ascii	"standard input\0"
+.data
+.long	L148
+.long	0x56
+.long	1
+.space	76
+.align	2
+.globl	__filefre
+__filefre:.long	2
+.align	2
+.globl	__fchain
+__fchain:.long	0
+.long	0
+.long	0
+.long	0
+.long	_input
+.space	92
+.data
+.align	2
+.globl	__actfile
+__actfile:.long	_input
+.long	_output
+.long	__err
+.space	116
+.comm	_pcaddrp,4
+.globl _loopaddr
+.text
+LL0:.align	1
+.globl	_interpreter
+.data
+.align 2
+.comm Ll1,8
+.text
+.data	1
+L197:.ascii	"Active frame not found in non-local goto\12\0"
+.text
+.data	1
+L200:.ascii	"Panic\72 stack not empty between statements\12\0"
+.text
+.data	1
+L223:.ascii	"Panic\72 bad relation %d to REL4*\12\0"
+.text
+.data	1
+L235:.ascii	"Panic\72 bad relation %d to RELG*\12\0"
+.text
+.data	1
+L247:.ascii	"Panic\72 bad relation %d to RELT*\12\0"
+.text
+.data	1
+L264:.ascii	"Panic\72 bad relation %d to REL8*\12\0"
+.text
+.data
+.align	2
+L319:.double	0d0.00000000000000000000e+00
+.text
+.data	1
+L410:.ascii	"\12Call to procedure halt\12\0"
+.text
+.data	1
+L412:.ascii	"Halted\0"
+.text
+.data	1
+L593:.ascii	"Panic\72 bad op code\12\0"
+.text
+.set	L151,0xfc0
+.data
+.text
+_interpreter:.word	L151
+movab	-80(sp),sp
+moval	-4(fp),_pcaddrp
+calls	$0,_getpid
+movl	r0,-72(fp)
+moval	__actfile+12,-68(fp)
+jbr	L159
+L2000001:clrl	*-68(fp)
+addl2	$4,-68(fp)
+L159:cmpl	-68(fp),$__actfile+128
+jlss	L2000001
+pushl	$8
+subl2	(sp)+,sp
+movl	sp,__display
+addl2	$8,__display
+movl	__display,r0
+moval	_output,-4(r0)
+movl	__display,r0
+moval	_input,-8(r0)
+pushl	$32
+subl2	(sp)+,sp
+movl	sp,r10
+moval	__display,__dp
+movl	4(ap),r11
+_loopaddr:L162:movzbl	(r11),r0
+incl	r11
+casel	r0,$1,$254
+L2000221:
+.word	L168-L2000221
+.word	L169-L2000221
+.word	L175-L2000221
+.word	L180-L2000221
+.word	L181-L2000221
+.word	L183-L2000221
+.word	L186-L2000221
+.word	L188-L2000221
+.word	L190-L2000221
+.word	L191-L2000221
+.word	L192-L2000221
+.word	L193-L2000221
+.word	L198-L2000221
+.word	L204-L2000221
+.word	L592-L2000221
+.word	L207-L2000221
+.word	L209-L2000221
+.word	L213-L2000221
+.word	L211-L2000221
+.word	L212-L2000221
+.word	L254-L2000221
+.word	L225-L2000221
+.word	L237-L2000221
+.word	L249-L2000221
+.word	L251-L2000221
+.word	L252-L2000221
+.word	L253-L2000221
+.word	L266-L2000221
+.word	L267-L2000221
+.word	L268-L2000221
+.word	L592-L2000221
+.word	L269-L2000221
+.word	L270-L2000221
+.word	L271-L2000221
+.word	L272-L2000221
+.word	L273-L2000221
+.word	L274-L2000221
+.word	L275-L2000221
+.word	L276-L2000221
+.word	L277-L2000221
+.word	L278-L2000221
+.word	L280-L2000221
+.word	L281-L2000221
+.word	L282-L2000221
+.word	L285-L2000221
+.word	L288-L2000221
+.word	L290-L2000221
+.word	L291-L2000221
+.word	L292-L2000221
+.word	L293-L2000221
+.word	L294-L2000221
+.word	L295-L2000221
+.word	L297-L2000221
+.word	L298-L2000221
+.word	L299-L2000221
+.word	L300-L2000221
+.word	L301-L2000221
+.word	L302-L2000221
+.word	L303-L2000221
+.word	L304-L2000221
+.word	L305-L2000221
+.word	L306-L2000221
+.word	L307-L2000221
+.word	L308-L2000221
+.word	L309-L2000221
+.word	L310-L2000221
+.word	L311-L2000221
+.word	L312-L2000221
+.word	L313-L2000221
+.word	L314-L2000221
+.word	L315-L2000221
+.word	L317-L2000221
+.word	L317-L2000221
+.word	L318-L2000221
+.word	L592-L2000221
+.word	L320-L2000221
+.word	L321-L2000221
+.word	L322-L2000221
+.word	L592-L2000221
+.word	L323-L2000221
+.word	L324-L2000221
+.word	L325-L2000221
+.word	L326-L2000221
+.word	L327-L2000221
+.word	L328-L2000221
+.word	L329-L2000221
+.word	L330-L2000221
+.word	L331-L2000221
+.word	L332-L2000221
+.word	L333-L2000221
+.word	L334-L2000221
+.word	L335-L2000221
+.word	L336-L2000221
+.word	L337-L2000221
+.word	L338-L2000221
+.word	L339-L2000221
+.word	L340-L2000221
+.word	L341-L2000221
+.word	L342-L2000221
+.word	L343-L2000221
+.word	L344-L2000221
+.word	L345-L2000221
+.word	L346-L2000221
+.word	L347-L2000221
+.word	L348-L2000221
+.word	L349-L2000221
+.word	L350-L2000221
+.word	L351-L2000221
+.word	L352-L2000221
+.word	L354-L2000221
+.word	L355-L2000221
+.word	L356-L2000221
+.word	L357-L2000221
+.word	L358-L2000221
+.word	L359-L2000221
+.word	L360-L2000221
+.word	L361-L2000221
+.word	L362-L2000221
+.word	L363-L2000221
+.word	L364-L2000221
+.word	L365-L2000221
+.word	L366-L2000221
+.word	L367-L2000221
+.word	L368-L2000221
+.word	L369-L2000221
+.word	L370-L2000221
+.word	L592-L2000221
+.word	L372-L2000221
+.word	L373-L2000221
+.word	L374-L2000221
+.word	L375-L2000221
+.word	L376-L2000221
+.word	L377-L2000221
+.word	L378-L2000221
+.word	L382-L2000221
+.word	L384-L2000221
+.word	L386-L2000221
+.word	L388-L2000221
+.word	L390-L2000221
+.word	L392-L2000221
+.word	L394-L2000221
+.word	L396-L2000221
+.word	L398-L2000221
+.word	L400-L2000221
+.word	L402-L2000221
+.word	L404-L2000221
+.word	L406-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L380-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L165-L2000221
+.word	L413-L2000221
+.word	L415-L2000221
+.word	L416-L2000221
+.word	L424-L2000221
+.word	L431-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L438-L2000221
+.word	L440-L2000221
+.word	L442-L2000221
+.word	L444-L2000221
+.word	L446-L2000221
+.word	L448-L2000221
+.word	L450-L2000221
+.word	L452-L2000221
+.word	L454-L2000221
+.word	L457-L2000221
+.word	L460-L2000221
+.word	L463-L2000221
+.word	L466-L2000221
+.word	L469-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L472-L2000221
+.word	L473-L2000221
+.word	L474-L2000221
+.word	L475-L2000221
+.word	L476-L2000221
+.word	L478-L2000221
+.word	L479-L2000221
+.word	L592-L2000221
+.word	L480-L2000221
+.word	L484-L2000221
+.word	L488-L2000221
+.word	L492-L2000221
+.word	L495-L2000221
+.word	L498-L2000221
+.word	L499-L2000221
+.word	L502-L2000221
+.word	L504-L2000221
+.word	L505-L2000221
+.word	L506-L2000221
+.word	L507-L2000221
+.word	L510-L2000221
+.word	L508-L2000221
+.word	L512-L2000221
+.word	L592-L2000221
+.word	L513-L2000221
+.word	L515-L2000221
+.word	L517-L2000221
+.word	L519-L2000221
+.word	L520-L2000221
+.word	L522-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L524-L2000221
+.word	L526-L2000221
+.word	L535-L2000221
+.word	L538-L2000221
+.word	L541-L2000221
+.word	L528-L2000221
+.word	L529-L2000221
+.word	L592-L2000221
+.word	L532-L2000221
+.word	L533-L2000221
+.word	L534-L2000221
+.word	L544-L2000221
+.word	L546-L2000221
+.word	L548-L2000221
+.word	L592-L2000221
+.word	L592-L2000221
+.word	L549-L2000221
+.word	L551-L2000221
+.word	L553-L2000221
+.word	L555-L2000221
+.word	L557-L2000221
+.word	L559-L2000221
+.word	L562-L2000221
+.word	L562-L2000221
+.word	L565-L2000221
+.word	L565-L2000221
+.word	L575-L2000221
+.word	L581-L2000221
+.word	L578-L2000221
+.word	L566-L2000221
+.word	L572-L2000221
+.word	L569-L2000221
+.word	L584-L2000221
+.word	L585-L2000221
+.word	L586-L2000221
+.word	L588-L2000221
+.word	L588-L2000221
+.word	L589-L2000221
+.word	L590-L2000221
+.word	L591-L2000221
+L592:pushal	L593
+calls	$1,_ERROR
+jbr	L162
+L165:calls	$0,_PFLUSH
+pushl	$4
+pushl	-72(fp)
+calls	$2,_kill
+decl	r11
+jbr	L162
+L168:movl	$1,__nodump
+L169:addl2	$8,__dp
+movl	__dp,r0
+movq	(r0),12(r10)
+movzbl	(r11),r7
+incl	r11
+movl	r11,8(r10)
+movl	(r11),r6
+movl	r11,r0
+cvtwl	12(r0),__lino
+movl	r11,r0
+movl	8(r0),__runtst
+bicpsw	$0xe0
+tstl	__runtst
+jeql	L171
+bispsw	$0xe0
+L171:addl2	r7,r11
+movl	-8(fp),4(r10)
+pushl	r6
+subl2	(sp)+,sp
+movl	sp,r9
+tstl	__runtst
+jeql	L173
+pushl	r6
+pushl	r9
+	movl	(sp)+,r3
+	jbr	2f
+1:
+	subl2	r0,(sp)
+	movc5	$0,(r3),$0,r0,(r3)
+2:
+	movzwl	$65535,r0
+	cmpl	(sp),r0
+	jgtr	1b
+	movl	(sp)+,r0
+	movc5	$0,(r3),$0,r0,(r3)
+L173:addl2	r6,r9
+movl	r9,*__dp
+movl	__dp,r0
+movl	r10,4(r0)
+pushl	$0
+subl2	(sp)+,sp
+movl	sp,(r10)
+jbr	L162
+L175:pushl	*__dp
+calls	$1,_PCLOSE
+movl	__dp,r0
+movl	4(r0),r10
+movl	4(r10),-8(fp)
+addl3	$12,r10,r0
+movl	__dp,r1
+movq	(r0),(r1)
+cmpl	__dp,$__display+8
+jneq	L177
+ret
+L177:movl	28(r10),__lino
+movl	24(r10),r11
+movl	20(r10),__dp
+movl	8(r10),r0
+movl	8(r0),__runtst
+bicpsw	$0xe0
+tstl	__runtst
+jeql	L178
+bispsw	$0xe0
+L178:addl3	$32,*8(r10),r0
+movl	8(r10),r1
+addl3	4(r1),r0,-(sp)
+L2000015:addl2	(sp)+,sp
+jbr	L162
+L180:cvtbl	(r11),r7
+incl	r11
+addl3	4(ap),(r11),r9
+addl2	$4,r11
+addl2	$2,r9
+addl3	(r9),4(ap),r9
+pushl	$32
+subl2	(sp)+,sp
+movl	sp,r10
+movl	__lino,28(r10)
+movl	r11,24(r10)
+movl	__dp,20(r10)
+movaq	__display[r7],__dp
+movl	r9,r11
+jbr	L162
+L181:incl	r11
+movl	(sp)+,r9
+movl	(sp)+,-60(fp)
+pushl	$32
+subl2	(sp)+,sp
+movl	sp,r10
+movl	__lino,28(r10)
+movl	r11,24(r10)
+movl	__dp,20(r10)
+movl	*-60(fp),r11
+movl	-60(fp),r0
+movl	4(r0),r0
+movaq	__display[r0],__dp
+movl	-60(fp),r0
+ashl	$3,4(r0),-(sp)
+pushl	r9
+pushal	__display+8
+	popr	$0xa
+	jbr	2f
+1:
+	subl2	r0,(sp)
+	movc3	r0,(r1),(r3)
+2:
+	movzwl	$65535,r0
+	cmpl	(sp),r0
+	jgtr	1b
+	movl	(sp)+,r0
+	movc3	r0,(r1),(r3)
+movl	-60(fp),r0
+ashl	$3,4(r0),-(sp)
+pushal	__display+8
+addl3	$8,-60(fp),-(sp)
+L2000016:
+	popr	$0xa
+	jbr	2f
+1:
+	subl2	r0,(sp)
+	movc3	r0,(r1),(r3)
+2:
+	movzwl	$65535,r0
+	cmpl	(sp),r0
+	jgtr	1b
+	movl	(sp)+,r0
+	movc3	r0,(r1),(r3)
+jbr	L162
+L183:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L184
+movzwl	(r11),r7
+addl2	$2,r11
+L184:pushl	$0
+subl2	(sp)+,sp
+movl	sp,r9
+addl3	r7,r9,r0
+movl	(r0),-60(fp)
+addl3	r7,r9,r0
+movl	4(r0),-48(fp)
+tstl	r7
+jeql	L185
+pushl	r7
+addl3	$8,r9,-(sp)
+pushl	r9
+	popr	$0xa
+	jbr	2f
+1:
+	subl2	r0,(sp)
+	movc3	r0,(r1),(r3)
+2:
+	movzwl	$65535,r0
+	cmpl	(sp),r0
+	jgtr	1b
+	movl	(sp)+,r0
+	movc3	r0,(r1),(r3)
+L185:pushl	$8
+addl2	(sp)+,sp
+movl	-60(fp),r0
+ashl	$3,4(r0),-(sp)
+pushal	__display+8
+pushl	-48(fp)
+jbr	L2000016
+L186:movl	(sp)+,-60(fp)
+movl	-60(fp),r0
+cvtbl	(r11),4(r0)
+incl	r11
+addl3	4(ap),(r11),r9
+addl2	$4,r11
+addl2	$2,r9
+addl3	(r9),4(ap),*-60(fp)
+movl	-60(fp),r0
+ashl	$3,4(r0),-(sp)
+addl3	$8,-60(fp),-(sp)
+pushal	__display+8
+	popr	$0xa
+	jbr	2f
+1:
+	subl2	r0,(sp)
+	movc3	r0,(r1),(r3)
+2:
+	movzwl	$65535,r0
+	cmpl	(sp),r0
+	jgtr	1b
+	movl	(sp)+,r0
+	movc3	r0,(r1),(r3)
+pushl	-60(fp)
+jbr	L162
+L188:incl	r11
+cvtwl	(sp)+,r7
+cvtwl	r7,-(sp)
+movw	(sp)+,(sp)
+cvtwl	r7,-(sp)
+L2000017:movw	(sp)+,(sp)
+jbr	L162
+L190:incl	r11
+movl	(sp)+,r7
+pushl	r7
+pushl	r7
+jbr	L162
+L191:incl	r11
+L2000020:movl	r11,r0
+L2000022:cvtwl	(r0),r0
+L2000021:addl2	r0,r11
+jbr	L162
+L192:incl	r11
+addl3	(r11),4(ap),r11
+jbr	L162
+L193:cvtbl	(r11),r0
+ashl	$3,r0,r0
+movl	__display+4(r0),-56(fp)
+incl	r11
+addl3	(r11),4(ap),r11
+L2000003:movl	__dp,r0
+movl	4(r0),r10
+cmpl	-56(fp),r10
+jneq	L2000005
+pushl	$0
+subl2	(sp)+,sp
+movl	sp,-76(fp)
+subl3	-76(fp),(r10),-(sp)
+jbr	L2000015
+L2000005:cmpl	__dp,$__display+8
+jneq	L196
+pushl	$0
+pushal	L197
+calls	$2,_ERROR
+L196:pushl	*__dp
+calls	$1,_PCLOSE
+movl	4(r10),-8(fp)
+addl3	$12,r10,r0
+movl	__dp,r1
+movq	(r0),(r1)
+movl	20(r10),__dp
+jbr	L2000003
+L198:pushl	$0
+subl2	(sp)+,sp
+movl	sp,-76(fp)
+movl	__dp,r0
+cmpl	*4(r0),-76(fp)
+jeql	L199
+pushal	L200
+calls	$1,_ERROR
+L199:cvtbl	(r11),__lino
+incl	r11
+tstl	__lino
+jneq	L201
+cvtwl	(r11),__lino
+addl2	$2,r11
+L201:tstl	__runtst
+jeql	L202
+	incl	__stcnt
+	cmpl	__stcnt,__stlim
+	jlss	1f
+	pushl	__stcnt
+	pushl	$_ELINO
+	calls	$2,_ERROR
+1:
+jbr	L162
+L202:incl	__stcnt
+jbr	L162
+L204:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L205
+movl	(r11),r7
+addl2	$4,r11
+L205:mnegl	r7,r0
+incl	r0
+bicl3	$1,r0,r7
+pushl	r7
+subl2	(sp)+,sp
+movl	sp,r9
+tstl	__runtst
+jeql	L162
+pushl	r7
+pushl	r9
+L2000023:
+	movl	(sp)+,r3
+	jbr	2f
+1:
+	subl2	r0,(sp)
+	movc5	$0,(r3),$0,r0,(r3)
+2:
+	movzwl	$65535,r0
+	cmpl	(sp),r0
+	jgtr	1b
+	movl	(sp)+,r0
+	movc5	$0,(r3),$0,r0,(r3)
+jbr	L162
+L207:incl	r11
+cvtwl	(sp)+,r0
+jeql	L2000020
+L2000024:addl2	$2,r11
+jbr	L162
+L209:cvtwl	(sp)+,r7
+L2000025:cvtwl	(sp)+,r6
+jbr	L210
+L211:cvtwl	(sp)+,r7
+jbr	L2000006
+L212:movl	(sp)+,r7
+jbr	L2000025
+L213:movl	(sp)+,r7
+L2000006:movl	(sp)+,r6
+L210:cvtbl	(r11),r0
+incl	r11
+casel	r0,$0,$10
+L2000222:
+.word	L216-L2000222
+.word	L222-L2000222
+.word	L217-L2000222
+.word	L222-L2000222
+.word	L218-L2000222
+.word	L222-L2000222
+.word	L219-L2000222
+.word	L222-L2000222
+.word	L220-L2000222
+.word	L222-L2000222
+.word	L221-L2000222
+L222:movl	r11,r0
+cvtbl	-1(r0),-(sp)
+pushal	L223
+L2000026:calls	$2,_ERROR
+jbr	L162
+L216:cmpl	r6,r7
+jneq	L9999
+L2000206:movl	$1,r0
+L9998:pushl	r0
+jbr	L2000017
+L217:cmpl	r6,r7
+jneq	L2000206
+L9999:clrl	r0
+jbr	L9998
+L218:cmpl	r6,r7
+jgeq	L9999
+jbr	L2000206
+L219:cmpl	r6,r7
+jleq	L9999
+jbr	L2000206
+L220:cmpl	r6,r7
+jgtr	L9999
+jbr	L2000206
+L221:cmpl	r6,r7
+jlss	L9999
+jbr	L2000206
+L225:cvtbl	(r11),-12(fp)
+incl	r11
+movzwl	(r11),r7
+addl2	$2,r11
+addl3	$1,r7,r0
+bicl3	$1,r0,r6
+pushl	$0
+subl2	(sp)+,sp
+movl	sp,r9
+movl	-12(fp),r0
+casel	r0,$0,$10
+L2000223:
+.word	L228-L2000223
+.word	L234-L2000223
+.word	L229-L2000223
+.word	L234-L2000223
+.word	L230-L2000223
+.word	L234-L2000223
+.word	L231-L2000223
+.word	L234-L2000223
+.word	L232-L2000223
+.word	L234-L2000223
+.word	L233-L2000223
+L234:pushl	-12(fp)
+pushal	L235
+L2000207:calls	$2,_ERROR
+L226:ashl	$1,r6,-(sp)
+L2000030:addl2	(sp)+,sp
+cvtwl	-52(fp),-(sp)
+jbr	L2000017
+L228:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r7
+L2000219:
+	popr	$0xb
+	movl	r0,r4
+1:
+	movzwl	$65535,r0
+	cmpl	r4,r0
+	jleq	3f
+	subl2	r0,r4
+	cmpc3	r0,(r1),(r3)
+	jeql	1b
+2:
+	clrl	r0
+	jbr	4f
+3:
+	cmpc3	r4,(r1),(r3)
+	jneq	2b
+	incl	r0
+4:
+L2000032:movl	r0,-52(fp)
+jbr	L226
+L229:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r7
+L2000220:
+	popr	$0xb
+	movl	r0,r4
+1:
+	movzwl	$65535,r0
+	cmpl	r4,r0
+	jleq	3f
+	subl2	r0,r4
+	cmpc3	r0,(r1),(r3)
+	jeql	1b
+2:
+	movl	$1,r0
+	jbr	4f
+3:
+	cmpc3	r4,(r1),(r3)
+	jneq	2b
+4:
+jbr	L2000032
+L230:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r7
+	popr	$0xb
+	movl	r0,r4
+	jbr	2f
+1:
+	subl2	r0,r4
+	cmpc3	r0,(r1),(r3)
+	jneq	3f
+2:
+	movzwl	$65535,r0
+	cmpl	r4,r0
+	jgtr	1b
+	cmpc3	r4,(r1),(r3)
+3:
+	jlss	4f
+	clrl	r0
+	jbr	5f
+4:
+	movl	$1,r0
+5:
+jbr	L2000032
+L231:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r7
+	popr	$0xb
+	movl	r0,r4
+	jbr	2f
+1:
+	subl2	r0,r4
+	cmpc3	r0,(r1),(r3)
+	jneq	3f
+2:
+	movzwl	$65535,r0
+	cmpl	r4,r0
+	jgtr	1b
+	cmpc3	r4,(r1),(r3)
+3:
+	jgtr	4f
+	clrl	r0
+	jbr	5f
+4:
+	movl	$1,r0
+5:
+jbr	L2000032
+L232:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r7
+	popr	$0xb
+	movl	r0,r4
+	jbr	2f
+1:
+	subl2	r0,r4
+	cmpc3	r0,(r1),(r3)
+	jneq	3f
+2:
+	movzwl	$65535,r0
+	cmpl	r4,r0
+	jgtr	1b
+	cmpc3	r4,(r1),(r3)
+3:
+	jleq	4f
+	clrl	r0
+	jbr	5f
+4:
+	movl	$1,r0
+5:
+jbr	L2000032
+L233:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r7
+	popr	$0xb
+	movl	r0,r4
+	jbr	2f
+1:
+	subl2	r0,r4
+	cmpc3	r0,(r1),(r3)
+	jneq	3f
+2:
+	movzwl	$65535,r0
+	cmpl	r4,r0
+	jgtr	1b
+	cmpc3	r4,(r1),(r3)
+3:
+	jgeq	4f
+	clrl	r0
+	jbr	5f
+4:
+	movl	$1,r0
+5:
+jbr	L2000032
+L237:cvtbl	(r11),-12(fp)
+incl	r11
+movzwl	(r11),r6
+addl2	$2,r11
+pushl	$0
+subl2	(sp)+,sp
+movl	sp,r9
+movl	-12(fp),r0
+casel	r0,$0,$10
+L2000224:
+.word	L240-L2000224
+.word	L246-L2000224
+.word	L241-L2000224
+.word	L246-L2000224
+.word	L242-L2000224
+.word	L246-L2000224
+.word	L243-L2000224
+.word	L246-L2000224
+.word	L244-L2000224
+.word	L246-L2000224
+.word	L245-L2000224
+L246:pushl	-12(fp)
+pushal	L247
+jbr	L2000207
+L240:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r6
+jbr	L2000219
+L241:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r6
+jbr	L2000220
+L242:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r6
+calls	$3,_RELTLT
+jbr	L2000032
+L243:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r6
+calls	$3,_RELTGT
+jbr	L2000032
+L244:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r6
+calls	$3,_RELTLE
+jbr	L2000032
+L245:pushl	r9
+addl3	r6,r9,-(sp)
+pushl	r6
+calls	$3,_RELTGE
+jbr	L2000032
+L249:cvtwl	(sp)+,r0
+L2000035:cvtld	r0,-80(fp)
+movd	-80(fp),-20(fp)
+jbr	L2000008
+L251:movl	(sp)+,r0
+jbr	L2000035
+L252:movq	(sp)+,r0
+movd	r0,-20(fp)
+cvtwl	(sp)+,r0
+L2000037:cvtld	r0,-80(fp)
+movd	-80(fp),-28(fp)
+jbr	L250
+L253:movq	(sp)+,r0
+movd	r0,-20(fp)
+movl	(sp)+,r0
+jbr	L2000037
+L254:movq	(sp)+,r0
+movd	r0,-20(fp)
+L2000008:movq	(sp)+,r0
+movd	r0,-28(fp)
+L250:cvtbl	(r11),r0
+incl	r11
+casel	r0,$0,$10
+L2000225:
+.word	L257-L2000225
+.word	L263-L2000225
+.word	L258-L2000225
+.word	L263-L2000225
+.word	L259-L2000225
+.word	L263-L2000225
+.word	L260-L2000225
+.word	L263-L2000225
+.word	L261-L2000225
+.word	L263-L2000225
+.word	L262-L2000225
+L263:movl	r11,r0
+cvtbl	-1(r0),-(sp)
+pushal	L264
+jbr	L2000026
+L257:cmpd	-28(fp),-20(fp)
+jneq	L9999
+jbr	L2000206
+L258:cmpd	-28(fp),-20(fp)
+jeql	L9999
+jbr	L2000206
+L259:cmpd	-28(fp),-20(fp)
+jgeq	L9999
+jbr	L2000206
+L260:cmpd	-28(fp),-20(fp)
+jleq	L9999
+jbr	L2000206
+L261:cmpd	-28(fp),-20(fp)
+jgtr	L9999
+jbr	L2000206
+L262:cmpd	-28(fp),-20(fp)
+jlss	L9999
+jbr	L2000206
+L266:incl	r11
+cvtwl	(sp)+,r7
+cvtwl	(sp)+,r6
+mcoml	r7,r0
+bicl3	r0,r6,-(sp)
+jbr	L2000017
+L267:incl	r11
+cvtwl	(sp)+,r7
+cvtwl	(sp)+,r6
+bisl3	r7,r6,-(sp)
+jbr	L2000017
+L268:incl	r11
+cvtwl	(sp)+,r7
+xorl3	$1,r7,-(sp)
+jbr	L2000017
+L269:incl	r11
+cvtwl	(sp)+,r7
+L2000039:movl	(sp)+,-76(fp)
+cvtlw	r7,*-76(fp)
+jbr	L162
+L270:incl	r11
+movl	(sp)+,r7
+L2000041:movl	(sp)+,-76(fp)
+movl	r7,*-76(fp)
+jbr	L162
+L271:incl	r11
+cvtwl	(sp)+,r7
+jbr	L2000041
+L272:incl	r11
+movl	(sp)+,r7
+jbr	L2000039
+L273:incl	r11
+cvtwl	(sp)+,r7
+L2000043:movl	(sp)+,-76(fp)
+cvtlb	r7,*-76(fp)
+jbr	L162
+L274:incl	r11
+movl	(sp)+,r7
+jbr	L2000043
+L275:incl	r11
+cvtwl	(sp)+,r7
+L2000045:movl	(sp)+,-76(fp)
+cvtld	r7,*-76(fp)
+jbr	L162
+L276:incl	r11
+movl	(sp)+,r7
+jbr	L2000045
+L277:incl	r11
+movq	(sp)+,Ll1
+movaq	Ll1,r0
+movq	(r0),-36(fp)
+movl	(sp)+,-76(fp)
+moval	-36(fp),r0
+movl	-76(fp),r1
+movq	(r0),(r1)
+jbr	L162
+L278:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L279
+movzwl	(r11),r7
+addl2	$2,r11
+L279:addl3	$1,r7,r0
+bicl3	$1,r0,r6
+pushl	$0
+subl2	(sp)+,sp
+movl	sp,r9
+pushl	r7
+addl3	r6,r9,r0
+pushl	(r0)
+pushl	r9
+	popr	$0xa
+	jbr	2f
+1:
+	subl2	r0,(sp)
+	movc3	r0,(r1),(r3)
+2:
+	movzwl	$65535,r0
+	cmpl	(sp),r0
+	jgtr	1b
+	movl	(sp)+,r0
+	movc3	r0,(r1),(r3)
+addl3	$4,r6,-(sp)
+jbr	L2000015
+L280:cvtbl	(r11),r7
+incl	r11
+cvtwl	(sp)+,r6
+L2000053:movl	r6,r0
+movl	r11,r1
+cvtwl	(r1),r1
+subl2	r1,r0
+ashl	r7,r0,r6
+addl2	$2,r11
+movl	(sp)+,r9
+addl3	r6,r9,-(sp)
+jbr	L162
+L281:cvtbl	(r11),r7
+incl	r11
+movl	(sp)+,r6
+jbr	L2000053
+L282:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L283
+movzwl	(r11),r7
+addl2	$2,r11
+L283:cvtwl	(sp)+,r6
+cvtwl	(r11),-12(fp)
+addl2	$2,r11
+movl	(sp)+,r9
+subl3	-12(fp),r6,r0
+mull2	r7,r0
+addl3	r9,r0,-(sp)
+movzwl	(r11),r7
+addl2	$2,r11
+tstl	__runtst
+jeql	L162
+L2000057:pushl	r7
+pushl	-12(fp)
+pushl	r6
+	popr	$0x07
+	cmpl	r0,r1
+	jlss	1f
+	cmpl	r0,r2
+	jleq	2f
+1:
+	pushl	r0
+	pushl	$_ESUBSC
+	calls	$2,_ERROR
+2:
+jbr	L162
+L285:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L286
+movzwl	(r11),r7
+addl2	$2,r11
+L286:movl	(sp)+,r6
+cvtwl	(r11),-12(fp)
+addl2	$2,r11
+movl	(sp)+,r9
+subl3	-12(fp),r6,r0
+mull2	r7,r0
+addl3	r9,r0,-(sp)
+movzwl	(r11),r7
+addl2	$2,r11
+tstl	__runtst
+jneq	L2000057
+jbr	L162
+L288:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L289
+movzwl	(r11),r7
+addl2	$2,r11
+L289:movl	(sp)+,r9
+addl3	r7,r9,-(sp)
+jbr	L162
+L290:incl	r11
+calls	$0,_NIL
+jbr	L162
+L291:incl	r11
+cvtwl	(sp)+,r7
+L2000059:cvtwl	(sp)+,r6
+L2000058:addl3	r7,r6,-(sp)
+jbr	L162
+L292:incl	r11
+movl	(sp)+,r7
+L2000060:movl	(sp)+,r6
+jbr	L2000058
+L293:incl	r11
+cvtwl	(sp)+,r7
+jbr	L2000060
+L294:incl	r11
+movl	(sp)+,r7
+jbr	L2000059
+L295:incl	r11
+cvtwl	(sp)+,r7
+L2000064:movq	(sp)+,r0
+movd	r0,-20(fp)
+cvtld	r7,r0
+addd3	-20(fp),r0,-(sp)
+jbr	L162
+L297:incl	r11
+movl	(sp)+,r7
+jbr	L2000064
+L298:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+cvtwl	(sp)+,r0
+L2000067:cvtld	r0,-80(fp)
+movd	-80(fp),-28(fp)
+L2000068:addd3	-20(fp),-28(fp),-(sp)
+jbr	L162
+L299:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+movl	(sp)+,r0
+jbr	L2000067
+L300:incl	r11
+cvtwl	(sp)+,r7
+L2000070:cvtwl	(sp)+,r6
+L2000069:subl3	r7,r6,-(sp)
+jbr	L162
+L301:incl	r11
+movl	(sp)+,r7
+L2000071:movl	(sp)+,r6
+jbr	L2000069
+L302:incl	r11
+cvtwl	(sp)+,r7
+jbr	L2000071
+L303:incl	r11
+movl	(sp)+,r7
+jbr	L2000070
+L304:incl	r11
+cvtwl	(sp)+,r7
+L2000075:movq	(sp)+,r0
+movd	r0,-20(fp)
+cvtld	r7,r0
+subd3	r0,-20(fp),-(sp)
+jbr	L162
+L305:incl	r11
+movl	(sp)+,r7
+jbr	L2000075
+L306:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+cvtwl	(sp)+,r0
+L2000078:cvtld	r0,-80(fp)
+movd	-80(fp),-28(fp)
+L2000079:subd3	-20(fp),-28(fp),-(sp)
+jbr	L162
+L307:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+movl	(sp)+,r0
+jbr	L2000078
+L308:incl	r11
+cvtwl	(sp)+,r7
+L2000081:cvtwl	(sp)+,r6
+L2000080:mull3	r7,r6,-(sp)
+jbr	L162
+L309:incl	r11
+movl	(sp)+,r7
+L2000082:movl	(sp)+,r6
+jbr	L2000080
+L310:incl	r11
+cvtwl	(sp)+,r7
+jbr	L2000082
+L311:incl	r11
+movl	(sp)+,r7
+jbr	L2000081
+L312:incl	r11
+cvtwl	(sp)+,r7
+L2000086:movq	(sp)+,r0
+movd	r0,-20(fp)
+cvtld	r7,r0
+muld3	r0,-20(fp),-(sp)
+jbr	L162
+L313:incl	r11
+movl	(sp)+,r7
+jbr	L2000086
+L314:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+cvtwl	(sp)+,r0
+L2000089:cvtld	r0,-80(fp)
+movd	-80(fp),-28(fp)
+L2000090:muld3	-20(fp),-28(fp),-(sp)
+jbr	L162
+L315:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+movl	(sp)+,r0
+jbr	L2000089
+L317:incl	r11
+movl	(sp)+,r7
+jlss	L9975
+L2000217:movl	r7,r0
+jbr	L9974
+L9975:mnegl	r7,r0
+L9974:pushl	r0
+jbr	L162
+L318:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+cmpd	r0,L319
+jgeq	L9972
+mnegd	r0,r0
+L9972:movd	r0,-(sp)
+jbr	L162
+L320:incl	r11
+cvtwl	(sp)+,r0
+mnegl	r0,-(sp)
+jbr	L162
+L321:incl	r11
+mnegl	(sp)+,-(sp)
+jbr	L162
+L322:incl	r11
+movq	(sp)+,r0
+mnegd	r0,-(sp)
+jbr	L162
+L323:incl	r11
+cvtwl	(sp)+,r7
+L2000092:cvtwl	(sp)+,r6
+L2000091:divl3	r7,r6,-(sp)
+jbr	L162
+L324:incl	r11
+movl	(sp)+,r7
+L2000093:movl	(sp)+,r6
+jbr	L2000091
+L325:incl	r11
+cvtwl	(sp)+,r7
+jbr	L2000093
+L326:incl	r11
+movl	(sp)+,r7
+jbr	L2000092
+L327:incl	r11
+cvtwl	(sp)+,r7
+L2000101:cvtwl	(sp)+,r6
+L2000096:divl3	r7,r6,r0
+mull2	r7,r0
+subl3	r0,r6,-(sp)
+jbr	L162
+L328:incl	r11
+movl	(sp)+,r7
+L2000102:movl	(sp)+,r6
+jbr	L2000096
+L329:incl	r11
+cvtwl	(sp)+,r7
+jbr	L2000102
+L330:incl	r11
+movl	(sp)+,r7
+jbr	L2000101
+L331:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+movq	(sp)+,r0
+movd	r0,-28(fp)
+jbr	L2000068
+L332:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+movq	(sp)+,r0
+movd	r0,-28(fp)
+jbr	L2000079
+L333:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+movq	(sp)+,r0
+movd	r0,-28(fp)
+jbr	L2000090
+L334:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+L2000105:movq	(sp)+,r0
+movd	r0,-28(fp)
+L2000103:divd3	-20(fp),-28(fp),-(sp)
+jbr	L162
+L335:incl	r11
+cvtwl	(sp)+,-(sp)
+jbr	L162
+L336:incl	r11
+cvtwl	(sp)+,r0
+L2000109:cvtld	r0,-80(fp)
+movd	-80(fp),-20(fp)
+movd	-20(fp),-(sp)
+jbr	L162
+L337:incl	r11
+movl	(sp)+,r0
+jbr	L2000109
+L338:incl	r11
+L2000111:movl	(sp)+,r0
+L2000110:cvtwl	r0,-(sp)
+jbr	L2000017
+L339:incl	r11
+cvtwl	(sp)+,r0
+L2000118:cvtld	r0,-80(fp)
+movd	-80(fp),-20(fp)
+L2000120:cvtwl	(sp)+,r0
+L2000113:cvtld	r0,-80(fp)
+movd	-80(fp),-28(fp)
+jbr	L2000103
+L340:incl	r11
+movl	(sp)+,r0
+L2000124:cvtld	r0,-80(fp)
+movd	-80(fp),-20(fp)
+L2000125:movl	(sp)+,r0
+jbr	L2000113
+L341:incl	r11
+cvtwl	(sp)+,r0
+jbr	L2000124
+L342:incl	r11
+movl	(sp)+,r0
+jbr	L2000118
+L343:incl	r11
+cvtwl	(sp)+,r0
+L2000127:cvtld	r0,-80(fp)
+movd	-80(fp),-20(fp)
+jbr	L2000105
+L344:incl	r11
+movl	(sp)+,r0
+jbr	L2000127
+L345:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+jbr	L2000120
+L346:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+jbr	L2000125
+L347:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),r0
+L2000128:cvtbl	(r9)[r0],-(sp)
+jbr	L2000017
+L348:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),r0
+L2000129:cvtbl	(r9)[r0],-(sp)
+jbr	L162
+L349:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),r0
+addl2	r9,r0
+L2000130:cvtwl	(r0),-(sp)
+jbr	L2000017
+L350:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),r0
+addl2	r9,r0
+L2000131:cvtwl	(r0),-(sp)
+jbr	L162
+L351:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),r0
+addl2	r9,r0
+L2000132:pushl	(r0)
+jbr	L162
+L352:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),r0
+addl2	r9,r0
+L2000134:subl2	$8,sp
+movq	(r0),(sp)
+jbr	L162
+L354:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+cvtwl	(r0),r0
+addl2	r0,r9
+addl2	$2,r11
+L2000144:movzwl	(r11),r7
+addl2	$2,r11
+L2000151:addl3	$1,r7,r0
+bicl3	$1,r0,-(sp)
+subl2	(sp)+,sp
+movl	sp,-48(fp)
+pushl	r7
+pushl	-48(fp)
+pushl	r9
+jbr	L2000016
+L355:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),r0
+addl3	r9,r0,-(sp)
+jbr	L162
+L356:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$4,r11
+movl	(r0),r0
+jbr	L2000128
+L357:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$4,r11
+movl	(r0),r0
+jbr	L2000129
+L358:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$4,r11
+addl3	r9,(r0),r0
+jbr	L2000130
+L359:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$4,r11
+addl3	r9,(r0),r0
+jbr	L2000131
+L360:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$4,r11
+addl3	r9,(r0),r0
+jbr	L2000132
+L361:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$4,r11
+addl3	r9,(r0),r0
+jbr	L2000134
+L362:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+addl2	(r11),r9
+addl2	$4,r11
+jbr	L2000144
+L363:movzbl	(r11),r0
+movl	__display[r0],r9
+incl	r11
+movl	r11,r0
+addl2	$4,r11
+addl3	r9,(r0),-(sp)
+jbr	L162
+L364:incl	r11
+movl	(sp)+,r0
+L2000152:cvtbl	(r0),-(sp)
+jbr	L2000017
+L365:incl	r11
+movl	(sp)+,r0
+L2000153:cvtbl	(r0),-(sp)
+jbr	L162
+L366:incl	r11
+movl	(sp)+,r0
+jbr	L2000130
+L367:incl	r11
+movl	(sp)+,r0
+jbr	L2000131
+L368:incl	r11
+movl	(sp)+,r0
+jbr	L2000132
+L369:incl	r11
+movl	(sp)+,r0
+jbr	L2000134
+L370:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L371
+movzwl	(r11),r7
+addl2	$2,r11
+L371:movl	(sp)+,r9
+jbr	L2000151
+L372:movl	r11,r0
+incl	r11
+jbr	L2000152
+L373:movl	r11,r0
+incl	r11
+jbr	L2000153
+L374:incl	r11
+movl	r11,r0
+addl2	$2,r11
+jbr	L2000130
+L375:incl	r11
+movl	r11,r0
+addl2	$2,r11
+jbr	L2000131
+L376:incl	r11
+movl	r11,r0
+addl2	$4,r11
+jbr	L2000132
+L377:incl	r11
+movl	r11,r0
+addl2	$8,r11
+movd	(r0),-(sp)
+jbr	L162
+L378:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L379
+movzwl	(r11),r7
+addl2	$2,r11
+L379:addl3	$1,r7,r0
+bicl3	$1,r0,r7
+pushl	r7
+subl2	(sp)+,sp
+movl	sp,r9
+pushl	r7
+pushl	r9
+pushl	r11
+	popr	$0xa
+	jbr	2f
+1:
+	subl2	r0,(sp)
+	movc3	r0,(r1),(r3)
+2:
+	movzwl	$65535,r0
+	cmpl	(sp),r0
+	jgtr	1b
+	movl	(sp)+,r0
+	movc3	r0,(r1),(r3)
+L2000154:addl2	r7,r11
+jbr	L162
+L380:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L381
+movzwl	(r11),r7
+addl2	$2,r11
+L381:addl3	$1,r7,r0
+bicl3	$1,r0,r6
+pushl	r6
+subl2	(sp)+,sp
+movl	sp,r9
+pushl	r6
+pushl	r9
+pushl	r11
+	popr	$0xa
+	jbr	2f
+1:
+	subl2	r0,(sp)
+	movc3	r0,(r1),(r3)
+2:
+	movzwl	$65535,r0
+	cmpl	(sp),r0
+	jgtr	1b
+	movl	(sp)+,r0
+	movc3	r0,(r1),(r3)
+addl3	$2,r7,r0
+bicl2	$1,r0
+jbr	L2000021
+L382:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L383
+movzwl	(r11),r7
+addl2	$2,r11
+L383:addl3	$1,r7,r0
+bicl3	$1,r0,r7
+pushl	r11
+jbr	L2000154
+L384:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L385
+cvtwl	(r11),r7
+addl2	$2,r11
+L385:cvtwl	(sp)+,r6
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),-(sp)
+L2000157:pushl	r7
+pushl	r6
+	popr	$0x07
+	cmpl	r0,r1
+	jlss	1f
+	cmpl	r0,r2
+	jleq	2f
+1:
+	pushl	r0
+	pushl	$_ERANG
+	calls	$2,_ERROR
+2:
+jbr	L2000110
+L386:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L387
+cvtwl	(r11),r7
+addl2	$2,r11
+L387:movl	(sp)+,r6
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),-(sp)
+L2000160:pushl	r7
+pushl	r6
+	popr	$0x07
+	cmpl	r0,r1
+	jlss	1f
+	cmpl	r0,r2
+	jleq	2f
+1:
+	pushl	r0
+	pushl	$_ERANG
+	calls	$2,_ERROR
+2:
+jbr	L9974
+L388:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L389
+cvtwl	(r11),r7
+addl2	$2,r11
+L389:cvtwl	(sp)+,r6
+pushl	r7
+pushl	r6
+	popr	$0x03
+	cmpl	r0,r1
+	jlequ	1f
+	pushl	r0
+	pushl	$_ERANG
+	calls	$2,_ERROR
+1:
+jbr	L2000110
+L390:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L391
+cvtwl	(r11),r7
+addl2	$2,r11
+L391:movl	(sp)+,r6
+pushl	r7
+pushl	r6
+	popr	$0x03
+	cmpl	r0,r1
+	jlequ	1f
+	pushl	r0
+	pushl	$_ERANG
+	calls	$2,_ERROR
+1:
+jbr	L9974
+L392:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L393
+movl	(r11),r7
+addl2	$4,r11
+L393:movl	(sp)+,r6
+movl	r11,r0
+addl2	$4,r11
+pushl	(r0)
+jbr	L2000160
+L394:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L395
+movl	(r11),r7
+addl2	$4,r11
+L395:cvtwl	(sp)+,r6
+movl	r11,r0
+addl2	$4,r11
+pushl	(r0)
+jbr	L2000157
+L396:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L391
+movl	(r11),r7
+addl2	$4,r11
+jbr	L391
+L398:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L389
+movl	(r11),r7
+addl2	$4,r11
+jbr	L389
+L400:incl	r11
+calls	$0,_STLIM
+L2000167:pushl	$4
+jbr	L2000015
+L402:incl	r11
+calls	$0,_LLIMIT
+L2000168:pushl	$8
+jbr	L2000015
+L404:movl	r11,r0
+incl	r11
+cvtbl	(r0),-(sp)
+calls	$1,_BUFF
+jbr	L162
+L406:incl	r11
+cmpl	__nodump,$1
+jneq	L407
+pushl	$0
+calls	$1,_psexit
+L407:pushal	__iob+40
+pushal	L410
+calls	$2,_fputs
+pushal	L412
+calls	$1,_backtrace
+pushl	$0
+calls	$1,_psexit
+jbr	L162
+L413:incl	r11
+movl	(r11),__cntrs
+addl2	$4,r11
+movl	(r11),__rtns
+addl2	$4,r11
+addl3	$1,__cntrs,r0
+ashl	$2,r0,-(sp)
+pushal	__pcpcount
+calls	$2,_NEW
+addl3	$1,__cntrs,r0
+ashl	$2,r0,-(sp)
+pushl	__pcpcount
+jbr	L2000023
+L415:incl	r11
+movzwl	(r11),r0
+ashl	$2,r0,r0
+addl2	__pcpcount,r0
+incl	(r0)
+jbr	L2000024
+L416:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L417
+movzwl	(r11),r7
+addl2	$2,r11
+L417:ashl	$1,r7,r0
+addl3	r11,r0,r8
+movl	r8,r9
+cvtwl	(sp)+,r6
+jbr	L420
+L2000010:movl	r6,r0
+cvtbl	(r9)+,r1
+cmpl	r0,r1
+jeql	L419
+decl	r7
+L420:tstl	r7
+jgtr	L2000010
+L419:tstl	r7
+jneq	L422
+L2000209:pushl	r6
+calls	$1,_CASERNG
+L422:ashl	$1,r7,r0
+subl3	r0,r8,r0
+jbr	L2000022
+L424:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L425
+movzwl	(r11),r7
+addl2	$2,r11
+L425:ashl	$1,r7,r0
+addl3	r11,r0,r8
+movl	r8,-40(fp)
+cvtwl	(sp)+,r6
+jbr	L428
+L2000012:movl	-40(fp),r0
+addl2	$2,-40(fp)
+movl	r6,r1
+cvtwl	(r0),r0
+cmpl	r1,r0
+jeql	L427
+decl	r7
+L428:tstl	r7
+jgtr	L2000012
+L427:tstl	r7
+jneq	L422
+jbr	L2000209
+L431:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L432
+movzwl	(r11),r7
+addl2	$2,r11
+L432:ashl	$1,r7,r0
+addl3	r11,r0,r8
+movl	r8,-44(fp)
+movl	(sp)+,r6
+jbr	L435
+L2000014:movl	-44(fp),r0
+addl2	$4,-44(fp)
+cmpl	r6,(r0)
+jeql	L434
+decl	r7
+L435:tstl	r7
+jgtr	L2000014
+L434:tstl	r7
+jneq	L422
+jbr	L2000209
+L438:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L439
+movzwl	(r11),r7
+addl2	$2,r11
+L439:pushl	$0
+subl2	(sp)+,sp
+movl	sp,r9
+ashl	$-2,r7,-(sp)
+pushl	r9
+addl3	r7,r9,-(sp)
+addl3	r7,r9,-(sp)
+	popr	$0x17
+	movl	r0,r3
+1:
+	bisl3	(r1)+,(r2)+,(r3)+
+	sobgtr	r4,1b
+L2000171:pushl	r7
+jbr	L2000015
+L440:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L441
+movzwl	(r11),r7
+addl2	$2,r11
+L441:pushl	$0
+subl2	(sp)+,sp
+movl	sp,r9
+ashl	$-2,r7,-(sp)
+pushl	r9
+addl3	r7,r9,-(sp)
+addl3	r7,r9,-(sp)
+	popr	$0x17
+	movl	r0,r3
+1:
+	bicl3	(r2)+,(r1)+,(r3)+
+	sobgtr	r4,1b
+jbr	L2000171
+L442:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L443
+movzwl	(r11),r7
+addl2	$2,r11
+L443:pushl	$0
+subl2	(sp)+,sp
+movl	sp,r9
+ashl	$-2,r7,-(sp)
+pushl	r9
+addl3	r7,r9,-(sp)
+addl3	r7,r9,-(sp)
+	popr	$0x17
+	movl	r0,r3
+1:
+	mcoml	(r1)+,r5
+	bicl3	r5,(r2)+,(r3)+
+	sobgtr	r4,1b
+jbr	L2000171
+L444:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L445
+movzwl	(r11),r7
+addl2	$2,r11
+L445:calls	$0,_INCT
+movl	r0,-52(fp)
+ashl	$2,r7,-(sp)
+jbr	L2000030
+L446:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L447
+movzwl	(r11),r7
+addl2	$2,r11
+L447:ashl	$2,r7,r6
+pushl	$0
+subl2	(sp)+,sp
+addl3	r6,sp,r9
+pushl	r9
+calls	$1,_CTTOT
+ashl	$2,r7,-(sp)
+jbr	L2000015
+L448:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L449
+movzwl	(r11),r7
+addl2	$2,r11
+L449:pushl	$0
+subl2	(sp)+,sp
+movl	sp,r9
+pushl	r7
+pushl	r9
+calls	$2,_CARD
+movl	r0,r6
+pushl	r7
+addl2	(sp)+,sp
+cvtwl	r6,-(sp)
+jbr	L2000017
+L450:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L451
+movzwl	(r11),r7
+addl2	$2,r11
+L451:movl	(sp)+,r6
+pushl	$0
+subl2	(sp)+,sp
+movl	sp,r9
+cvtwl	(r11),-12(fp)
+addl2	$2,r11
+pushl	r9
+movl	r11,r0
+addl2	$2,r11
+movzwl	(r0),-(sp)
+pushl	-12(fp)
+pushl	r6
+	popr	$0x1e
+	clrl	r0
+	subl2	r2,r1
+	cmpl	r1,r3
+	jgtru	1f
+	jbc	r1,(r4),1f
+	incl	r0
+1:
+movl	r0,-52(fp)
+pushl	r7
+jbr	L2000030
+L452:incl	r11
+calls	$0,_ASRTS
+jbr	L2000168
+L454:cvtbl	(r11),r6
+incl	r11
+tstl	r6
+jneq	L455
+cvtwl	(r11),r6
+addl2	$2,r11
+L455:movl	(sp)+,r9
+movl	(sp)+,r7
+cvtbl	(r9),r0
+cmpl	r0,r7
+jeql	L162
+incb	(r9)
+L2000172:addl2	r6,r11
+jbr	L162
+L457:cvtbl	(r11),r6
+incl	r11
+tstl	r6
+jneq	L458
+cvtwl	(r11),r6
+addl2	$2,r11
+L458:movl	(sp)+,r8
+movl	(sp)+,r7
+cvtwl	(r8),r0
+cmpl	r0,r7
+jeql	L162
+incw	(r8)
+jbr	L2000172
+L460:cvtbl	(r11),r6
+incl	r11
+tstl	r6
+jneq	L461
+cvtwl	(r11),r6
+addl2	$2,r11
+L461:movl	(sp)+,-44(fp)
+movl	(sp)+,r7
+cmpl	*-44(fp),r7
+jeql	L162
+incl	*-44(fp)
+jbr	L2000172
+L463:cvtbl	(r11),r6
+incl	r11
+tstl	r6
+jneq	L464
+cvtwl	(r11),r6
+addl2	$2,r11
+L464:movl	(sp)+,r9
+movl	(sp)+,r7
+cvtbl	(r9),r0
+cmpl	r0,r7
+jeql	L162
+decb	(r9)
+jbr	L2000172
+L466:cvtbl	(r11),r6
+incl	r11
+tstl	r6
+jneq	L467
+cvtwl	(r11),r6
+addl2	$2,r11
+L467:movl	(sp)+,r8
+movl	(sp)+,r7
+cvtwl	(r8),r0
+cmpl	r0,r7
+jeql	L162
+decw	(r8)
+jbr	L2000172
+L469:cvtbl	(r11),r6
+incl	r11
+tstl	r6
+jneq	L470
+cvtwl	(r11),r6
+addl2	$2,r11
+L470:movl	(sp)+,-44(fp)
+movl	(sp)+,r7
+cmpl	*-44(fp),r7
+jeql	L162
+decl	*-44(fp)
+jbr	L2000172
+L472:incl	r11
+movl	r11,r0
+addl2	$4,r11
+addl3	4(ap),(r0),-(sp)
+pushl	-8(fp)
+calls	$2,_READE
+jbr	L2000110
+L473:incl	r11
+pushl	-8(fp)
+calls	$1,_READ4
+jbr	L9974
+L474:incl	r11
+pushl	-8(fp)
+calls	$1,_READC
+jbr	L9998
+L475:incl	r11
+pushl	-8(fp)
+calls	$1,_READ8
+jbr	L9972
+L476:incl	r11
+pushl	-8(fp)
+calls	$1,_READLN
+jbr	L162
+L478:incl	r11
+pushl	(sp)+
+calls	$1,_TEOF
+jbr	L2000110
+L479:incl	r11
+pushl	(sp)+
+calls	$1,_TEOLN
+jbr	L2000110
+L480:tstl	__runtst
+jeql	L481
+pushl	-8(fp)
+calls	$1,_WRITEC
+jbr	L2000175
+L2000211:pushl	-8(fp)
+calls	$1,_WRITES
+jbr	L2000175
+L2000213:pushl	-8(fp)
+calls	$1,_WRITEF
+L2000175:movl	r11,r0
+incl	r11
+cvtbl	(r0),-(sp)
+jbr	L2000015
+L481:calls	$0,_fputc
+jbr	L2000175
+L484:tstl	__runtst
+jneq	L2000211
+calls	$0,_fwrite
+jbr	L2000175
+L488:tstl	__runtst
+jneq	L2000213
+calls	$0,_fprintf
+jbr	L2000175
+L492:incl	r11
+tstl	__runtst
+jeql	L493
+pushl	-8(fp)
+calls	$1,_WRITLN
+jbr	L162
+L493:pushl	-8(fp)
+	movl	(sp)+,r1
+	movl	12(r1),r0
+pushl	r0
+pushl	$10
+L2000184:
+	sobgeq	*4(sp),1f
+	calls	$2,__flsbuf
+	jbr	2f
+1:
+	popr	$0x3
+	movb	r0,*4(r1)
+	incl	4(r1)
+2:
+jbr	L162
+L495:incl	r11
+tstl	__runtst
+jeql	L496
+pushl	-8(fp)
+calls	$1,_PAGE
+jbr	L162
+L496:pushl	-8(fp)
+	movl	(sp)+,r1
+	movl	12(r1),r0
+pushl	r0
+pushl	$12
+jbr	L2000184
+L498:incl	r11
+movl	(sp)+,r7
+movl	r11,r0
+addl2	$4,r11
+addl3	4(ap),(r0),-(sp)
+pushl	r7
+calls	$2,_NAM
+jbr	L9974
+L499:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L500
+movzwl	(r11),r7
+addl2	$2,r11
+L500:movl	(sp)+,r6
+tstl	__runtst
+jeql	L501
+movl	r11,r0
+addl2	$2,r11
+movzwl	(r0),-(sp)
+pushl	r7
+pushl	r6
+calls	$3,_MAX
+jbr	L9974
+L501:subl2	r7,r6
+movzwl	(r11),r7
+addl2	$2,r11
+cmpl	r6,r7
+jleq	L2000217
+L2000218:movl	r6,r0
+jbr	L9974
+L502:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L503
+movzwl	(r11),r7
+addl2	$2,r11
+L503:movl	(sp)+,r6
+cmpl	r6,r7
+jlss	L2000218
+jbr	L2000217
+L504:incl	r11
+pushl	(sp)+
+calls	$1,_UNIT
+movl	r0,-8(fp)
+jbr	L162
+L505:incl	r11
+moval	_input,-8(fp)
+jbr	L162
+L506:incl	r11
+moval	_output,-8(fp)
+jbr	L162
+L507:incl	r11
+calls	$0,_PFLUSH
+moval	__err,-8(fp)
+jbr	L162
+L508:incl	r11
+pushl	-8(fp)
+calls	$1,_PUT
+jbr	L162
+L510:incl	r11
+pushl	-8(fp)
+calls	$1,_GET
+jbr	L162
+L512:incl	r11
+pushl	(sp)+
+calls	$1,_FNIL
+jbr	L9974
+L513:incl	r11
+calls	$0,_DEFNAME
+L2000185:pushl	$16
+jbr	L2000015
+L515:incl	r11
+calls	$0,_RESET
+jbr	L2000185
+L517:incl	r11
+calls	$0,_REWRITE
+jbr	L2000185
+L519:incl	r11
+pushl	-8(fp)
+	movl	(sp)+,r1
+	movl	12(r1),r0
+jbr	L9974
+L520:incl	r11
+calls	$0,_REMOVE
+jbr	L2000168
+L522:incl	r11
+calls	$0,_FLUSH
+jbr	L2000167
+L524:incl	r11
+calls	$0,_PACK
+L2000186:pushl	$28
+jbr	L2000015
+L526:incl	r11
+calls	$0,_UNPACK
+jbr	L2000186
+L528:incl	r11
+pushl	__argc
+jbr	L162
+L529:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L530
+movzwl	(r11),r7
+addl2	$2,r11
+L530:movl	(sp)+,r9
+movl	(sp)+,r6
+pushl	r7
+pushl	r9
+pushl	r6
+calls	$3,_ARGV
+jbr	L162
+L532:incl	r11
+calls	$0,_CLCK
+jbr	L9974
+L533:incl	r11
+pushl	$0
+calls	$1,_time
+jbr	L9974
+L534:incl	r11
+calls	$0,_SCLCK
+jbr	L9974
+L535:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L536
+movzwl	(r11),r7
+addl2	$2,r11
+L536:movl	(sp)+,r9
+pushl	r7
+pushl	r9
+calls	$2,_NEW
+tstl	__runtst
+jeql	L162
+pushl	r7
+pushl	(r9)
+jbr	L2000023
+L538:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L539
+movzwl	(r11),r7
+addl2	$2,r11
+L539:movl	(sp)+,r9
+pushl	r7
+pushl	r9
+calls	$2,_DISPOSE
+L2000187:clrl	(r9)
+jbr	L162
+L541:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L542
+movzwl	(r11),r7
+addl2	$2,r11
+L542:movl	(sp)+,r9
+pushl	r7
+pushl	r9
+calls	$2,_DFDISPOSE
+jbr	L2000187
+L544:incl	r11
+pushl	(sp)+
+calls	$1,_DATE
+jbr	L162
+L546:incl	r11
+pushl	(sp)+
+calls	$1,_TIME
+jbr	L162
+L548:incl	r11
+movq	(sp)+,r0
+cvtwl	$0,-(sp)
+jbr	L2000017
+L549:incl	r11
+tstl	__runtst
+jeql	L550
+movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_ATAN
+jbr	L9972
+L550:movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_atan
+jbr	L9972
+L551:incl	r11
+tstl	__runtst
+jeql	L552
+movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_COS
+jbr	L9972
+L552:movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_cos
+jbr	L9972
+L553:incl	r11
+tstl	__runtst
+jeql	L554
+movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_EXP
+jbr	L9972
+L554:movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_exp
+jbr	L9972
+L555:incl	r11
+tstl	__runtst
+jeql	L556
+movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_LN
+jbr	L9972
+L556:movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_log
+jbr	L9972
+L557:incl	r11
+tstl	__runtst
+jeql	L558
+movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_SIN
+jbr	L9972
+L558:movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_sin
+jbr	L9972
+L559:incl	r11
+tstl	__runtst
+jeql	L560
+movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_SQRT
+jbr	L9972
+L560:movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_sqrt
+jbr	L9972
+L562:incl	r11
+tstl	__runtst
+jeql	L2000111
+pushl	(sp)+
+	movl	(sp)+,r0
+	cmpl	r0,$127
+	jlequ	1f
+	pushl	r0
+	pushl	$_ECHR
+	calls	$2,_ERROR
+1:
+jbr	L9998
+L565:incl	r11
+movl	(sp)+,r7
+extzv	$0,$1,r7,r0
+jbr	L2000110
+L566:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L567
+cvtwl	(r11),r7
+addl2	$2,r11
+L567:movl	(sp)+,r6
+tstl	__runtst
+jeql	L568
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),-(sp)
+pushl	r7
+pushl	r6
+calls	$3,_SUCC
+jbr	L2000110
+L568:addl3	$1,r6,r0
+L2000189:cvtwl	r0,-(sp)
+movw	(sp)+,(sp)
+jbr	L2000024
+L569:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L570
+cvtwl	(r11),r7
+addl2	$2,r11
+L570:movl	(sp)+,r6
+tstl	__runtst
+jeql	L571
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),-(sp)
+L2000192:pushl	r7
+pushl	r6
+calls	$3,_SUCC
+jbr	L9974
+L571:addl3	$1,r6,-(sp)
+jbr	L2000024
+L572:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L573
+movl	(r11),r7
+addl2	$4,r11
+L573:movl	(sp)+,r6
+tstl	__runtst
+jeql	L574
+movl	r11,r0
+addl2	$4,r11
+pushl	(r0)
+jbr	L2000192
+L574:addl3	$1,r6,-(sp)
+L2000193:addl2	$4,r11
+jbr	L162
+L575:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L576
+cvtwl	(r11),r7
+addl2	$2,r11
+L576:movl	(sp)+,r6
+tstl	__runtst
+jeql	L577
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),-(sp)
+pushl	r7
+pushl	r6
+calls	$3,_PRED
+jbr	L2000110
+L577:subl3	$1,r6,r0
+jbr	L2000189
+L578:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L579
+cvtwl	(r11),r7
+addl2	$2,r11
+L579:movl	(sp)+,r6
+tstl	__runtst
+jeql	L580
+movl	r11,r0
+addl2	$2,r11
+cvtwl	(r0),-(sp)
+L2000196:pushl	r7
+pushl	r6
+calls	$3,_PRED
+jbr	L9974
+L580:subl3	$1,r6,-(sp)
+jbr	L2000024
+L581:cvtbl	(r11),r7
+incl	r11
+tstl	r7
+jneq	L582
+movl	(r11),r7
+addl2	$4,r11
+L582:movl	(sp)+,r6
+tstl	__runtst
+jeql	L583
+movl	r11,r0
+addl2	$4,r11
+pushl	(r0)
+jbr	L2000196
+L583:subl3	$1,r6,-(sp)
+jbr	L2000193
+L584:incl	r11
+pushl	(sp)+
+	movl	__seed,r0
+	movl	(sp)+,__seed
+jbr	L9974
+L585:incl	r11
+movq	(sp)+,r0
+movd	r0,-(sp)
+	addl2	$8,sp
+	emul	__seed,$1103515245,$0,r0
+	ediv	$0x7fffffff,r0,r1,r0
+	movl	r0,__seed
+	cvtld	r0,r0
+	divd2	$0d2.147483647e+09,r0
+jbr	L9972
+L586:incl	r11
+movq	(sp)+,r0
+movd	r0,-(sp)
+calls	$2,_EXPO
+jbr	L9974
+L588:incl	r11
+movl	(sp)+,r7
+mull3	r7,r7,-(sp)
+jbr	L162
+L589:incl	r11
+movq	(sp)+,r0
+movd	r0,-20(fp)
+muld3	r0,r0,-(sp)
+jbr	L162
+L590:incl	r11
+movq	(sp)+,r0
+movd	r0,-(sp)
+	cvtrdl	(sp)+,r0
+jbr	L9974
+L591:incl	r11
+movq	(sp)+,r0
+movd	r0,-(sp)
+	cvtdl	(sp)+,r0
+jbr	L9974
+

@@ -1,0 +1,101 @@
+.TH uuaids 8c
+.SH NAME
+uucompact, uumkspool, uurespool  \- uucp administrative utilities
+.SH SYNTAX
+.B uucompact
+-s\fIsystem\fP 
+.PP
+.B uumkspool
+system(s)
+.PP
+.B uurespool
+[ -t\fI#\fP ]
+.SH DESCRIPTION
+.PP
+.ec |
+All three of these commands are located in 
+/usr/lib/uucp.
+.ec
+.PP
+.ti 3
+\fBUucompact.\fP
+.PP
+The
+.PN uucompact
+command
+compacts uucp system spool directories and associated subdirectories. 
+If \fIsystem\fP is \fBALL\fP, then all existing uucp system spool 
+directories are compacted.  
+Otherwise, only the specified \fIsystem\fP spool directory is
+compacted.
+If no \fIsystem\fP is specified, /usr\/spool\/uucp\/sys 
+is compacted.
+If 
+.PN uucompact
+is stopped before it is finished,
+it can be restarted without reprocessing directories. 
+The
+.PN uucompact
+command continues 
+processing where it left off during it's previous instantiation.
+.PP
+.ti 3
+.B Uumkspool.
+.PP
+For each of the specified systems 
+.PN uumkspool
+makes a per system spool directory and associated subdirectories.
+For example, if \fIsystem\fP is \fBmk3\fP and if the local system name
+is \fBpenny\fP,
+the following directories are created:
+.EX
+/usr/spool/uucp/sys/mk3
+/usr/spool/uucp/sys/mk3/C.
+/usr/spool/uucp/sys/mk3/X.
+/usr/spool/uucp/sys/mk3/D.
+/usr/spool/uucp/sys/mk3/D.penny
+/usr/spool/uucp/sys/mk3/D.penny
+.EE
+.B Uurespool.
+.PP
+The
+.PN uurespool
+command
+moves files from old spool directories to  new spool
+directories.
+There are at least two instances where one will want to move spool files
+to a new spool directory.
+.IP 1.
+Installing the current version of \fIuucp\fP. 
+Because the structure of the spool directories has changed from older 
+versions of \fIuucp\fP, it is necessary to respool old spooled files
+to new spool directories.
+.IP 2.
+Creating a new per system spool directory.  
+In this case, it is necessary to move files from 
+.br
+/usr/spool/uucp/sys/DEFAULT to the new spool directories.
+To ease this task,
+.PN uurespool
+moves files that have been spooled
+in one of 4 formats and respools them under the new spooling structure.
+The format is specified by the \fB-t#\fP option.
+\fB#\fP can be one of the following:
+.RS
+.IP 1) 
+original - all files are in /usr/spool/uucp
+.IP 2)
+split spool -  contains the following subdirectories:
+C., X., D., D.local, D.localX
+.IP 3)
+modified split spool - contains all subdirectories 
+listed in 2) plus: STST., TM., C./OTHERS
+.IP 4)
+used when a new system directory has been created and
+spool files must be moved from the DEFAULT directory
+to the new system directory.
+.RE
+.SH FILES
+/usr/spool/uucp - spool directory
+.SH SEE ALSO
+mail(1), uucp (1c), uux(1c)

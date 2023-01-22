@@ -1,0 +1,70 @@
+.TH install 1
+.SH NAME
+install \- install binaries
+.SH SYNTAX
+.B install
+[
+.B \-c
+] [
+.B \-m
+mode ] [
+.B \-o
+owner ] [
+.B \-g
+group ] [
+.B \-s
+] binary destination
+.SH DESCRIPTION
+The
+.I binary
+is moved (or copied if 
+.B \-c
+is specified) to
+.IR destination .
+If
+.I destination
+already exists,
+it is removed before
+.I binary
+is moved.
+If the destination is a directory then
+.I binary
+is moved into the
+.I destination
+directory with its original file-name.
+.PP
+The mode for
+.I destination
+is set to 755; the
+.B \-m
+.I mode
+option may be used to specify a different mode.
+.PP
+The
+.I destination
+is changed to current owner.  The
+.B \-o
+.I owner
+option may be used to specify a different owner, but only
+the superuser can change the owner.
+.PP
+The
+.I destination
+is changed to group system; the
+.B \-g
+.I group
+option may be used to specify a different group.
+The user must belong to the specified group and 
+be the owner of the file or the superuser.
+.PP
+If the
+The
+.B \-s
+option is specified the binary is stripped after being installed.
+.PP
+The
+.B install
+command
+refuses to move a file onto itself.
+.SH "SEE ALSO"
+chgrp(1), chmod(1), cp(1), mv(1), strip(1), chown(8)

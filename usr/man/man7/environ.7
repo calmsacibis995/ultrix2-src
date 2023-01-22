@@ -1,0 +1,65 @@
+.TH environ 7
+.SH NAME
+environ \- user environment
+.SH SYNTAX
+.B extern char **environ;
+.SH DESCRIPTION
+.NXR "environ macro package"
+An array of strings, called the environment, is made available by
+execve(2)
+when a process begins.  By convention these strings have the form
+.RI ` name = value '.
+The following names are used by various commands:
+.TP "\w'TERMCAP 'u"
+PATH
+The sequence of directory prefixes that
+sh(1), time(1), and nice(1)
+apply in searching for a file known by an incomplete path name.
+The prefixes are separated by a colon(:).
+The login(1)
+command sets PATH=:/usr/ucb:/bin:/usr/bin.
+.TP
+HOME
+A user's login directory, set by
+.PN login
+from the password file passwd(5).
+.TP
+TERM
+The kind of terminal for which output is to be prepared.
+This information is used by commands, such as nroff(1)
+or plot(1g),
+which may exploit special terminal capabilities.  See /etc/termcap
+in termcap(5)
+for a list of terminal types.
+.TP
+SHELL
+The file name of the users login shell.
+.TP
+TERMCAP
+The string describing the terminal in TERM,
+or the name of the termcap file.  For further information, see
+termcap(5), termcap(3x).
+.TP
+EXINIT
+A startup list of commands read by ex(1), edit(1), and vi(1).
+.TP
+USER
+The login name of the user.
+.TP
+PRINTER
+The name of the default printer to be used by lpr(1), lpq(1),
+and lprm(1).
+.PP
+Further names may be placed in the environment by the
+.PN export
+command and `name=value' arguments in sh(1), or by the
+.PN setenv
+command if you use csh(1).
+Arguments may also be placed in the environment at the point of an
+execve(2).
+It is unwise to conflict with certain sh(1)
+variables that are frequently exported by `.profile' files:
+MAIL, PS1, PS2, IFS.
+.SH SEE ALSO
+csh(1), ex(1), login(1), sh(1), execve(2), system(3), termcap(3x),
+termcap(5)

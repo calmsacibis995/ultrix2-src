@@ -1,0 +1,31 @@
+.TH getwd 3
+.SH NAME
+getwd \- get current working directory pathname
+.SH SYNTAX
+.nf
+.B char *getwd(pathname)
+.B char *pathname;
+.fi
+.SH DESCRIPTION
+The
+.PN getwd
+subroutine 
+copies the absolute pathname of the current working directory to
+.I pathname
+and returns a pointer to the result.
+.SH RESTRICTIONS
+The
+.PN getwd
+subroutine
+may fail to return to the current directory if an error occurs.
+.PP
+Pathnames can be no longer than
+MAXPATHLEN as defined in
+< sys/param.h >.
+.SH DIAGNOSTICS
+The
+.PN getwd
+subroutine
+returns zero and places a message in
+.I pathname
+if an error occurs.

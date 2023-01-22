@@ -1,0 +1,34 @@
+.\" Last modified by BAM on 2-Aug-85  1000  
+.\"
+.TH getuid 2
+.SH NAME
+getuid, geteuid \- get user identity
+.SH SYNTAX
+.ft B
+.nf
+uid = getuid()
+int uid;
+.PP
+.ft B
+euid = geteuid()
+int euid;
+.fi
+.SH DESCRIPTION
+The
+.PN getuid
+system call returns the real user ID of the current process,
+.PN geteuid
+the effective user ID.
+.PP
+The real user ID identifies the person who is logged in.
+The effective user ID
+gives the process additional permissions during
+execution of \*(lqset-user-ID\*(rq mode processes, which use
+.PN getuid
+to determine the real-user-id of the process which
+invoked them.
+.SH ENVIRONMENT
+Differs from the System V definition in that
+the return values are ints instead of unsigned shorts.
+.SH "SEE ALSO"
+getgid(2), setreuid(2)

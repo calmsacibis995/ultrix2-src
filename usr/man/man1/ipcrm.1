@@ -1,0 +1,63 @@
+.\" Last modified by BAM on 29-Jul-85  1100  
+.\"
+.TH ipcrm 1
+.SH NAME
+ipcrm \- remove a message queue, semaphore set or shared memory identifier
+.SH SYNTAX
+.ft B
+ipcrm [
+.IR options ]
+.SH DESCRIPTION
+The
+.PN ipcrm
+command
+removes one or more specified messages, semaphores or shared memory
+identifiers.  The identifiers and keys are specified by the following
+.IR options :
+.TP 15
+-q msqid
+removes the message queue identifier
+.I msqid
+from the system and destroys the message queue and data structure
+associated with it.
+.TP 15
+-m shmid
+removes the shared memory identifier
+.I shmid
+from the system.  The shared memory segment and data structure
+associated with it are destroyed after the last detach.
+.TP 15
+-s semid
+removes the semaphore identifier
+.I semid
+from the system and destroys the set of semaphores and data structure
+associated with it.
+.TP 15
+-Q msgkey
+removes the message queue identifier, created with a key 
+from the system and destroys the message queue and data
+structure associated with it.
+.TP 15
+-M shmkey
+removes the shared memory identifier, created with key
+.IR shmkey ,
+from the system.  The shared memory segment and data structure
+associated with it are destroyed after the last detach.
+.TP 15
+-S semkey
+removes the semaphore identifier, created with key
+.IR semkey ,
+from the system and destroys the set of semaphores and data structure
+associated with it.
+.LP
+.PP
+The details of the removes are described in
+.PN msgctl(2),
+.PN shmctl(2),
+and 
+.PN semctl(2).
+The identifiers and keys may be found by
+.PN ipcs(1).
+.SH SEE ALSO
+ipcs(1)gctl(2), msgget(2), msgop(2), semctl(2), semget(2), semop(2),
+shmctl(2), shmget(2), shmop(2)

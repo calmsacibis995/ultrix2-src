@@ -1,0 +1,19 @@
+.TH lo 4
+.SH NAME
+lo \- software loopback network interface
+.SH SYNTAX
+.B pseudo-device loop
+.SH DESCRIPTION
+The
+.I loop
+interface is a software loopback mechanism which may be
+used for performance analysis, software testing, and/or local
+communication.   By default, the loopback interface is
+accessible at address 127.0.0.1 (non-standard); this address
+may be changed with the SIOCSIFADDR ioctl.
+.SH DIAGNOSTICS
+\fBlo%d: can't handle af%d\fP.  The interface was handed
+a message with addresses formatted in an unsuitable address
+family; the packet was dropped.
+.SH SEE ALSO
+intro(4n), inet(4f)

@@ -1,0 +1,7 @@
+/*		@(#)startup	1.2	(ULTRIX)	1/24/85 */
+{define; {editor}; /usr/bin/ex}
+{define; {shell}; /bin/csh}
+{define; {continuetrap}; {ifsame; @{tuplecount}; {tuplecount};; {ifsame; @{tuplecount}; 1; {type (1 tuple)}; {type @({tuplecount} tuples)}}}}
+{define; {begintrap}; {remove; {tuplecount}}}
+\v
+\r

@@ -1,0 +1,42 @@
+# @(#)WISPER	1.5	(ULTRIX)	6/5/86
+#
+# WISPER
+# Digital VAX 8500 (Nautilus) standalone development machine
+#
+machine		vax
+cpu		"VAX8500"
+ident		WISPER
+timezone	5 dst
+maxusers	32
+physmem		20
+processors	1
+options		QUOTA
+options		INET
+options		LAT
+
+config		vmunix		root on ra0 swap on ra0 and ra1
+
+adapter		vaxbi0	at nexus ?
+adapter		vaxbi1	at nexus ?
+adapter		vaxbi2	at nexus ?
+adapter		vaxbi3	at nexus ?
+adapter		uba0	at nexus ?
+controller	kdb0	at vaxbi ? node ?
+controller	uq0	at kdb0				vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+disk		ra2	at uq0 drive 2
+disk		ra3	at uq0 drive 3
+device		de0	at uba0 csr 0174510		vector deintr
+controller	klesib0	at vaxbi? node?
+controller	tmscp0	at klesib0 			vector tmscpintr  
+tape		tms0	at tmscp0 drive 0
+device		dmb0	at vaxbi? node? flags 0xff vector dmbsint dmbaint dmblint
+controller	aie0	at vaxbi? node?
+device		bvpni0	at aie0 			vector bvpniintr
+pseudo-device	pty
+pseudo-device	loop
+pseudo-device	inet
+pseudo-device	ether
+pseudo-device	lat
+pseudo-device	lta

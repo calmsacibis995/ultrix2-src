@@ -1,0 +1,100 @@
+.TH mount 8ufs
+.SH NAME
+mount \- mount the local ULTRIX File System (UFS)
+.SH SYNTAX
+.B /etc/mount [
+.B \-r \-v
+.B \-o options
+.B ] special name
+.SH DESCRIPTION
+The mount(8ufs)
+command announces to the system that a file system
+is present on the device
+.I special.
+.I Special
+must be a local device.
+The file
+.I name
+must already exist and it must be a directory.
+It becomes the name of the newly mounted file system.
+.PP
+.\" If invoked with \fB\-p\fP,
+.\" .PN ufs_mount
+.\" prints the list of mounted file systems reading standard input
+.\" for \fIstruct fs_data\fP records output from the
+.\" .I getmnt()
+.\" system call. This option is used by the mount(8) command.
+.\" .PP
+If invoked with \fB\-r\fP, the device \fIspecial\fP is mounted
+on \fIname\fP \fBread-only\fP.
+.PP
+To further protect from system crashes,
+only file systems that have
+been cleanly checked by fsck(8)
+are mounted.
+In emergency situations,
+this can be overridden by the
+.I force
+option as shown below.
+.PP
+Options may be specified to the file
+system using the \fB\-o\fP flag as follows:
+.TP 8
+.B nosuid
+Setuid and setgid programs may not be executed from this file system.
+.TP 8
+.B nodev
+Block and character special devices
+cannot be accessed from this file system.
+.TP 8
+.B noexec
+Binaries cannot be executed from this file system.
+.TP 8
+.B pgthresh=##
+Set the paging threshold for this file system in kilobytes.
+.TP 8
+.B force
+Root may force the mounting of non-clean file systems.
+.PP
+Physically write-protected disks and magnetic tape file
+systems must be mounted read-only
+or an error will occur at mount time.
+You should use the
+.B force
+flag only in single user mode when repairing
+or recovering damaged file systems.
+.SH EXAMPLES
+.\" The
+.\" PN ufs_mount
+.\" command is not the suggested interface.
+The
+.B mount 8ufs
+command calls
+.B ufs_mount
+to do its work.
+A sample
+.B mount
+command is:
+.EX
+# mount \-t ufs \-o nodev,nosuid,noexec,pgthresh=100 /dev/ra0g /usr
+.EE
+.\" .PP
+.\" This would be translated to 
+.\" .PN ufs_mount 
+.\" as
+.\" .EX
+.\" ufs_mount -o nodev,nosuid,noexec,pgthresh=100 /dev/ra0g /usr
+.\" .EE
+.\" .PP
+.SH RESTRICTIONS
+The
+.B /etc/ufs_mount
+command should only be invoked by the mount(8ufs) command.
+Users (and superusers) should not invoke the
+.B ufs_mount
+command.
+.SH FILES
+.ta 2i
+/etc/ufs_mount	UFS specific mount program.
+.SH "SEE ALSO"
+getmnt(2), mount(2), mount(8)

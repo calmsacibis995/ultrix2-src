@@ -1,0 +1,41 @@
+.\"  Last modified by MJT on 3-Feb-86  1115
+.\"   Replaced incorrect font invocation with PN macro
+.\"   Modified by BAM on 4-Dec-1985 1300.
+.\"   Modified by BAM on 30-Oct-1985 1300.
+.\"   Modified by BAM on 19-Jul-85  1100  
+.\"
+.TH getpgrp 2
+.SH NAME
+getpgrp \- get process group
+.SH SYNTAX
+.ft B
+.nf
+pgrp = getpgrp(pid)
+int prgp;
+int pid;
+.fi
+.ft R
+.SH DESCRIPTION
+The process group of the specified process is returned by
+.PN getpgrp.
+If
+.I pid
+is zero, then the call applies to the current process.
+.PP
+Process groups are used for distribution of signals, and
+by terminals to arbitrate requests for their input: processes
+which have the same process group as the terminal are foreground
+and may read, while others will block with a signal if they attempt
+to read.
+.PP
+This call is thus used by programs such as csh(1)
+to create process groups in implementing job control.
+The TIOCGPGRP and TIOCSPGRP calls described in tty(4)
+are used to get/set the process group of the control terminal.
+.SH ENVIRONMENT
+In the System V environment,
+.PN getpgrp
+is called with no arguments and returns the process group of 
+the current process.
+.SH "SEE ALSO"
+getuid(2), setpgrp(2), tty(4)

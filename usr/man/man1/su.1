@@ -1,0 +1,41 @@
+.TH su 1 dc
+.SH NAME
+su \- substitute user id temporarily
+.SH SYNTAX
+.B su
+[ userid ]
+.SH DESCRIPTION
+The 
+.PN su
+command requests the password of the specified
+.IR userid .
+If the correct password is given,
+.PN su
+changes to that 
+.I userid
+without changing the current directory.
+The user environment
+is unchanged except for HOME and SHELL
+which are taken from the password file entry
+for 
+.I userid.
+The shell that is run is also taken from the password file entry
+for 
+.I userid.
+The new user ID stays in force until the shell exits.
+.PP
+If no 
+.I userid
+is specified, `root' is assumed.
+To remind the superuser of his responsibilities,
+the shell substitutes `#' for its usual prompt.
+.SH FILES
+.IP /usr/adm/sulog 1i
+Log file of anyone who became
+.BR root ,
+with a date mark.
+.SH "SEE ALSO"
+sh(1),
+csh(1),
+passwd(5yp),
+environ(7)

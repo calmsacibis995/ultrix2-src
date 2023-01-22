@@ -1,0 +1,50 @@
+.TH qe 4
+.SH NAME
+qe \- DEC DEQNA/DELQA 10 Mb/s Ethernet interface
+.SH SYNTAX
+.B "device qe0 at uba0 csr 0174440 vector qeintr"
+.SH DESCRIPTION
+The
+.B qe
+interface provides access to a 10 Mb/s Ethernet network through
+a DEQNA/DELQA controller.
+.PP
+The host's Internet address is specified at boot time with an 
+SIOCSIFADDR ioctl.  The
+.PN qe
+interface employs the address resolution protocol described in
+arp(4p)
+to dynamically map between Internet and Ethernet addresses on the local
+network.
+.PP
+The interface normally tries to use a ``trailer'' encapsulation
+to minimize copying data on input and output.  This can be
+disabled for an interface by setting the IFF_NOTRAILERS
+flag with an SIOCSIFFLAGS ioctl.
+Trailers are only used for packets destined for Internet hosts.
+.PP
+The SIOCSPHYSADDR ioctl can be used to change and SIOCRPHYSADDR can
+be used to read the physical address of the board.  SIOCADDMULTI 
+and SIOCDELMULTI can be used to add  or delete multicast addresses.  
+The board recognizes at most 10 multicast addresses. The argument 
+to the latter ioctls is a pointer to an ifreq structure found in 
+<net/if.h>.
+.PP
+SIOCRDCTRS and SIOCRDZCTRS ioctls can be used to read or 
+"read and clear" the board counters. The argument to the latter 
+two ioctls is a pointer to a counter structure "ctrreq" found 
+in <net/if.h>.
+.PP
+The ioctls SIOCENABLBACK and SIOCDISABLBACK can be used to enable
+and disable the interface loopback mode respectively.
+.SH RESTRICTIONS
+The PUP protocol family is not supported.
+.SH DIAGNOSTICS
+Various error messages can occur while transmitting or receiving
+packets.  For example,
+.PP
+\fBqe%d: can't handle af%d\fP.  The interface was handed
+a message with addresses formatted in an unsuitable address
+family; the packet was dropped.
+.SH SEE ALSO
+arp(4p), inet(4f), intro(4n)

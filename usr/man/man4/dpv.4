@@ -1,0 +1,32 @@
+.TH dpv 4
+.SH NAME
+dpv 
+synchronous character oriented BISYNC data communications device
+.SH SYNTAX
+device dpv0 at uba0 csr 0170000 flags 0x0f vector dpvrint dpvxint
+.SH DESCRIPTION
+.PP
+The dpv data communications
+device is used only in conjunction with the 2780/3780
+Terminal
+Emulator.  It has no programmable user interface.  
+.PP
+When a system
+is generated for 2780/3780 emulation on Qbus host machines, 
+the dpv data communications device must 
+be specified in the configuration file as dpv0.
+.PP
+To boot a Qbus device having
+2780/3780 emulation, the dpv must be specified in rc.local.  
+This device is specified by removing the comment sign from the command
+line already placed in the rc.local file:
+.EX
+#/etc/bscconfig dpv0 bsc 1
+.EE
+.LP
+The dpv 
+data communications device is used with the DF126 modem. 
+.SH FILES
+/etc/rc.local, /etc/bscconfig
+.SH SEE ALSO
+2780e(1), 3780e(1), 2780d(8)

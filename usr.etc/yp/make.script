@@ -1,0 +1,208 @@
+#
+#	@(#)make.script 1.1 86/02/05 SMI
+#	@(#)make.script	2.1 86/04/16 NFSSRC
+# @(#)make.script	1.3	(ULTRIX)	3/3/87
+#
+DIR =/etc
+DOM = `domainname`
+NOPUSH = ""
+ALIASES = /usr/lib/aliases
+AWK =/bin/awk
+TOUCH=/usr/bin/touch
+ECHO=/bin/echo
+MAKEDBM=/etc/yp/makedbm
+SED=/bin/sed
+YPPUSH=/etc/yp/yppush
+REVNETGROUP=/etc/yp/revnetgroup
+SENDMAIL=/usr/lib/sendmail
+RM=/bin/rm
+
+all: passwd group hosts networks rpc services protocols \
+	netgroup aliases
+
+passwd.time: $(DIR)/passwd
+	-@if [ -f $(DIR)/passwd ]; then \
+		$(AWK) 'BEGIN { FS=":"; OFS="\t"; } /^[a-zA-Z0-9_]/ { print $$1, $$0 }' \
+		  $(DIR)/passwd  | $(MAKEDBM) - /etc/yp/$(DOM)/passwd.byname; \
+		$(AWK) 'BEGIN { FS=":"; OFS="\t"; } /^[a-zA-Z0-9_]/ { print $$3, $$0 }' \
+		  $(DIR)/passwd | $(MAKEDBM) - /etc/yp/$(DOM)/passwd.byuid; \
+		$(TOUCH) passwd.time; \
+		$(ECHO) "updated passwd"; \
+		if [ ! $(NOPUSH) ]; then \
+			$(YPPUSH) passwd.byname; \
+			$(YPPUSH) passwd.byuid; \
+			$(ECHO) "pushed passwd"; \
+		else \
+			: ; \
+		fi \
+	else \
+		$(ECHO) "couldn't find $(DIR)/passwd"; \
+	fi
+
+group.time: $(DIR)/group
+	-@if [ -f $(DIR)/group ]; then \
+		$(AWK) 'BEGIN { FS=":"; OFS="\t"; } { print $$1, $$0 }' \
+		    $(DIR)/group | $(MAKEDBM) - /etc/yp/$(DOM)/group.byname; \
+		$(AWK) 'BEGIN { FS=":"; OFS="\t"; } { print $$3, $$0 }' \
+		    $(DIR)/group | $(MAKEDBM) - /etc/yp/$(DOM)/group.bygid; \
+		$(TOUCH) group.time; \
+		$(ECHO) "updated group"; \
+		if [ ! $(NOPUSH) ]; then \
+			$(YPPUSH) group.byname; \
+			$(YPPUSH) group.bygid; \
+			$(ECHO) "pushed group"; \
+		else \
+			: ; \
+		fi \
+	else \
+		$(ECHO) "couldn't find $(DIR)/group"; \
+	fi
+
+hosts.time: $(DIR)/hosts
+	-@if [ -f $(DIR)/hosts ]; then \
+		$(SED) -e "/^#/d" -e s/#.*$$// $(DIR)/hosts | /etc/yp/stdhosts \
+		    | $(AWK) '{for (i = 2; i <= NF; i++) print $$i, $$0}' \
+		    | $(MAKEDBM) - /etc/yp/$(DOM)/hosts.byname; \
+		/etc/yp/stdhosts $(DIR)/hosts | \
+		    $(AWK) 'BEGIN { OFS="\t"; } $$1 !~ /^#/ { print $$1, $$0 }' \
+		    | $(MAKEDBM) - /etc/yp/$(DOM)/hosts.byaddr; \
+		$(TOUCH) hosts.time; \
+		$(ECHO) "updated hosts"; \
+		if [ ! $(NOPUSH) ]; then \
+			$(YPPUSH) hosts.byname; \
+			$(YPPUSH) hosts.byaddr; \
+			$(ECHO) "pushed hosts"; \
+		else \
+			: ; \
+		fi \
+	else \
+		$(ECHO) "couldn't find $(DIR)/hosts"; \
+	fi
+
+networks.time: $(DIR)/networks
+	-@if [ -f $(DIR)/networks ]; then \
+		$(SED) -e "/^#/d" -e s/#.*$$// $(DIR)/networks | $(AWK) \
+		    '{print $$1, $$0; for (i = 3;i <= NF;i++) print $$i,$$0}' \
+		    | $(MAKEDBM) - /etc/yp/$(DOM)/networks.byname; \
+		$(AWK) 'BEGIN { OFS="\t"; } $$1 !~ /^#/ { print $$2, $$0 }' \
+		   $(DIR)/networks | $(MAKEDBM) - /etc/yp/$(DOM)/networks.byaddr;\
+		$(TOUCH) networks.time; \
+		$(ECHO) "updated networks"; \
+		if [ ! $(NOPUSH) ]; then \
+			$(YPPUSH) networks.byname; \
+			$(YPPUSH) networks.byaddr; \
+			$(ECHO) "pushed networks"; \
+		else \
+			: ; \
+		fi \
+	else \
+		$(ECHO) "couldn't find $(DIR)/networks"; \
+	fi
+
+services.time: $(DIR)/services
+	-@if [ -f $(DIR)/services ]; then \
+		$(AWK) 'BEGIN { OFS="\t"; } $$1 !~ /^#/ { print $$2, $$0 }' \
+		    $(DIR)/services| $(MAKEDBM) - /etc/yp/$(DOM)/services.byname;\
+		$(TOUCH) services.time; \
+		$(ECHO) "updated services"; \
+		if [ ! $(NOPUSH) ]; then \
+			$(YPPUSH) services.byname; \
+			$(ECHO) "pushed services"; \
+		else \
+			: ; \
+		fi \
+	else \
+		$(ECHO) "couldn't find $(DIR)/services"; \
+	fi
+
+rpc.time: $(DIR)/rpc
+	-@if [ -f $(DIR)/rpc ]; then \
+		$(AWK) 'BEGIN { OFS="\t"; } $$1 !~ /^#/ { print $$2, $$0 }' \
+		    $(DIR)/rpc| $(MAKEDBM) - /etc/yp/$(DOM)/rpc.bynumber;\
+		$(TOUCH) rpc.time; \
+		$(ECHO) "updated rpc"; \
+		if [ ! $(NOPUSH) ]; then \
+			$(YPPUSH) rpc.bynumber; \
+			$(ECHO) "pushed rpc"; \
+		else \
+			: ; \
+		fi \
+	else \
+		$(ECHO) "couldn't find $(DIR)/rpc"; \
+	fi
+
+protocols.time: $(DIR)/protocols
+	-@if [ -f $(DIR)/protocols ]; then \
+		$(AWK) 'BEGIN { OFS="\t"; } $$1 !~ /^#/ { print $$2, $$0 }' \
+		    $(DIR)/protocols | $(MAKEDBM) - \
+		    /etc/yp/$(DOM)/protocols.bynumber; \
+		$(SED) -e "/^#/d" -e s/#.*$$// $(DIR)/protocols | $(AWK) \
+		    '{print $$1,$$0; for (i = 3;i <= NF;i++) print $$i, $$0}' \
+		    | $(MAKEDBM) - /etc/yp/$(DOM)/protocols.byname; \
+		$(TOUCH) protocols.time; \
+		$(ECHO) "updated protocols"; \
+		if [ ! $(NOPUSH) ]; then \
+			$(YPPUSH) protocols.byname; \
+			$(YPPUSH) protocols.bynumber; \
+			$(ECHO) "pushed protocols"; \
+			else \
+			: ; \
+		fi \
+	else \
+		$(ECHO) "couldn't find $(DIR)/protocols"; \
+	fi
+
+netgroup.time: $(DIR)/netgroup
+	-@if [ -f $(DIR)/netgroup ]; then \
+		$(MAKEDBM) $(DIR)/netgroup /etc/yp/$(DOM)/netgroup; \
+		$(REVNETGROUP) -u | $(MAKEDBM) - /etc/yp/$(DOM)/netgroup.byuser; \
+		$(REVNETGROUP) -h | $(MAKEDBM) - /etc/yp/$(DOM)/netgroup.byhost; \
+		$(TOUCH) netgroup.time; \
+		$(ECHO) "updated netgroup"; \
+		if [ ! $(NOPUSH) ]; then \
+			$(YPPUSH) netgroup; \
+			$(YPPUSH) netgroup.byuser; \
+			$(YPPUSH) netgroup.byhost; \
+			$(ECHO) "pushed netgroup"; \
+		else \
+			: ; \
+		fi \
+	else \
+		$(ECHO) "couldn't find $(DIR)/netgroup"; \
+	fi
+
+aliases.time: $(ALIASES)
+	-@if [ -f $(ALIASES) ]; then \
+		cp $(ALIASES) /etc/yp/$(DOM)/mail.aliases; \
+		$(SENDMAIL) -bi -oA/etc/yp/$(DOM)/mail.aliases; \
+		$(RM) /etc/yp/$(DOM)/mail.aliases; \
+		$(TOUCH) aliases.time; \
+		$(ECHO) "updated aliases"; \
+		if [ ! $(NOPUSH) ]; then \
+			$(YPPUSH) mail.aliases; \
+			$(ECHO) "pushed aliases"; \
+		else \
+			: ; \
+		fi \
+	else \
+		$(ECHO) "couldn't find $(ALIASES)"; \
+	fi
+
+passwd: passwd.time
+group: group.time
+hosts: hosts.time
+networks: networks.time
+rpc: rpc.time
+services: services.time
+protocols: protocols.time
+netgroup: netgroup.time
+aliases: aliases.time
+$(DIR)/passwd:
+$(DIR)/group:
+$(DIR)/hosts:
+$(DIR)/networks:
+$(DIR)/rpc:
+$(DIR)/services:
+$(DIR)/protocols:
+$(DIR)/netgroup:
+$(ALIASES):

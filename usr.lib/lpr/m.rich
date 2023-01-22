@@ -1,0 +1,8 @@
+install:  all
+	-if [ ! -d ${DESTROOT}/lib ] ; then \
+		mkdir ${DESTROOT}/lib; \
+		chmod 755 ${DESTROOT}/lib; \
+		/etc/chown root ${DESTROOT}/lib; \
+		chgrp system  ${DESTROOT}/lib; \
+	else true; \
+	fi

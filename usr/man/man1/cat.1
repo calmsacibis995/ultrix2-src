@@ -1,0 +1,92 @@
+.TH cat 1
+.SH NAME
+cat \- concatenate and print
+.SH SYNTAX
+.B cat
+[
+.B \-b
+] [
+.B \-e
+] [
+.B \-n
+] [
+.B \-s
+] [
+.B \-t
+] [
+.B \-u
+] [
+.B \-v
+]
+file...
+.br
+.SH DESCRIPTION
+The
+.PN cat
+command reads each
+.I file
+in sequence and displays it on the standard output.  Thus
+.PP
+.ti+15n
+cat file
+.PP
+displays the file on the standard output, and
+.PP
+.ti+15n
+cat file1 file2 >file3
+.PP
+concatenates the first two files and places the result on the third.
+.PP
+If no input file is given, or if the argument `\-' is encountered,
+.PN cat
+reads from the standard input file.
+Output is buffered in 1024-byte blocks unless the standard
+output is a terminal, in which case it is line buffered. 
+.PP
+The
+.B \-b
+option ignores blank lines and precedes all other output with
+line numbers.
+.PP
+The 
+.B \-e
+option displays a dollar sign ($) at the end of each output
+line.
+.PP
+The
+.B \-n
+option precedes all output lines (including blank lines) with
+line numbers.
+.PP
+The
+.B \-s
+option squeezes adjacent empty lines so that the
+output is displayed single spaced.
+.PP
+The 
+.B \-t
+option displays all non-printing characters including tabs 
+in the output.
+In addition to those representations used with the
+.B \-v
+option, all tab characters are displayed as ^I.
+.PP
+The
+.B \-u
+option makes the output completely unbuffered.
+.PP
+The
+.B \-v
+option displays non-printing characters (except tabs).
+.CT x 
+(control character x) prints as ^X.
+The delete character
+(octal 0177) prints as ^?.
+Non-ascii characters (with the high bit set) are printed as M-
+(for meta) followed by the character of the low 7 bits.
+.PP
+.SH RESTRICTIONS
+Beware of `cat a b >a' and `cat a b >b', which destroy
+the input files before reading them.
+.SH "SEE ALSO"
+cp(1), ex(1), more(1), pr(1), tail(1)

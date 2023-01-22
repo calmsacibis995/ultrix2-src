@@ -1,0 +1,8 @@
+(File runFp.l)
+(initHelp (lambda . local) quote addHelp)
+(addHelp (lambda . local) quote putprop)
+(init (lambda . local) initHelp initStats concat quote setq)
+(setup (lambda . local) quote nreverse cdr setsyntax car cons null exploden liszt-internal-do mapcar let makereadtable setq)
+(make_chset (lambda . local) explodec get setq null cond quote putprop)
+(res_fp lambda fpMain setq msg-tyo-char terpr progn msg quote signal)
+(runFp lambda fpMain signal quote setq msg-tyo-char terpr progn msg tyo and tyi let Tyi init setup exit terpri patom make_chset null cond)

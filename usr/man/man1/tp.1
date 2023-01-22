@@ -1,0 +1,213 @@
+.TH tp 1 
+.SH NAME
+tp \- manipulate tape archive
+.SH SYNTAX
+.B tp
+[ \fIkey\fR ] [ \fIname\fR... ]
+.SH DESCRIPTION
+The
+.PN tp
+command saves and restores files
+to and from an archive on DECtape or magnetic tape.
+The default archive is
+.PN tapx ,
+but any file or device may be requested through
+the use of options.
+Its actions are controlled by the
+.I key 
+argument.  The key is a string of characters containing at
+most one function letter and possibly one or more function
+modifiers.  Other arguments to the command are file or
+directory names specifying which files are to be dumped,
+restored, or listed.  In all cases appearance of a directory 
+name refers to the files and (recursively) subdirectories of that
+directory.  
+.PP
+.NT
+The DECtape device is not supported in ULTRIX-32.
+.NE
+.PP
+The function portion of the key is specified by one of the 
+following letters:
+.TP 8
+.B d
+Deletes the named files from the tape.  At least one
+.I name
+argument must be given.  This function is not permitted
+on magnetic tapes.
+.TP 8
+.B  r
+The named files
+are written
+on the tape.
+If files with the same names
+already exist, they are replaced.
+``Same'' is determined by string comparison, so
+.PN ./abc
+is not the same as 
+.PN /usr/dmr/abc
+even
+if 
+.PN /usr/dmr 
+is the current directory.
+If no 
+.I name
+argument is given, `\fB.\fR' is the default.
+.TP 8
+.B t
+Lists the names of the specified files.  If no
+.I name
+argument is given, the entire contents of the tape are
+listed.
+.TP 8
+.B  u
+Updates the tape.
+.B u
+is like
+.B r,
+but a file is replaced only if its
+modification date is later than the date stored on the tape.
+.B u
+is the default function key if none is given.
+.TP 8
+.B  x
+Extracts the named files from the tape to the file system.
+The owner and mode are restored.
+If no 
+.I name
+argument is given, the entire contents of the
+tape are extracted.
+.PP
+You can use one or more of the following options in addition
+to the letter that selects the function desired.
+.TP 8 
+.B  c
+A fresh dump is to be created.  The tape directory
+is cleared before beginning.
+This option is usable only with
+the
+.B r
+and
+.B u
+function keys.
+This option is assumed with magnetic tape since
+it is impossible to selectively overwrite
+magnetic tape.
+.TP 8
+.B f
+Use the next argument as the name of the archive.  Any
+special file can be used as the next argument.  When
+used with the
+.B r
+function key, the
+.B c
+option is implied.  That is, the directory is cleared
+before beginning.
+.TP 8 
+
+This option cannot be used with the
+.B d
+or
+.B u
+function keys.
+.TP 8 
+.B  i
+Errors reading and writing the
+tape are noted, but no action is taken.
+Normally, errors cause a return to the command level.
+.TP 8
+.B m
+Specifies magnetic tape as opposed to DECtape.  The
+default tape is
+.PN rmt0h ,
+but other devices may be requested with the
+.B f
+option.
+.TP 8
+
+When used with the
+.B r
+function key, the
+.B c 
+option is implied.  That is, the directory
+is cleared before beginning.
+.TP 8
+
+This option cannot be used with the
+.B d
+or
+.B u
+function keys.
+.TP 8
+.B v
+Normally,
+.PN tp
+does its work silently.  This option causes it
+to display the name of each file it treats, preceded
+by the function letter.  With the
+.B t
+function,
+.B v
+gives more information about the entries than just
+the name.
+.TP 8 
+.B  w
+Causes
+.I tp
+to pause before transferring each file, type
+the indicative letter and the file name (as with
+.BR v )
+and await the user's response.
+.TP
+
+Response
+.B y
+means `yes', so the file is transferred.
+Null response
+means `no', and the file 
+is not transferred
+.TP
+
+Response
+.B x
+means ``exit'';
+the
+.I tp
+command terminates immediately.
+With the
+.B x
+function key,
+files previously asked about
+have been extracted already.
+With the
+.BR r , 
+.BR u ,
+and
+.B d
+function keys,
+no change has been made to the tape.
+.PP
+.SH RESTRICTIONS
+A single file with several links to it is treated like several files.
+.PP
+Binary-coded control information makes
+magnetic tapes written by
+.PN tp
+difficult to carry to other machines.
+The
+.MS tar 1
+command
+avoids this problem.
+.SH DIAGNOSTICS
+There are several.  The least obvious one is
+`Phase error', which means the file changed after it was selected for
+dumping but before it was dumped.
+.SH FILES
+.TP
+.PN /dev/tap?
+DECtape archive
+.TP
+\fI/dev/rmt?h\fR or \fI/dev/nmt?h\fR
+Magnetic tape archive
+.SH SEE ALSO
+ar(1), tar(1)

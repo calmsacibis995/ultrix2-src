@@ -1,0 +1,71 @@
+.TH lta 4
+.SH NAME
+lta \- Local Area Terminal (LAT) server driver
+.SH SYNTAX
+\fBoptions LAT
+\fBpseudo-device lat
+\fBpseudo-device lta\fB[\fIn\fB]
+.SH DESCRIPTION
+The
+.PN lta
+pseudo-terminal driver provides support for
+local area transport (LAT) service.
+LAT service allows users to access remote nodes through the Ethernet.
+.SH Installing LAT
+.LP
+To properly configure LAT service into your system,
+do the following:
+.IP
+Edit the configuration file to include ``options LAT'',
+``pseudo-device lat'', and ``pseudo-device lta''.
+The configuration file is in /sys/conf/MACHINE, where
+MACHINE is the the name you have given your machine.
+.IP ""
+If no optional \fIn\fR value is given defining the number
+of LAT lines to configure, a default of 16 lines is assumed.
+.IP
+To use remote node maintenance functions to load and control
+diskless servers such as the DECserver 100, edit the
+configuration file to include ``options DLI'', and
+``pseudo-device dli''.
+.IP
+To restart LAT service
+automatically when the system reboots,
+add the following to the /etc/rc.local file after the
+``local daemons'' startup section.
+.nf
+if [ -f /etc/lcp ]; then
+       /etc/lcp -s > /dev/console 2>&1 & echo -n ' lat' >/dev/console
+fi
+.fi
+.IP
+Create the LAT special files with the following commands:
+.EX
+cd /dev
+MAKEDEV lta0
+.EE
+.IP ""
+The MAKEDEV command will create 16 LAT special files.
+You can create more special files in groups of 16 by
+specifying a digit in the range 1 to 7. This will
+create groups of 16 special files.
+For example, the command
+.EX
+MAKEDEV lta1
+.EE
+will create 16 additional tty?? special files.
+.IP
+Edit the /etc/ttys file to include entries for all files
+created by the
+.br
+MAKEDEV command.
+For more information on how to add these entries, see
+the manual page ttys(5).
+.SH FILES
+.nf
+.DT
+/dev/tty??
+/dev/ttyd?		(modem lines only)
+.fi
+.SH SEE ALSO
+ttys(5), MAKEDEV(8)

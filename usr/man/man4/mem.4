@@ -1,0 +1,29 @@
+.TH mem 4
+.SH NAME
+mem \- physical main memory
+.SH DESCRIPTION
+The
+.PN mem
+is a character special file that is an image of the physical main memory
+of the computer.
+It may be used, for example, to examine
+(and even to patch) the running system.
+.PP
+Byte addresses in
+.PN mem
+are interpreted as physical memory addresses.
+References to non-existent locations cause errors to be returned.
+.PP
+Examining and patching device registers is likely
+to lead to unexpected results when read-only or write-only
+bits are present.
+.SH RESTRICTIONS
+The
+.PN mem
+memory file is accessed one byte
+at a time. This may be inappropriate for some
+device registers.
+.SH FILES
+/dev/mem
+.SH SEE ALSO
+MAKEDEV(8)

@@ -1,0 +1,60 @@
+.TH ris 8
+.UC 4
+.SH NAME
+ris \- remote installation services utility
+.SH SYNTAX
+.B /etc/ris
+.SH DESCRIPTION
+.PP
+The
+.B ris
+utility
+is an interactive utility that performs the following remote 
+installation services. The
+.B ris
+utility
+loads kits into the ris control directory,
+/usr/adm/ris,
+adds clients for remote installation services, and
+removes clients from remote installation services.
+.PP
+The remote installation services use the 
+/usr/adm/ris
+directory as a base.
+.PP
+This
+directory contains the subsets of the kits that can be 
+installed to clients on a network. This directory also 
+contains a directory called
+clients,
+which holds individual permission files for each client.
+The permission file of a specific client
+contains an ordered list of subsets that are allowed to be installed
+to that client. The ordering of the permission files is checked
+by the 
+.B ris
+utility whenever
+a model permission file is used to create a client permission file.
+The model
+permission files allow a system manager to set up a default
+network kit for a 
+particular type of client. Through the use of model files the
+system manager can customize a clients network kit to either
+contain or omit certain subsets. This customization may be necessary
+for clients with small disk capacity or for clients that are not
+licensed for all the available kits. All model files begin with the
+prefix "model." in order to be distinguished from client
+permission files. 
+.PP
+The
+/usr/adm/ris
+directory also holds 
+the instctrl directory,
+which is crucial to the 
+remote installation service.
+This directory contains
+files used to verify the contents of the individual subsets. 
+.SH SEE ALSO
+setld(8) 
+.br
+ULTRIX Network Management Guide 

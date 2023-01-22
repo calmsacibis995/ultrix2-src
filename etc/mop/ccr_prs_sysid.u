@@ -1,0 +1,379 @@
+/*	@(#)ccr_prs_sysid.u	1.1	(ULTRIX)	9/30/85	*/
+
+/*
+ * MODULE - CCR_PRS_SYSID.U, parses MOP system id message
+ *
+ * Copyright (C) 1985 by
+ * Digital Equipment Corporation, Maynard, Mass.
+ *
+ * This software is furnished under a license and may be used and copied
+ * only  in  accordance  with  the  terms  of such  license and with the
+ * inclusion of the above copyright notice. This software or  any  other
+ * copies thereof may not be provided or otherwise made available to any
+ * other person. No title to and ownership of  the  software  is  hereby
+ * transferred.
+ *
+ * The information in this software is subject to change without  notice
+ * and  should  not be  construed  as  a commitment by Digital Equipment
+ * Corporation.
+ *
+ * Digital assumes no responsibility for the use or  reliability  of its
+ * software on equipment which is not supplied by Digital.
+ *
+ *
+ * Networks & Communications Software Engineering
+ *
+ * IDENT HISTORY:
+ *
+ * 1.00 10-Jul-1985
+ *      DECnet-ULTRIX   V1.0
+ *
+ */
+
+/* PARSE MOP SYSTEM ID MESSAGE */
+
+
+parse binary 
+
+%%
+
+/* Parse for correct function code */
+
+sys_id_msg:		state	{
+							$BYTE	MOP_CCR_SYSID,reserv_fld;
+							$ERROR	ccr_INVFUNCODE;
+						}
+
+/* Skip over reserved field and parse over receipt number field */
+
+reserv_fld:		state	{
+							$SKIP;
+						}
+
+				state	{
+							$MATCH 2,info_field;
+							$ERROR	ccr_MESFORMERR;
+						}
+
+/* Parse necessary information about the system */
+
+info_field:		state	{
+							$EOM	,$EXIT;
+							$PARAM	sysid_VERSION,version_fld;
+							$PARAM	sysid_FUNCTION,func_fld;
+							$PARAM	sysid_CONUSER,user_fld;
+							$PARAM	sysid_RESTIMER,timer_fld;
+							$PARAM	sysid_CMDSIZE,cmdsize_fld;
+							$PARAM	sysid_RSPSIZE,rspsize_fld;
+							$MATCH	2,other_info;	
+							$MATCH	1,other_info;	
+						}
+
+version_fld:	state	{
+							!image,info_field,cmp_version;
+							$ERROR	ccr_INCVERSION;
+						}
+
+func_fld:	state		{
+							!image,info_field,st_function;
+							$ERROR	ccr_MESFORMERR;
+						}
+
+user_fld:		state	{
+							!image,info_field,st_user;
+							$ERROR	ccr_MESFORMERR;
+						}
+
+timer_fld:		state	{
+							!image,info_field,st_timer;
+							$ERROR	ccr_MESFORMERR;
+						}
+
+cmdsize_fld:	state	{
+							!image,info_field,st_cmdsize;
+							$ERROR	ccr_MESFORMERR;
+						}
+
+rspsize_fld:	state	{	
+							!image,info_field,st_rspsize;
+							$ERROR	ccr_MESFORMERR;
+						}
+
+other_info:		state	{	
+							!image,info_field;
+							$ERROR	ccr_MESFORMERR;
+						}
+
+image:			state	{
+							$EOM	,$EXIT;
+							$IMAGE	MX_IMGFLD_LEN,$RETURN;
+							$ERROR	ccr_MESFORMERR;
+						}
+
+%%
+
+#include <stdio.h>
+#include <ctype.h>
+#include <sys/types.h>
+#include "ccr.h"
+#include "ccr_mesg_codes.h"
+
+
+static int 	cmp_version(),
+			st_user(),
+			st_timer(),
+			st_function(),
+			st_cmdsize(),
+			st_rspsize();	
+
+static u_char 	mop_version[] = {3,0,0};
+
+struct sys_id_info	sysid_values;
+
+extern u_char	u_text[];
+extern short	u_length;
+
+/*
+*		p a r s e _ s y s _ i d
+*
+* Description:
+*		This routine parses the MOP system id message.
+*
+* Inputs:
+*		ptr_mesgbuf		pointer to buffer containing MOP system id
+*						message
+*		buf_len			length of message
+*
+* Outputs:
+*		SUCCESS			if message parsed successfully
+*		FAIL			if error during message parsing
+*
+* Notes:
+*
+*/
+parse_sys_id(ptr_mesgbuf,buf_len)
+u_char *ptr_mesgbuf;
+int buf_len;
+
+{
+
+	_utbl_entry	*pt_parse_tbl;
+	register int status;
+
+	/*
+	 * Initialize pointer to parse table and parse the MOP
+	 * system id message
+ 	 */
+
+	pt_parse_tbl = &sys_id_msg;
+	_u_parse_binary();
+
+
+	/*
+	 * First bump the pointer to the receive message, because all
+	 * MOP messages contain 2 bytes of length in the beginning. Also
+	 * decrement the length of the buffer by 2
+	 */
+	ptr_mesgbuf += MOP_LEN_OVRHD;
+
+	if ((status = _u_parse(ptr_mesgbuf,buf_len,pt_parse_tbl)) == SUCCESS) 
+		return(SUCCESS);
+	else
+	{
+		print_message(status);
+		return(FAIL);
+	}
+}
+
+/*
+*		c m p _ v e r s i o n
+*
+* Description:
+*		Compare the returned MOP version number to make sure 
+*		the remote system supports the current Console Carrier 
+*		implementation.
+*
+* Inputs:
+*		u_text		array containing the last thing parsed by upars.
+*
+* Outputs:
+*		success		if version number is supported.
+*		fail		if cannot communicate using the remote system's
+*						version of MOP.
+*
+* Notes:
+*		Becuase what was parsed was image data the first element of
+*		the array u_text contains the actual count of data parsed.
+*
+*/
+static int cmp_version()
+
+{
+
+
+	if ( u_text[0] == sizeof(mop_version))
+	{
+		if ( bcmp(u_text+1,mop_version,sizeof(mop_version)) == 0)
+			return(SUCCESS);
+	}
+	return(FAIL);
+
+}
+
+/*
+*		s t _ f u n c t i o n
+*
+* Description:
+*		Stores the function word, which indicates what maintenance 
+*		operations are currently available for the remote system.
+*
+* Inputs:
+*		u_text		array containing the last thing parsed by upars.
+*
+* Outputs:
+*		success		if function word stored.
+*		fail		if incorrect length for this image field.
+*
+* Notes:
+*		Becuase what was parsed was image data the first element of
+*		the array u_text contains the actual count of data parsed.
+*
+*/
+static int st_function()
+
+{
+	if ( u_text[0]  != BYTLEN_FUNC)
+		return(FAIL);
+	else
+	{
+		bcopy(&u_text[1],&sysid_values.functions,BYTLEN_FUNC);
+		return(SUCCESS);
+	}
+}
+
+/*
+*		s t _ u s e r
+*
+* Description:
+*		Stores the console user, which is the system address of the
+*		system that has the console reserved.
+*
+* Inputs:
+*		u_text		array containing the last thing parsed by upars.
+*
+* Outputs:
+*		success		if console user stored.
+*		fail		if incorrect length for this image field.
+*
+* Notes:
+*		Becuase what was parsed was image data the first element of
+*		the array u_text contains the actual count of data parsed.
+*
+*/
+static int st_user()
+
+{
+	if ( u_text[0] != BYTLEN_CONUSER)
+		return(FAIL);
+	else
+	{
+		bcopy(&u_text[1],sysid_values.console_user,BYTLEN_CONUSER);
+		return(SUCCESS);
+	}
+}
+
+/*
+*		s t _ t i m e r
+*
+* Description:
+*		Stores the reservation timer, which is the maximum value in
+*		seconds of the timer used to clear unused console 
+*		reservations.
+*
+* Inputs:
+*		u_text		array containing the last thing parsed by upars.
+*
+* Outputs:
+*		success		if reservation timer stored.
+*		fail		if incorrect length for this image field.
+*
+* Notes:
+*		Becuase what was parsed was image data the first element of
+*		the array u_text contains the actual count of data parsed.
+*
+*/
+static int st_timer()
+
+{
+	if ( u_text[0] != BYTLEN_RESTIMER)
+		return(FAIL);
+	else
+	{
+		bcopy(&u_text[1],&sysid_values.max_restimer,BYTLEN_RESTIMER);
+		return(SUCCESS);
+	}
+}
+
+/*
+*		s t _ c m d s i z e
+*
+* Description:
+*		This routine stores away the maximum size of the console command
+*		buffer, returned by the remote system.
+*
+* Inputs:
+*		u_text		array containing the last thing parsed by upars.
+*
+* Outputs:
+*		success		if maximum command size stored.
+*		fail		if incorrect length for this image field.
+*
+* Notes:
+*		Becuase what was parsed was image data the first element of
+*		the array u_text contains the actual count of data parsed.
+*
+*/
+static int st_cmdsize()
+
+{
+	if ( u_text[0] != BYTLEN_CMDSIZE)
+		return(FAIL);
+	else
+	{
+		bcopy(&u_text[1],&sysid_values.max_cmd_size,BYTLEN_CMDSIZE);
+		return(SUCCESS);
+	}
+}
+
+/*
+*		s t _ r s p s i z e
+*
+* Description:
+*		This routine stores away the maximum size of the console response
+*		buffer, returned by the remote system.
+*
+* Inputs:
+*		u_text		array containing the last thing parsed by upars.
+*
+* Outputs:
+*		success		if maximum response size stored.
+*		fail		if incorrect length for this image field.
+*
+* Notes:
+*		Becuase what was parsed was image data the first element of
+*		the array u_text contains the actual count of data parsed.
+*
+*/
+static int st_rspsize()
+
+{
+	if ( u_text[0] != BYTLEN_RSPSIZE)
+		return(FAIL);
+	else
+	{
+		bcopy(&u_text[1],&sysid_values.max_rsp_size,BYTLEN_RSPSIZE);
+		return(SUCCESS);
+	}
+}
+
+

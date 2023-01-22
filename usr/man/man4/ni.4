@@ -1,0 +1,70 @@
+.TH ni 4 
+.SH NAME
+ni \- DEC BVP DEBNT/NI port driver for 10 Mb/s Ethernet
+.SH SYNTAX
+.nf
+.B "controller  aie? 	at vaxbi? node?"
+.B "device      bvpni0 	at aie? vector bvpniintr"
+.fi
+.SH DESCRIPTION
+The
+.PN ni
+driver provides access to a 10 Mb/s Ethernet network through
+the NI port of the DEBNT controller. The DEBNT also has a tape
+port which shares the controller structure with the NI port.
+.PP
+The host's Internet address is specified at boot time with an 
+SIOCSIFADDR ioctl.  The
+.PN ni
+interface employs the address resolution protocol described in
+arp(4p)
+to dynamically map between Internet and Ethernet addresses on the local
+network.
+.PP
+The interface normally tries to use a ``trailer'' encapsulation
+to minimize copying data on input and output.  This can be
+disabled for an interface by setting the IFF_NOTRAILERS
+flag with an SIOCSIFFLAGS ioctl.
+Trailers are only used for packets destined for Internet hosts.
+.PP
+The SIOCSPHYSADDR ioctl can be used to change and SIOCRPHYSADDR can
+be used to read the physical address of the NI.  SIOCADDMULTI 
+and SIOCDELMULTI can be used to add  or delete multicast addresses.  
+The NI supports a maximum of 32 multicast addresses. The argument 
+to the latter ioctls is a pointer to an ifreq structure found in 
+<net/if.h>.
+.PP
+SIOCCRDCTRS and SIOCRDZCTRS ioctls can be used to read or 
+"read and clear" network counters. The argument to the latter 
+two ioctls is a pointer to a counter structure "ctrreq" found 
+in <net/if.h>.
+.PP
+The ioctls SIOCENABLBACK and SIOCDISABLBACK can be used to enable
+and disable the interface loopback mode respectively.
+.SH RESTRICTIONS
+The PUP protocol family is not supported. 
+.SH DIAGNOSTICS
+\fBni%d\fR in wrong state. DEBNT is unable to be attached during
+autoconfiguration time because its not in the undefined state.
+.PP
+\fBni%d\fR cannot initialize. DEBNT failed to become initialized after
+a request to become initialized.
+.PP
+\fBnid%d\fR cannot enable. DEBNT failed to become enabled after a 
+request to become enabled.
+.PP
+\fBreset ni%d %x %x %x %x\fR. DEBNT has requested a software reset.
+Values of port control, port status, port error and port data
+are given to help identify what caused the reset request.
+.PP
+\fBni%d\fR SUME error detected %x %x %x %x. Some error has been
+detected.
+Values of port error, port data, port status and port control are
+given to help identify the cause of the error.
+.PP
+\fBni%d\fR cant handle af%d. A packet with an undefined
+protocol type has been sent to DEBNT.
+\fBni%d\fR multi failed, multicast list full. Too many multicast request
+have been made.
+.SH SEE ALSO
+arp(4p), inet(4f), intro(4n)

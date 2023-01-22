@@ -1,0 +1,42 @@
+.TH assert 3x
+.\" Last modified by BAM on 13-Nov-1985 1300.
+.\"
+.\" Last modified by BAM on 19-Jul-85  1100  
+.\"
+.SH NAME
+assert \- program verification
+.SH SYNTAX
+.B #include <assert.h>
+.PP
+.B assert(expression)
+.SH DESCRIPTION
+The
+.PN assert
+macro indicates
+.I expression
+is expected to be true at this point in the program.
+It causes an exit(2)
+with a diagnostic comment on the standard output when
+.I expression
+is false (0).
+Compiling with the cc(1) option
+.SM
+.B \-DNDEBUG
+effectively deletes
+.PN assert
+from the program.
+.SH ENVIRONMENT
+When your program is complied using the System V environment,
+an error message is printed without calling \fIfprintf\fP.
+.SH DIAGNOSTICS
+`Assertion failed: file
+.I f
+line
+.I n.'
+The
+.I f
+is the source file and
+.I n
+the source line number of the
+.PN assert
+statement.

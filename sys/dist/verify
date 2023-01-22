@@ -1,0 +1,247 @@
+USAGE="sh verify [-f] [master | kit ] [ tape1 | tape2 | rc25 | rl02 | rk07 | rm05 | ra60 ] path"
+
+# process args
+
+
+MASTERFLAG="false"
+FASTFLAG="false"
+PWD=`pwd`
+while	:   true
+do
+	case $1 in
+
+		-f)
+			FASTFLAG="true"
+			;;
+		master)
+			case ${FASTFLAG} in
+
+				true)
+					mkdir /sys/dist/check 2> /dev/null
+					DEST="/sys/dist/check/FASTMASTERSUM"
+					;;
+
+				false)
+					mkdir /sys/dist/check 2> /dev/null
+					DEST="/sys/dist/check/MASTERSUM"
+					;;
+			esac
+			MASTERFLAG="true"
+			;;
+		kit)
+			case ${FASTFLAG} in
+				true)
+					if
+						test -s /sys/dist/check/FASTMASTERSUM
+					then
+						DEST="/tmp/fastkitsum.$$"
+						GREPFILE="/tmp/fastgrep.$$"
+						MASTER="/sys/dist/check/FASTMASTERSUM"
+					else
+						echo "you must first create a master checksum file"
+						echo "first!  Exiting ......."
+						exit 1
+					fi
+					;;
+				false)
+					if
+						test -s /sys/dist/check/MASTERSUM
+					then
+						DEST="/tmp/kitsum.$$"
+						GREPFILE="/tmp/grep.$$"
+						MASTER="/sys/dist/check/MASTERSUM"
+					else
+						echo "You must create a master checksum file"
+						echo "first! Exiting ........"
+						exit 1
+					fi
+					;;
+			esac
+			DIFF_FILE="/tmp/diff.$$"
+			;;
+
+		tape)
+			SEQUENCE="1 2"
+			FIRSTOPTIONAL="2"
+			OPTION="$1"
+			break
+			;;
+
+		rc25)
+			SEQUENCE="1 2 3"
+			FIRSTOPTIONAL="2"
+			OPTION="$1"
+			break
+			;;
+
+		rl02)
+			SEQUENCE="1 2 3 4 5"
+			FIRSTOPTIONAL="3"
+			OPTION="$1"
+			break
+			;;
+
+		rk07)
+			SEQUENCE="1 2 3"
+			FIRSTOPTIONAL="2"
+			OPTION="$1"
+			break
+			;;
+
+		rm05)
+			OPTION="$1"
+			break
+			;;
+
+		ra60)
+			SEQUENCE="1"
+			FIRSTOPTIONAL="1"
+			OPTION="$1"
+			break
+			;;
+
+		*)
+			echo $USAGE
+			exit 1
+			;;
+	esac
+	shift
+done
+FROM=$2
+for J in ${SEQUENCE}
+do
+	echo "Please put volume $J of the ${OPTION} on unit ${FROM}."
+	echo "Press RETURN when ready:"
+	read ANSWER
+	case ${ANSWER} in
+		exit)
+			break
+			;;			
+	esac
+	case ${OPTION}-$J in
+		tape-1)
+			FILES="boot mini root kernel usr"
+			;;
+		tape-2)
+
+			FILES=`grep "$J\$" subsets.info.${OPTION} | awk 'print $1}' | tr A-Z a-z`
+			;;
+	esac
+	case ${OPTION} in
+		tape)
+
+		case ${FASTFLAG} in
+
+			"true")
+				for I in ${FILES}
+				do
+					case $I in
+						boot)
+							echo `dd if=${FROM} count=5 bs=512 | sum` $I >> ${DEST}
+							;;
+						installation)
+							mt -f ${FROM} fsf 1
+							;;
+						*)
+							echo `dd if=${FROM} count=5 bs=20b | sum` $I >> ${DEST}
+							;;
+					esac
+					mt -f ${FROM} bsr 5
+					mt -f ${FROM} fsf 1
+				done
+				;;
+
+			"false")
+				for I in ${FILES}
+				do
+					case $I in
+						boot)
+							echo `dd if=${FROM} bs=512 | sum` $I >> ${DEST}
+							;;
+						installation)
+							mt -f ${FROM} fsf 1
+							;;
+						*)
+							echo `dd if=${FROM} bs=20b | sum` $I >> ${DEST}
+							;;
+					esac
+				done
+				;;
+
+		esac
+		;;
+
+	rc25 | rl02 | rk07 | rm05 | ra60)
+
+	    mkdir /VERIFY 2> /dev/null
+	    fsck ${FROM}
+	    mount ${FROM} /VERIFY
+	    cd /VERIFY
+	    FILES=`ls`
+	    case "${FASTFLAG}" in
+
+	    	"true")
+			for I in ${FILES}
+			do
+				case $I in
+					boot)
+						echo `dd if=$I count=5 bs=512 | sum` $I >> ${DEST}
+							;;
+					*)
+					   echo `dd if=$I count=5 bs=20b | sum` $I >> ${DEST}
+							;;
+				esac
+			done
+			;;
+	       "false")
+	       		for I in ${FILES}
+			do
+			   echo `dd if=$I | sum` $I >> ${DEST}
+			done
+			;;
+		esac
+		;;
+esac
+
+case "${MASTERFLAG}" in
+
+	"true")
+		echo "Master checksum file created in ${DEST}"
+		;;
+
+	"false")
+
+		fgrep -f ${MASTER} ${DEST} > ${GREPFILE}
+		 diff ${GREPFILE} ${DEST} > ${DIFF_FILE}
+		if 
+		test -s ${DIFF_FILE}
+		then
+			echo "The ${OPTION} is different than the master kit!!"
+			echo "recopy!!"
+		else
+			case ${FASTFLAG} in
+				true)
+				echo "The ${OPTION} appears to be identical to the master kit."
+				;;
+
+				false)
+					echo "The ${OPTION} is identical to the master kit."
+					;;
+			esac
+		
+		fi
+		;;
+esac
+done
+
+
+cd ${PWD}
+case ${OPTION} in
+	tape*)
+		mt -f ${FROM} rew
+		;;
+	*)
+		umount ${FROM}
+		;;
+esac
+exit 0

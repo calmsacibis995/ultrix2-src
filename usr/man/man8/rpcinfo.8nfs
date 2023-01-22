@@ -1,0 +1,57 @@
+.TH rpcinfo 8nfs
+.SH NAME
+rpcinfo \- report RPC information
+.SH SYNTAX
+.B "/etc/rpcinfo \-p"
+[ host ]
+.br
+.B "/etc/rpcinfo \-u"
+host program-number
+[ version-number ]
+.br
+.B "/etc/rpcinfo \-t"
+host program-number
+[ version-number ]
+.SH DESCRIPTION
+.IX  "rpcinfo command"  ""  "\fLrpcinfo\fP \(em report RPC information"
+The
+.B rpcinfo
+command makes an RPC call to an RPC server and displays its findings
+based on the specified options.
+.SH OPTIONS
+.TP
+.B \-p
+Probe the portmapper 
+portmap(8nfs),
+running on
+.I host,
+and print a list of all registered RPC programs.
+If 
+.I host
+is not specified, 
+.B rpcinfo
+defaults to the value returned by either
+hostname(1) 
+or
+gethostname(2).
+.TP
+.B \-u
+Make an RPC call to procedure 0 of
+.I program-number
+using the user datagram protocol (UDP), and report whether a response
+was received.
+.TP
+.B \-t
+Make an RPC call to procedure 0 of
+.I program-number
+using the transmission control protocol (TCP), and report whether a
+response was received.
+.LP
+The
+.I program-number
+argument can be either a name or a number.  If no version is given,
+it defaults to 1.
+.SH FILES
+/etc/rpc	names for rpc program numbers
+.SH SEE ALSO
+hostname(1), tcp(4p), udp(4p), portmap(8nfs)

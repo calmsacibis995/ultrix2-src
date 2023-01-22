@@ -1,0 +1,11 @@
+cc -O -c spell.c
+cc spell.o -o spell
+cc -O -c spellin.c
+cc spellin.o -o spellin
+spellin <words >hlist
+(cat american local)|spellin hlist >hlista
+spellin: cannot initialize hash table
+
+*** Error code 141
+
+Stop.

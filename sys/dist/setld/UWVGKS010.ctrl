@@ -1,0 +1,6 @@
+NAME='ULTRIX VAXStation II UWVGKS010'
+DESC='Graphical Kernel Standard 2.0b'
+NVOLS=1:3
+MTLOC=1:2
+DEPS=UWVX010
+FLAGS=2

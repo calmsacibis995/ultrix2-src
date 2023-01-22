@@ -1,0 +1,60 @@
+.\" Last modified by MJT on 27-Aug-85  0817
+.\"  Add tm line for production
+.\"  Modified by CCB, comments from Dave Ballenger on 23-Aug-85  1500  
+.TH exit 2
+.SH NAME
+_exit \- terminate a process
+.SH SYNTAX
+.nf
+.ft B
+void _exit(status)
+int status;
+.fi
+.SH DESCRIPTION
+The function
+.PN _exit
+terminates a calling process with the following consequences:
+.PP
+All of the file descriptors open in the calling process are closed.
+.PP
+If the parent process of the calling process is executing a
+.I wait,
+it is notified of the calling process's termination and
+the low-order eight bits of \fIstatus\fP are made available to it.
+See
+.PN wait(2).
+.PP
+The parent process ID of all of the calling process's existing child
+processes and zombie processes are also set to 1.   
+This means that the initialization process, (see
+.PN intro(2),
+inherits each of these processes as well.
+.PP
+Each attached shared memory segment is detached
+and the value of \fBshm_nattach\fP in the data structure
+associated with its shared memory identifier is decremented by 1.
+.PP
+For each semaphore for which the calling process has set
+a semadj value, (see 
+.PN semop(2), 
+that semadj value 
+is added to the semval of the specified semaphore.
+.PP
+If the process has a process, text or data lock, an
+unlock is performed.
+.PP
+An accounting record is written on the accounting file
+if the system's accounting routine is enabled; see
+.PN acct(2).
+.PP
+The function 
+.PN _exit
+circumvents all cleanup.
+.PP
+Most C programs call the library routine
+.PN exit(3),
+which performs cleanup actions in the standard i/o library before
+calling 
+.PN _exit.
+.SH "SEE ALSO"
+fork(2), wait(2), exit(3), signal(3).

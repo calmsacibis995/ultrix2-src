@@ -1,0 +1,14 @@
+bin	/usr/local/bin
+mail	/usr/mail
+manuals	standard
+chown	/bin/chown
+remove  cp
+mts	sendmail
+bboards	on
+options	SYS5
+options	ISI MHE MHRC UCI WHATNOW MORE='"/bin/more"'
+ccoptions -V 5 -I/usr/4.2/include
+curses	-lcurses
+ranlib	on
+oldload	none
+ldoptlibs -lndir

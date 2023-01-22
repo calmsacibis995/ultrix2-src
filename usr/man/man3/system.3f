@@ -1,0 +1,33 @@
+.\" Last modified by MJT on 27-Aug-85  0001
+.\"  Repaired beginning matter to work right in whatis database
+.TH system 3f
+.SH NAME
+system \- execute an ULTRIX command
+.SH SYNTAX
+.B integer function system (string)
+.br
+.B character*(*) string
+.SH DESCRIPTION
+The
+.PN system
+routine causes
+.I string
+to be given to your shell
+as input as if the string had been typed as a command.
+If environment variable SHELL
+is found, its value will be used as the command interpreter (shell);
+otherwise sh(1) is used.
+.PP
+The current process waits until the command terminates.
+The returned value will be the exit status of the shell.
+See wait(2) for an explanation of this value.
+.SH RESTRICTIONS
+The
+.I string
+cannot be longer than NCARGS\_50 characters, as defined in
+< sys/param.h >.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+execve(2), wait(2), system(3)

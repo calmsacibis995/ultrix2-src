@@ -1,0 +1,118 @@
+.TH rcmd 3x
+.SH NAME
+rcmd, rresvport, ruserok \- routines for returning a stream to a remote command
+.SH SYNTAX
+.nf
+.B "rem = rcmd(ahost, inport, locuser, remuser, cmd, fd2p);"
+.B char **ahost;
+.B u_short inport;
+.B "char *locuser, *remuser, *cmd;"
+.B int *fd2p;
+.PP
+.B s = rresvport(port);
+.B int *port;
+.PP
+.B "ruserok(rhost, superuser, ruser, luser);"
+.B char *rhost;
+.B int superuser;
+.B char *ruser, *luser;
+.fi
+.SH DESCRIPTION
+The
+.PN rcmd
+subroutine
+is used by the super-user to execute a command on
+a remote machine using an authentication scheme based
+on reserved port numbers.  The
+.PN rresvport
+subroutine
+is a routine which returns a descriptor to a socket
+with an address in the privileged port space.
+The
+.I ruserok
+subroutine
+is a routine used by servers
+to authenticate clients requesting service with
+.PN rcmd.
+All three functions are present in the same file and are used
+by the
+.PN rshd(8c) 
+server (among others).
+.PP
+The
+.PN rcmd
+subroutine looks up the host
+.I *ahost
+using
+.PN gethostbyname(3n),
+(See
+.PN gethostent(3n)),
+returning \-1 if the host does not exist.
+Otherwise
+.I *ahost
+is set to the standard name of the host
+and a connection is established to a server
+residing at the well-known Internet port
+.IR inport .
+.PP
+If the call succeeds, a socket of type SOCK_STREAM
+is returned to the caller, and given to the remote
+command as 
+.B stdin
+and
+.B stdout.
+If
+.I fd2p
+is non-zero, then an auxiliary channel to a control
+process will be set up, and a descriptor for it will be placed
+in
+.IR *fd2p .
+The control process will return diagnostic
+output from the command (unit 2) on this channel, and will also
+accept bytes on this channel as being UNIX signal numbers, to be
+forwarded to the process group of the command.
+If
+.I fd2p
+is 0, then the 
+.B stderr
+(unit 2 of the remote
+command) will be made the same as the 
+.B stdout
+and no
+provision is made for sending arbitrary signals to the remote process,
+although you may be able to get its attention by using out-of-band data.
+.PP
+The protocol is described in detail in 
+.PN rshd(8c).
+.PP
+The
+.PN rresvport
+subroutine is used to obtain a socket with a privileged
+address bound to it.  This socket is suitable for use
+by 
+.PN rcmd
+and sevral other routines.  Privileged addresses consist
+of a port in the range 0 to 1023.  Only the super-user
+is allowed to bind an address of this sort to a socket.
+.PP
+The
+.PN ruserok
+subroutine takes a remote host's name, as returned by a
+.PN gethostent(3n) 
+routine, two user names and a flag indicating if
+the local user's name is the super-user.  It then
+checks the files /etc/hosts.equiv
+and possibly .rhosts
+in the current working directory (normally the local
+user's home directory) to see if the request for
+service is allowed.  A 0 is returned if the machine
+name is listed in the ``hosts.equiv'' file, or the
+host and remote user name are found in the ``.rhosts''
+file.  Otherwise 
+.PN ruserok
+returns \-1.  If the superuser
+flag is 1, the checking of the ``host.equiv'' file is
+bypassed.
+.SH SEE ALSO
+rlogin(1c), rsh(1c), gethostent(3n), rexec(3x), rexecd(8c), 
+rlogind(8c), rshd(8c)

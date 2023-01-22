@@ -1,0 +1,7 @@
+.TH intro 3yp
+.SH NAME
+intro \- introduction to yellow pages (YP) library functions
+.SH DESCRIPTION
+.PP
+This section describes those functions that are in the yellow pages
+library.  

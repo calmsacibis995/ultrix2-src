@@ -1,0 +1,126 @@
+.TH man 7
+.SH NAME
+man \- macros to typeset manual
+.SH SYNTAX
+.B
+nroff  \-man\ 
+file ...
+.PP
+.B
+troff  \-man\ 
+file ...
+.SH DESCRIPTION
+.NXCM "man command" "man macro package"
+.NXB "man macro package"
+These macros are used to lay out pages of this manual.
+.PP
+Any text argument
+.I t
+may be zero to six words.
+Quotes may be used to include blanks in a `word'.
+If 
+.I text
+is empty,
+the special treatment is applied to
+the next input line with text to be printed.
+In this way
+.BR . I
+may be used to italicize a whole line, or
+.BR . SM
+followed by
+.BR . B
+to make small bold letters.
+.PP
+A prevailing indent distance is remembered between
+successive indented paragraphs,
+and is reset to default value upon reaching a non-indented paragraph.
+Default units for indents
+.I i
+are ens.
+.PP
+Type font and size are reset to default values
+before each paragraph, and after processing
+font and size setting macros.
+.PP
+These strings are predefined by
+.BR \-man :
+.IP \e*R
+.if t `\*R', `(Reg)' in
+.if t .I nroff.
+.if n `(Reg)', trademark symbol in
+.if n .I troff.
+.IP \e*S
+Change to default type size.
+.SH RESTRICTIONS
+Relative indents don't nest.
+.SH REQUESTS
+.NXB(t) "man maco package" "requests"
+.\".ta \w'.TH n c x v m'u +\w'Cause 'u +\w'Argument\ 'u
+.TS
+l l l lw(3i).
+Request	Causes	If no	Explanation
+	Break	Argument
+\&.B \fIt\fR	no	\fIt\fR\^=\^n.t.l.*	Text \fIt\fR is bold.
+\&.BI \fIt\fR	no	\fIt\fR\^=\^n.t.l.	T{
+Join words of \fIt\fR alternating bold and italic.
+T}
+\&.BR \fIt\fR	no	\fIt\fR\^=\^n.t.l.	T{
+Join words of \fIt\fR alternating bold and Roman.
+T}
+\&.DT	no	.5i 1i\|...	Restore default tabs
+\&.HP \fIi\fR	no	\fIi\fR\^=\^p.i.	T{
+Set prevailing indent to \fIi\fR.
+Begin paragraph with hanging indent.
+T}
+\&.I \fIt\fR	no	\fIt\fR\^=\^n.t.l.*	Text \fIt\fR is italic.
+\&.IB \fIt\fR	no	\fIt\fR\^=\^n.t.l.	T{
+Join words of \fIt\fR alternating italic and bold.
+T}
+\&.IP \fIx i\fR	yes	\fIx\fR\^=\^"\|"	T{
+Same as .TP with tag \fIx\fR.
+T}
+\&.IR \fIt\fR	no	\fIt\fR\^=\^n.t.l.	T{
+Join words of \fIt\fR alternating italic and Roman.
+T}
+\&.LP	yes	\-	Same as .PP
+\&.PD \fId\fR	no	\fId\fR\^=\^.4v	T{
+Interparagraph distance is \fId\fR.
+T}
+\&.PP	yes	\-	T{
+Begin paragraph. Set prevailing indent to .5i.
+T}
+\&.RE	yes	\-	T{
+End of relative indent. Set prevailing indent to
+amount of starting .RS
+T}
+\&.RB \fIt\fR	no	\fIt\fR\^=\^n.t.l.	T{
+Join words of \fIt\fR alternating Roman and bold.
+T}
+\&.RI \fIt\fR	no	\fIt\fR\^=\^n.t.l.	T{
+Join words of \fIt\fR alternating Roman and italic.
+T}
+\&.RS \fIi\fR	no	\fIi\fR\^=\^p.i.	T{
+Start relative indent, move left margin distance \fIi\fR.
+Set prevailing indent to .5i for nested indents.
+T}
+\&.SH \fIt\fR	yes	\fIt\fR\^=\^n.t.l.	Subhead
+\&.SM \fIt\fR	no	\fIt\fR\^=\^n.t.l.	Text \fIt\fR is small.
+\&.TH \fIn c s v m\fR	yes	\-	T{
+Begin page named \fIn\fR of chapter \fIc\fR; \fIx\fR is extra commentary,
+e.g., 'local', for page foot center; \fIv\fR alters page foot left,
+e.g. '4th Berkeley Distribution; \fIm\fR alters page head center, e.g.,
+\&'Brand X Programmer's Manual'. Set prevailing indent and tabs to .5i.
+T}
+\&.TP \fIi\fR	yes	\fIi\fR\^=\^p.i.	T{
+Set prevailing indent to \fIi\fR. Begin indented paragraph with hanging tag
+given by next test line. If tag doesn't fit, place it on separate line.
+T}
+.TE
+* n.t.l. = next text line; p.i. = prevailing indent
+.NXQ(t) "man maco package" "requests"
+.SH FILES
+/usr/lib/tmac/tmac.an
+.SH SEE ALSO
+man(1), troff(1)
+.NXQ "man macro package"
+.NXQ "manual" "formatting"

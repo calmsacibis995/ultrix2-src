@@ -1,0 +1,123 @@
+#!/bin/sh
+# massage inventory.
+# sccsid "@(#)newinv	1.2 (ULTRIX) 12/8/86"
+# Three fields database - new database
+#	facility	path	subsetname
+
+PROG=$0
+BYE="failed. (exiting) Master inventory in .bkp file."
+
+EDITOR=${EDITOR-vi}
+
+BKP=.bkp
+TMP=.tmp
+EXTRA=.extra
+DEAD=.dead
+JOIN=.join
+
+# process args.
+case $# in
+0|1)	echo "Usage: $0 <masterdatabase>  <source dir> <source dir...>"
+	exit 1
+	;;
+*)	MAS=$1
+	shift
+	;;
+esac
+
+# is the old master here?
+if [ ! -f $MAS  ]
+then
+	echo "$PROG: where is $MAS?"
+	exit 1
+else
+# backup old master
+	cp $MAS $MAS$BKP
+fi
+
+# is the image valid.
+echo -n "Scanning new baselevel files..."
+> $MAS$TMP
+while test $# -gt 0
+do
+	(cd $1;find . -print)|grep -v '^$' >> $MAS$TMP ||
+	{
+		echo "$BYE"
+		exit 1
+	}
+	shift
+done
+
+echo -n "done.
+
+Sorting inventories..."
+sort -o $MAS$TMP $MAS$TMP &
+sort -o $MAS +1 -2 $MAS
+wait
+echo -n "done.
+
+Joining..."
+join -a1 -a2 -j1 2 -o 1.1 1.2 2.1 1.3 $MAS $MAS$TMP > $MAS$JOIN ||
+{
+	echo "$BYE"
+	exit 1
+}
+
+echo -n "done.
+
+Awking..."
+
+# new ones.
+awk 'NF == 1 {printf "%s\n", $1}' $MAS$JOIN > $MAS$EXTRA ||
+{
+	echo "*** 1a Field *** $BYE"
+	exit 1
+}
+
+# dead ones.
+awk 'NF == 3 {printf "%s\t%s\t%s\n", $1, $2, $3}' $MAS$JOIN > $MAS$DEAD ||
+{
+	echo "*** 3 Fields *** $BYE"
+	exit 1
+}
+
+# old (continuing) ones.
+awk 'NF == 4 {printf "%s\t%12s\t%s\n", $1, $2, $4}' $MAS$JOIN > $MAS ||
+{
+	echo "*** 4 Fields *** $BYE"
+	exit 1
+}
+
+echo -n "done.
+
+Human intervention time:
+
+	You will be thrown into vi with 2 files:
+	 1) The file containing new entries for the inventory.
+	 2) The file containing those entries which appeared
+		in the old inventory but were not present in
+		the latest baselevel.
+
+	Anything left in these files will be merged with the new
+	inventory.
+
+Press <RETURN> when ready, ^C to abort: "
+read JOE
+
+$EDITOR $MAS$EXTRA $MAS$DEAD
+
+echo -n "Merging..."
+
+cat $MAS$EXTRA $MAS$DEAD >> $MAS
+
+echo -n "Sorting..."
+
+sort -o $MAS +1 -2 $MAS ||
+{
+	echo "BYE"
+	exit 1
+}
+
+echo "done. HAVA NICE DAY"
+exit 0
+

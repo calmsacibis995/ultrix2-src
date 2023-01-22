@@ -1,0 +1,37 @@
+#
+# MY730
+# Configuration file for Digital VAX 11/730 
+#
+machine		vax
+cpu		"VAX730"
+ident		MY730
+timezone	5 dst 1
+maxusers	16
+options		INET
+options		QUOTA
+
+config		vmunix		root on ra0 swap on ra0
+
+adapter		uba0	at nexus ?
+controller	hk0	at uba0 csr 0177440 		vector rkintr
+disk		rk0	at hk0 drive 0
+disk		rk1	at hk0 drive 1
+controller	uda0	at uba0
+controller	uq0	at uda0 csr 0172150		vector uqintr
+disk		ra0	at uq0 drive 0
+disk		ra1	at uq0 drive 1
+controller	idc0	at uba0 csr 0175606		vector idcintr
+disk		rb0	at idc0 drive 0
+disk		rb1	at idc0 drive 1
+controller	hl0	at uba0 csr 0174400		vector rlintr
+disk		rl0	at hl0 drive 0
+controller	zs0	at uba0 csr 0172520		vector tsintr
+device		ts0	at zs0 drive 0
+device		dmf0	at uba0 csr 0160400 flags 0xff
+	vector dmfsrint dmfsxint dmfdaint dmfdbint dmfrint dmfxint dmflint
+device		dz0	at uba0 csr 0160110 flags 0xff	vector dzrint dzxint
+pseudo-device	pty
+pseudo-device	loop
+pseudo-device	inet
+pseudo-device	ether
+device		de0	at uba0 csr 0174510		vector deintr

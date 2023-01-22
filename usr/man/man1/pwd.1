@@ -1,0 +1,20 @@
+.TH pwd 1 
+.SH NAME
+pwd \- working directory name
+.SH SYNTAX
+.B pwd
+.SH DESCRIPTION
+The
+.B pwd
+command
+prints the pathname of the working (current) directory.
+.SH RESTRICTIONS
+In csh(1)
+the command
+.I dirs
+is always faster
+(although it can give a different answer in the rare case
+that the current directory or a containing directory was moved after
+the shell descended into it).
+.SH "SEE ALSO"
+cd(1), csh(1), getwd(3)

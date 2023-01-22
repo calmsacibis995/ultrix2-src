@@ -1,0 +1,52 @@
+.TH qd 4
+.SH NAME
+qd \- VCB02 (QDSS) video subsystem
+.SH SYNTAX
+.B "device qd0 at uba0 csr 0177400 flags 0x0f  vector qdkint qdvint"
+.SH DESCRIPTION
+A VCB02 provides a half or full page user accessible bit map display for
+graphics applications.
+The device consists of a 256kb Q22 bus memory array,
+a 15 or 19 inch video monitor, and a VX10X-EA mouse.
+.PP
+The model supported by the driver is a hybrid terminal with three minor devices.
+The first device emulates a glass tty with a
+screen that appears as a 120 column
+by 80 row page that scrolls from the bottom.
+This device is capable of being configured as the system console.
+The second minor device is opened in the raw mode by default.
+Opening the second device makes the driver function like a pseudo tty
+in that the output destined for the first minor device is channeled to
+the second instead.
+Input and output on the first two minor device numbers are processed by
+the standard line disciplines.
+.PP
+The third minor device number is reserved for the mouse.
+This device is a source of mouse state changes.
+a state change defined as an X/Y axis mouse movement or button change).
+When opened, the driver couples movements of the mouse with the cursor.
+Mouse position changes are filtered and translated into cursor position
+changes in an exponential manner.
+Rapid movements result in large cursor position changes.
+All cursor positions are range checked to insure that the cursor remains on
+the display.
+.PP
+If there is a
+.B VCB02
+module at the standard address the system will use it as
+the system console.
+All input/output destined for /dev/console will use the
+.B VCB02
+instead.  This is done by overwriting the device switch tables.
+There is a second set of device switch entries configured for the console
+which may used as an additional terminal or printer port
+by making a special device file using major number 38 and minor number 0
+and making the appropriate entry in /etc/ttys.
+.sp
+.in -5
+.PP
+.SH FILES
+/dev/qd?
+/dev/qconsole
+.SH SEE ALSO
+tty(4), ttys(5), MAKEDEV(8)

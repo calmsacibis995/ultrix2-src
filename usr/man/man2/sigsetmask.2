@@ -1,0 +1,27 @@
+.TH sigsetmask 2
+.SH NAME
+sigsetmask \- set current signal mask
+.SH SYNTAX
+.nf
+.B sigsetmask(mask);
+.B int mask;
+.SH DESCRIPTION
+The
+.PN sigsetmask
+system call
+sets the current signal mask (those signals
+which are blocked from delivery).  Signal
+.I i
+is blocked if the
+.IR i -th
+bit in 
+.I mask
+is a 1.
+.PP
+The system
+quietly disallows SIGKILL, SIGSTOP, or SIGCONT to
+be blocked.
+.PP
+The previous set of masked signals is returned.
+.SH "SEE ALSO"
+kill(2), sigblock(2), sigpause(2), sigvec(2)

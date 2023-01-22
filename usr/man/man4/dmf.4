@@ -1,0 +1,74 @@
+.TH dmf 4
+.SH NAME
+dmf \- DMF32 communications multiplexor
+.SH SYNTAX
+.B "device dmf0 at uba? csr 0160340 flags 0x????"
+.br
+.ti +0.5i
+.B "vector dmfsrint dmfsxint dmfdaint dmfdbint dmfrint dmfxint dmflint"
+.SH DESCRIPTION
+The
+.PN dmf
+device provides 8 lines of asynchronous serial line support with full
+modem control on two lines only.   The device driver
+also supports a connection to a line printer through the line printer
+port of the DMF32.
+.PP
+Each line attached to a DMF32 serial line port behaves as described
+in tty(4).
+Input and output for each line may independently be set to run at any
+of 16 speeds.  See tty(4) for the encoding.
+.PP
+Bit
+.I i
+of flags may be specified for a
+.PN dmf
+to to say that a line is not properly connected, and that the
+line should be treated as hard-wired with carrier always present.
+Thus specifying ``flags 0x0004'' in the specification of
+.IR dmf0
+would cause line 2 on the DMF32 to be treated in this way.
+.PP
+The
+.PN dmf
+driver normally uses input silos and polls for input at each clock
+tick (10 milliseconds).
+.NT CAUTION
+The DMF32 will discard incoming characters on the lines with
+full modem control if carrier is not present.
+.NE
+.SH RESTRICTIONS
+The DMF32 provides other services, but these are
+not supported by the driver.
+.SH DIAGNOSTICS
+.IP "dmf%d: NXM line %d" 0.3i
+No response from UNIBUS on a dma transfer
+within a timeout period.  This is often followed by a UNIBUS adapter
+error.	This occurs most frequently when the UNIBUS is heavily loaded
+and when devices which monopolize the bus, such as rk07's, are present.
+It is not serious.
+.IP "dmf%d: silo overflow" 0.3i
+The character input silo overflowed
+before it could be serviced.  This can happen if a hard error occurs
+when the cpu is running with elevated priority, as the system will
+then print a message on the console with interrupts disabled.
+.PP
+.BR dmfsrint .
+.br
+.BR dmfsxint .
+.br
+.BR dmfdaint .
+.br
+.BR dmfdbint .
+.IP "" 0.3i
+One of the unsupported ports of the DMF32 interrupted because
+of a problem.  Check your interrupt vectors for a conflict with
+another device.
+.SH FILES
+.nf
+.DT
+/dev/tty??
+/dev/ttyd?		(modem lines only)
+.fi
+.SH SEE ALSO
+dmfsp(4), tty(4), MAKEDEV(8) 

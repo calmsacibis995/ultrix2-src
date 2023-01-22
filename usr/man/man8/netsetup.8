@@ -1,0 +1,79 @@
+.\" Last modified by MJT on 29-Apr-85  0241
+.\" Make that liza sanford-crane!  (7/30/86)
+.\"
+.TH netsetup 8
+.SH NAME
+netsetup - set up local area network files
+.SH SYNTAX
+.B /etc/netsetup [ install ]
+.br
+.SH DESCRIPTION
+The
+netsetup(8)
+command allows you to:
+.IP \(bu
+Add your system to a local area network (LAN)
+.IP \(bu
+Update the
+/etc/hosts
+and
+/etc/hosts.equiv
+files
+.SH
+Adding Your System to a LAN
+.LP
+To add your system to a LAN,
+bring the system to single-user mode.
+Then run the
+.B netsetup
+command with the \fBinstall\fR option
+and answer the questions.
+The network manager should be able to provide you with the
+following information ahead of time:
+.IP \(bu
+What is your network number
+and what is your host number?
+.IP \(bu
+What is your Internet Protocol (IP) broadcast address?
+(Does the LAN use all zeros (0) or ones (1)?)
+.IP \(bu
+Does the LAN use subnet routing?
+If the answer is yes,
+then how many bits of the host part of the Internet address
+are used to specify the subnet part of the network address?
+.NT
+If your LAN uses subnet routing,
+remember to enter the subnet number as part of the host number.
+.NE
+After the
+.B netsetup
+command has completed,
+reboot the system.
+.SH
+Adding or Modifying the LAN Files
+.LP
+To add or modify hosts in the
+/etc/hosts
+or
+/etc/hosts.equiv
+files,
+run the
+.B netsetup
+command without the
+.I install
+option and answer all the questions.
+There is no need to bring the system to single-user mode
+to update these files.
+.SH FILES
+.nf
+.ta 2i
+/etc/hosts
+.br
+/etc/hosts.equiv
+.br
+/etc/networks
+.br
+/etc/rc.local
+.fi
+.SH SEE ALSO
+The Network Management Guide

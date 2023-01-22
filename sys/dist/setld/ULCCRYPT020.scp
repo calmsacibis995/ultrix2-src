@@ -1,0 +1,120 @@
+#!/bin/sh
+#
+#	SCP to handle the old style crypt kits.
+#
+#	000	ccb		11-nov-1986
+#		first pass.
+#
+
+PATH="/bin:/usr/bin:/etc:/usr/ucb"
+export PATH
+
+# path dummies
+B=./bin
+L=./lib
+NUL=/dev/null
+UB=./usr/bin
+UCB=./usr/ucb
+UK=./usr/kits
+UL=./usr/lib
+UT=./usr/tmp
+
+# symbol dummies
+C=crypt
+X=xsend
+
+# man specific dummies
+UM=./usr/man
+UM1=$UM/man1
+UM3=$UM/man3
+
+cd /
+
+case "$ACT" in
+POST_[AL])
+
+	echo "Configuring ULCCRYPT020."
+	# INSTALL MANPAGES
+	#
+
+	for K in $UM $UM1 $UM3
+	{
+		[ -d $K ] || mkdir $K
+	}
+	echo "	Updating manpages..." &
+
+	# install manpages crypt(1), xsend(1)
+	mv $UK/ed.1.crypt $UM1/ed.1 &
+	mv $UK/ex.1.crypt $UM1/ex.1 &
+	mv $UK/crypt.3.crypt $UM3/crypt.3 &
+	mv $UK/crypt.1.crypt $UM1/crypt.1 &
+	mv $UK/xsend.1.crypt $UM1/xsend.1 &
+
+	# INSTALL BINARIES - ex, ed, xsend, xget, crypt, enroll
+	#
+
+	echo "	Installing Binaries..." &
+
+	# easy ones - xsend, xget, crypt, enroll
+	for K in xsend xget crypt enroll
+	{
+		cp $UK/$K.crypt $UB/$K &
+	}
+
+	# install the new ex(1)
+	cp $UK/ex.crypt $UCB/ex
+	for K in e vi view edit
+	{
+		rm -f $UCB/$K
+		ln $UCB/ex $UCB/$K &
+	}
+
+	# install the new ed.
+	cp $UK/ed.crypt /bin/ed
+	for K in e red
+	{
+		rm -f $B/$K
+		ln $B/ed $B/$K &
+	}
+
+
+	# UPDATE LIBRARY LOAD MODULES
+
+	# libc.a
+	echo "	Udating libc.a..." &
+	cp $UK/ruserpass.o.crypt $UK/ruserpass.o &
+	cp $UK/crypt.o.crypt $UK/crypt.o
+	wait
+	ar r $L/libc.a $UK/ruserpass.o $UK/crypt.o
+	ranlib $L/libc.a &
+
+	# update gross (dbx) archive
+	[ -f $UL/libcg.a ] &&
+	{
+		echo "	Updating libcg.a..." &
+		cp $UK/ruserpass.og.crypt $UK/ruserpass.o &
+		cp $UK/crypt.og.crypt $UK/crypt.o
+		wait
+		ar r $UL/libcg.a $UK/ruserpass.o $UK/crypt.o
+		ranlib $UL/libcg.a &
+	}
+
+	# update profiling library
+	[ -f $UL/libc_p.a ] &&
+	{
+		echo "	Updating libc_p.a..." &
+		cp $UK/ruserpass.op.crypt $UK/ruserpass.o &
+		cp $UK/crypt.op.crypt $UK/crypt.o
+		wait
+		ar r $UL/libc_p.a $UK/ruserpass.o $UK/crypt.o
+		ranlib $UL/libc_p.a &
+	}
+	rm -rf $UK/crypt.o $UK/ruserpass.o
+	wait
+	exit 0
+	;;
+*)	exit 0
+	;;
+esac
+	
+	

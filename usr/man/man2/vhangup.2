@@ -1,0 +1,52 @@
+.\" Last modified by MJT on 27-Aug-85  0001
+.\"  Repaired beginning matter to work right in whatis database
+.\"    Last edited by Carolyn Belman, incorporating Larry
+.\"    Cohen's and Bev Michaud's comments.
+.TH vhangup 2
+.SH NAME
+vhangup \- virtually hang up the current control terminal
+.SH SYNTAX
+.B vhangup\|(\|)
+.SH DESCRIPTION
+The
+.PN vhangup
+system call initializes a terminal line. 
+For example, the init(8) command uses
+.PN vhangup
+to ensure that 
+the previous user's processes cannot access the
+terminal anymore.
+.PP
+First,
+.PN vhangup
+searches the system tables for references to the current
+terminal (the control terminal
+of the invoking process) and revokes access permissions
+on each instance of the terminal that it finds.
+.PP
+The
+.PN vhangup
+system call
+also removes all references to the inode that corresponds to the
+control terminal. 
+The
+.PN vhangup 
+system call
+then invokes the kernel's device close routine to turn
+the terminal off.
+Finally,
+.PN vhangup
+sends a hangup signal (SIGHUP) to the process group
+of the control terminal.  For further information, see
+tty(4) for a description of process groups.
+.PP
+When
+.PN vhangup
+finishes, a terminal line is 
+initialized; no other processes refer to this line.
+The only way for other processes to access 
+the control terminal is through the special file 
+/dev/tty.
+All other requests will yield I/O errors (EBADF).
+.SH SEE ALSO
+init(8)

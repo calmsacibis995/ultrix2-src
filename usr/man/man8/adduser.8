@@ -1,0 +1,45 @@
+.TH adduser 8 
+.SH NAME
+adduser, removeuser, addgroup \- add and remove user accounts
+.SH SYNTAX
+.B /etc/adduser
+.br
+.B /etc/removeuser
+.br
+.B /etc/addgroup
+.SH DESCRIPTION
+The
+.PN adduser
+command provides an interactive
+facility for adding new user
+accounts to
+the system password file.  
+.sp
+The
+.PN adduser
+command also sets up a home directory with the files .cshrc, .login,
+and .profile
+for new users.  New accounts set up this way initially have
+no login password.
+.PP
+The interactive
+.PN removeuser
+command deletes 
+user accounts from the system password file.
+It also gives 
+the option of deleting the user's home directory and files.
+.PP
+The interactive
+.PN addgroup
+command adds new groups
+to the /etc/group 
+file. 
+.SH FILES
+.ta 1i
+/etc/ptmp	lock file
+.br
+/etc/passwd	password file
+.br
+/etc/group	group file
+.SH "SEE ALSO"
+passwd(1), passwd(5yp), vipw(8)

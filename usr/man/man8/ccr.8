@@ -1,0 +1,259 @@
+.TH ccr 8
+.SH NAME
+/etc/ccr \- remote console carrier requester
+.SH SYNTAX
+.B ccr 
+[
+.I options
+]
+.I node
+.SH DESCRIPTION
+The 
+.PN ccr
+command establishes a logical connection between
+your ULTRIX system and the console carrier server on a
+remote system.
+The
+.I node 
+is the name or address of the target node.  A node name
+consists of from one to six alphanumeric characters.
+For single networks, a node address consists of a 
+decimal integer (1-1023).  For multiple networks, a
+node address consist of two decimal integers (n.n), 
+where the first indicates the network number (1-63), 
+and the second indicates the node address (1-1023).
+The
+.PN ccr 
+is the console carrier requester, which 
+sets up a logical connection between your 
+ULTRIX node and the console carrier server on a remote node.
+The
+.PN ccr 
+enables your terminal to act as the console for a
+remote unattended system.  For example, your terminal can act as
+the console for a Digital Ethernet Communications Server (DECSA)
+and its resident software.
+.PP
+You can use 
+.PN ccr
+to force a crash if a server node becomes unresponsive.  To
+determine how to force a crash, see the documentation for 
+the respective server product. 
+.PP
+When you are attempting to use
+.PN ccr, 
+the remote console carrier server can be in one of the following states:
+.PP
+.RS 5
+Loaded and unreserved
+.PP
+Loaded and reserved by another user
+.PP
+Not loaded
+.RE
+.PP
+If the console carrier  server  is  loaded  and  unreserved, 
+.PN ccr
+reserves it, and the following message is displayed at your terminal:
+.PP
+ccr: Remote console reserved
+.PP
+If the console carrier server is loaded and  reserved by another  
+user, the following diagnostic message is displayed at your terminal:
+.PP
+ccr: Remote console already in use
+.PP
+If the console carrier server is not loaded, 
+.PN ccr
+loads the  server.  In order to load the server, your ULTRIX node must 
+have the console carrier server image file, plutocc.sys,
+and its loader file, plutowl.sys, present in the directory,
+/usr/lib/dnet.  Once the server is loaded, 
+.PN ccr 
+attempts to reserve the console and to proceed as previously described.
+.PP
+The requirements for using 
+.PN ccr 
+are as follows:
+.PP
+.RS 5
+The host node (that is, your local ULTRIX node) and
+the remote node must be on the same Ethernet.
+.PP
+The console carrier server image (plutocc.sys) and its loader file 
+(plutowl.sys) must be located 
+in /usr/lib/dnet on your ULTRIX node.  
+.RE
+.PP
+The following special characters are used by 
+.PN ccr:
+.PP
+.br
+.TP 15
+<CTRL/B>
+Operates as a 
+.B break  
+command to get the attention of the console on-line debugging tool 
+.B (odt). 
+.br
+.TP 15
+<CTRL/D>
+Exits from console carrier mode and terminates 
+.PN ccr.
+.SH OPTIONS
+.TP 5
+.B \-c  
+Uses the specified service and device number (UBA-n or
+QNA-n) as the circuit to the target node.
+.TP 5
+.B \-h
+Uses the specified address (next argument) as the Ethernet
+address of the target node.
+.TP 5
+.B \-n   
+Uses the next argument as the target node ID.
+.TP 5
+.B \-p
+Uses the specified service and password (next arguments)
+in accessing the target node.
+.SH EXAMPLE
+In the following sample session, you invoke 
+.PN ccr 
+to use the on-line debugging tool, 
+.B odt 
+to examine locations in memory of node Dallas.  After invoking 
+.PN ccr, 
+You type <CTRL/B> to invoke 
+.B odt.  
+The system then displays the current program counter and the 
+at sign prompt, (@).
+At this point, you
+can enter commands as if you were physically located at the console of 
+node Dallas.
+.PN ccr 
+commands are transmitted by the requester to the server, and the
+appropriate responses are transmitted by the server to the
+requester and displayed on your terminal.
+.PP
+To examine a register, enter the dollar sign ($) followed by 
+the register number and a slash (/).
+To examine a location, enter the address of 
+the location  and a slash.  The system then displays the 
+contents on the same line. Enter <LF> to view the next register or 
+location, or enter <RET> to return to the @ prompt. When you want to 
+exit 
+.B odt, 
+enter 
+.B p 
+(proceed). You must then issue a <CTRL/D> to return to 
+the ULTRIX system prompt.
+.PP
+# /etc/ccr dallas <RET>
+.br
+ccr: Remote console reserved
+.br
+<CTRL/B>
+.br
+002160
+.br
+@$0/000000 <LF>
+.br
+R1/005621 <LF>
+.br
+R2/112000 <LF>
+.br
+R3/000000 <LF>
+.br
+R4/000001 <LF>
+.br
+R5/000000 <RET>
+.br
+@100/016122 <LF>
+.br
+000102/000340 <LF>
+.br
+000104/001614 <LF>
+.br
+000106/000341 <RET>
+.br
+@p <RET>
+.br
+<CTRL/D> 
+.br
+ccr: Remote console released
+.br
+#
+.EE
+.SH RESTRICTIONS
+You must have superuser privileges to run 
+.PN ccr.
+.SH DIAGNOSTICS
+The
+.PN ccr
+command can return the following diagnostic messages:
+.PP
+ccr: Remote console reserved
+.PP
+.RS 5
+.B 
+ccr 
+has successfully connected to the remote console server and your 
+terminal is now capable of acting as a console for the remote node.
+.RE
+.PP
+ccr: Remote console released
+.PP
+.RS 5
+Your connection with the remote console server has been terminated and 
+you are no longer in console carrier mode.
+.RE
+.PP
+ccr: Remote console already in use
+.PP
+.RS 5
+The remote console server that you are attempting to connect to is 
+already reserved by another user.
+.RE
+.PP
+ccr: Permission denied 
+.PP
+.RS 5
+You do not have the necessary privileges to run 
+.PN ccr.  
+(You must be a superuser.)
+.RE
+.PP
+ccr: Hardware address required
+.PP
+.RS 5
+.PN ccr 
+is unable to locate the hardware address of the remote node to which 
+you are attempting to connect.  A remote node's hardware addres must 
+be defined either in the 
+.PN ccr 
+command line, or in its nodes database entry.  (Nodes database entries 
+are defined with the 
+.PN addnode 
+command.)
+.RE
+.PP
+ccr: No node entry in database
+.PP
+.RS 5
+.PN ccr 
+does not recognize the remote node to which you are attempting to 
+connect, since the 
+.I node-id 
+that you specified is not defined in the nodes database.
+(Nodes database entries are defined with the 
+.PN addnode 
+command.)
+.RE
+.SH FILES
+/usr/lib/dnet/plutocc.sys (console carrier server image)
+.br
+/usr/lib/dnet/plutowl.sys (console carrier server loader)
+.SH SEE ALSO
+addnode(8), getnode(8), load(8), remnode(8), trigger(8) 
+.br
+System Management Guide

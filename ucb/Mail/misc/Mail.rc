@@ -1,0 +1,1 @@
+set append dot save ask askcc save SHELL=/bin/csh EDITOR=/usr/ucb/ex metoo hold

@@ -1,0 +1,22 @@
+.TH getenv 3
+.SH NAME
+getenv \- value for environment name
+.SH SYNTAX
+.nf
+.B char *getenv(name)
+.B char *name;
+.fi
+.SH DESCRIPTION
+The
+.PN getenv
+subroutine searches the environment list
+for a string of the form
+.IB name = value
+and returns a pointer to the string
+.I value
+if such a string is present, otherwise 
+.PN getenv
+returns the value 0 (NULL).
+For further information, see environ(7).
+.SH SEE ALSO
+execve(2), environ(7)

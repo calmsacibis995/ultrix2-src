@@ -1,0 +1,89 @@
+.TH finger 1
+.SH NAME
+finger \- user information lookup program
+.SH SYNTAX
+ \fBfinger\fR [ \fIoptions\fR ] [ \fIname\fR ...]
+.SH DESCRIPTION
+By default,
+.B finger
+lists the login name, full name, terminal
+name and write status,
+idle time, login time, and
+office location and phone number (if they are known) for
+each current ULTRIX user.  Terminal write status is noted
+as an asterisk (*) before the terminal name if write
+permission is denied.  Idle time is given in minutes if the
+listing shows a
+single integer, hours and minutes if a colon (:) is present, or
+days and hours if a d is present.
+.PP
+A longer format also exists and is used by 
+.B finger 
+whenever a
+list of people's names is given.  (Account names as well as
+first and last names of users are accepted.) This format is
+multi-line, and includes all the information described above
+as well as the user's home directory and login shell, any
+plan which the person has placed in the file .plan 
+in their home directory, and the project on which they are working
+from the file .project also in their home directory.
+.PP
+If no list is given, all the people currently logged in are
+shown.
+.SH OPTIONS
+Finger options include:
+.TP 5
+.B \-b
+Give briefer long form list of users.
+.TP 5
+.B \-f
+Disable the printing of headers for short and quick outputs.
+.TP 5
+.B \-h
+Suppress printing of the .project
+file.
+.TP 5
+.B \-i
+Show quick list of users with idle times.
+.TP 5
+.B \-l
+Force long output format.
+.TP 5
+.B \-m
+Match arguments only on user name.
+.TP 5
+.B \-p
+Suppress printing of the 
+.PN .plan 
+file.
+.TP 5
+.B \-q
+Show quick list of users.
+.TP 5
+.B \-s
+Force short output format.
+.TP 5
+.B \-w
+Show narrow short format of specified users.
+.SH RESTRICTIONS
+Only the first line of the
+.PN .project
+file is printed.
+.SH FILES
+.TP 18
+/etc/utmp
+Who file.
+.TP 18
+/etc/passwd
+For users names, offices, and so forth. 
+.TP 18
+/usr/adm/lastlog
+Last login times.
+.TP 18
+~/.plan
+Plans.
+.TP 18
+~/.project
+Projects.
+.SH SEE ALSO
+w(1), who(1)

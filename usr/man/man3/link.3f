@@ -1,0 +1,37 @@
+.TH link 3f
+.SH NAME
+link, symlink \- make a link to an existing file
+.SH SYNTAX
+.B function link (name1, name2)
+.br
+.B character*(*) name1, name2
+.sp 1
+.B integer function symlnk (name1, name2)
+.br
+.B character*(*) name1, name2
+.SH DESCRIPTION
+The
+.I name1
+must be the pathname of an existing file.
+The
+.I name2
+is a pathname to be linked to file
+.IR name1 .
+The
+.I name2
+must not already exist.
+The returned value will be 0 if successful and 
+a system error code otherwise.
+.PP
+The
+.PN symlnk
+subroutine creates a symbolic link to
+.IR name1 .
+.SH RESTRICTIONS
+Pathnames can be no longer than MAXPATHLEN as defined in
+< sys/param.h >.
+.SH FILES
+.ie \nM /usr/ucb/lib/libU77.a
+.el /usr/lib/libU77.a
+.SH "SEE ALSO"
+link(2), symlink(2), perror(3f), unlink(3f)

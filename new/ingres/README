@@ -1,0 +1,22 @@
+In order to run ingres, you must setup an ingres account.  You can
+setup the account so that its login directory is here or somewhere else.
+If the login directory is to be somewhere else, do the following:
+
+	- Setup the account.
+	- Create the the login directory.
+	- Then do:  cp -r . ~ingres
+
+After the account has been setup, you can then use ~ingres/Makefile to
+install the necessary images and libraries in the appropriate
+system directories, as in:
+
+	(cd ~ingres; make )
+
+This will install images in /usr/new and libraries in /usr/lib.  These 
+defaults can be changed by redefining BIN and/or LIB on the make command 
+line, as in:
+
+	(cd ~ingres; make BIN=/bin)
+
+There is more documentation in the doc subdirectory.
+

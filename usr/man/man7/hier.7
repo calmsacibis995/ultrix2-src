@@ -1,0 +1,746 @@
+.TH hier 7
+.SH NAME
+hier \- file system hierarchy
+.SH DESCRIPTION
+.NXB "hier macro package"
+The following gives a quick tour through the \fBroot file system\fP.
+Listed are the major directory hierarchy and representative files.
+.na
+.nh
+.IP / 10
+root directory for root file system
+.IP /bin 10
+directory for utility programs (see also /usr/bin)
+.RS
+.IP as 2
+assembler
+.br
+.ns
+.IP cc 2
+C compiler executive (see also /lib/ccom, /lib/cpp, /lib/c2)
+.br
+.ns
+.IP csh 2
+C shell
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns 
+.IP .
+.RE
+.RE
+.RE
+.IP /dev 10
+directory for devices(4)
+.RS
+.IP MAKEDEV 2
+shell script to create special files
+.br
+.ns
+.IP MAKEDEV.local 2
+site specific part of MAKEDEV
+.br
+.ns
+.IP console 2
+main console,
+tty(4)
+.br
+.ns
+.IP hp* 2
+disks,
+hp(4)
+.br
+.ns
+.IP rhp* 2
+raw disks,
+hp(4)
+.br
+.ns
+.IP ra* 2
+UNIBUS disks
+ra(4)
+.br
+.ns
+.IP tty* 2
+terminals,
+tty(4)
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns 
+.IP .
+.RE
+.RE
+.RE
+.IP /etc 10
+directory for maintenance utilities and data
+.RS
+.IP cron 2
+clock daemon,
+cron(8)
+.br
+.ns
+.IP disktab 2
+disk characteristics and partition tables,
+disktab(5)
+.br
+.ns
+.IP dump 2
+dump program,
+dump(8)
+.br
+.ns
+.IP dumpdates 2
+dump history for
+dump(8)
+.br
+.ns
+.IP fstab 2
+file system configuration table,
+fstab(5)
+.br
+.ns
+.IP getty 2
+part of
+.IR login ,
+getty(8)
+.br
+.ns
+.IP group 2
+group file,
+group(5)
+.br
+.ns
+.IP hosts 2
+host name to network address mapping file,
+hosts(5)
+.br
+.ns
+.IP init 2
+parent of all processes,
+init(8)
+.br
+.ns
+.IP motd 2
+message-of-the-day file,
+login(1)
+.br
+.ns
+.IP mount 2
+mount program,
+mount(8)
+.br
+.ns
+.IP networks 2
+network name to network number mapping file,
+networks(5)
+.br
+.ns
+.IP passwd 2
+password file,
+passwd(5)
+.br
+.ns
+.IP phones 2
+phone numbers for remote hosts,
+phones(5)
+.br
+.ns
+.IP protocols 2
+name to number mapping file,
+protocols(5)
+.br
+.ns
+.IP rc 2
+shell script to bring the system to multi-user mode
+.br
+.ns
+.IP rc.local 2
+site dependent portion of 
+.I rc
+.br
+.ns
+.IP remote 2
+names and description of remote hosts for 
+tip(1c),
+.IR remote (5)
+.br
+.ns
+.IP services 2
+network services definition file,
+services(5)
+.br
+.ns
+.IP termcap 2
+description of terminal capabilities,
+termcap(5)
+.br
+.ns
+.IP ttys 2
+properties of terminals,
+ttys(5)
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.RE
+.IP /lib 10
+directory object libraries (see also /usr/lib)
+.RS
+.IP ccom 2
+C compiler proper
+.br
+.ns
+.IP cpp 2
+C preprocessor
+.br
+.ns
+.IP c2 2
+C code improver
+.br
+.ns
+.IP libc.a 2
+system calls and standard I/O (2,3,3S)
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.RE
+.IP /lost+found 10
+directory for connecting detached files for
+fsck(8)
+.IP /sys 10
+symbolic link, normally to /usr/sys
+.IP /tmp 10
+directory for temporary files (see also /usr/tmp)
+.RS
+.IP e* 2
+used by
+ed(1)
+.br
+.ns
+.IP ctm* 2
+used by 
+cc(1)
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.RE
+.IP /usr 10
+general purpose directory, normally on which the /usr file system is
+mounted (see description below)
+.IP /vmunix 10
+kernel image
+.NXE "root file system" "hierarchy"
+
+.sp
+.LP
+The following gives a quick tour through the /usr file system.
+.NXB "/usr file system" "hierarchy"
+Listed are the major directory hierarchy and representative
+files. 
+.IP /usr 10
+root directory for /usr file system 
+.IP /usr/adm 10
+directory for administrative information
+.RS
+.IP crash 2
+directory for crash dumps
+.RS
+.IP vmcore.?,vmunix.? 2
+crash dump files
+.RE
+.IP lpacct 2 
+line printer accounting,
+lpr(1)
+.br
+.ns
+.IP tracct 2
+phototypesetter accounting,
+troff(1)
+.br
+.ns
+.IP "vaacct, vpacct" 2
+varian and versatec accounting:
+vpr(1),
+vtroff(1),
+pac(8)
+.br
+.ns
+.IP wtmp 2
+login history,
+utmp(5)
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.RE
+.IP /usr/bin 10
+directory for utility programs (keeps /bin small)
+.IP /usr/dict 10
+directory for word lists
+.RS
+.IP spellhist 2
+history file,
+spell(1)
+.br
+.ns
+.IP words 2
+word list,
+look(1)
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.RE
+.IP /usr/doc 10
+directories containing files for the Vol.2 documentation
+.RS
+.IP as 2
+assembler manual
+.br
+.ns
+.IP c 2
+C manual
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.RE
+.IP /usr/games 10
+directory for games
+.RS
+.IP hangman 2
+hangman game
+.br
+.ns
+.IP lib 2
+library directory for games
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.RE
+.IP /usr/guest 10
+directory for guest accounts
+.IP /usr/include 10
+directory for standard #include files
+.RS
+.IP a.out.h 2
+object file layout,
+a.out(5)
+.br
+.ns
+.IP math.h 2
+math(3m)
+.br
+.ns
+.IP stdio.h 2
+standard I/O,
+intro(3s)
+.br
+.ns
+.IP sys 2
+symbolic link to /sys/h (system generation #include files)
+.RS
+.RS
+.br
+.ns
+.IP .
+.br 
+.ns
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.RE
+.IP /usr/lib 10
+directory for object libraries (keeps /lib small)
+.RS
+.IP atrun 2
+system scheduler,
+at(1)
+.br
+.ns
+.IP crontab 2
+system clock daemon table
+.br
+.ns
+.IP font 2
+directory for 
+nroff(1)
+and
+troff(1)
+fonts
+.br
+.ns
+.IP lint 2
+directory for utility files for 
+lint(1)
+.br
+.ns
+.IP tmac 2
+directory for 
+troff(1)
+macros
+.br
+.ns
+.IP units 2
+directory of conversion tables for
+units(1)
+.br
+.ns
+.IP uucp 2
+directory for
+uucp(1c)
+programs and data 
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.RE
+.IP /usr/man 10
+directory for unformatted and preformatted man pages
+.RS
+.IP man1 2
+directory for section 1 (unformatted)
+.br
+.ns
+.IP man2 2
+directory for section 2 (unformatted)
+.br
+.ns
+.KS
+.IP man3 2
+directory for section 3 (unformatted)
+.KE
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.br
+.ns
+.IP cat1 2
+directory for section 1 (preformatted)
+.br
+.ns
+.IP cat2 2
+directory for section 2 (preformatted)
+.br
+.ns 
+.IP cat3 2
+directory for section 3 (preformatted)
+.RS
+.RS
+.br
+.ns
+.IP .
+.br
+.ns 
+.IP .
+.br
+.ns
+.IP .
+.RE
+.RE
+.RE
+.IP /usr/mdec 10
+directory for ULTRIX-32 boot files
+.IP /usr/msgs 10
+directory for messages, 
+msgs(1)
+.IP /usr/new 10
+directory for binaries of new versions of programs
+.IP /usr/preserve 10
+directory for editor temp files preserved after crashes/hangups
+.IP /usr/pub 10
+directory for binaries of user programs 
+.IP /usr/skel 10
+directory for sample 
+.IR user
+startup files
+.RS
+.IP .cshrc 2
+startup file for
+csh(1)
+.br
+.ns
+.IP .login 2
+login startup file for
+csh(1)
+.br
+.ns
+.IP .mailrc 2
+startup file for
+mail(1)
+.br
+.ns
+.IP .profile 2
+startup file for
+sh(1)
+.br
+.ns
+.IP .project 2
+lists information used by 
+finger(1)
+.RE
+.IP /usr/spool 10
+directory for delayed execution files
+.RS
+.IP at 2
+directory used by 
+at(1)
+.br
+.ns
+.IP lpd 2
+directory used by
+lpr(1)
+.RS
+.RS
+.br
+.ns
+.IP lock 2
+present when line printer is active
+.IP cf* 2
+copy of file to be printed, if necessary
+.IP df* 2
+daemon control file,
+lpd(8)
+.IP tf* 2
+transient control file (exists while 
+.I lpr
+is working)
+.RE
+.RE
+.br
+.ns
+.IP mail 2
+directory of mailboxes for
+mail(1)
+.br
+.ns
+.RS
+.RS
+.IP \fIname\fP 2
+mail file for user
+.I name
+.br
+.ns
+.IP \fIname.lock\fP 2
+lock file (exists while
+.I name
+is receiving mail)
+.RE
+.RE
+.br
+.ns
+.IP uucp 2
+directory for work files and staging area for 
+uucp(1c)
+.RS
+.RS
+.br
+.ns
+.IP LOGFILE 2
+summary log
+.RE
+.RE
+.RE
+.IP /usr/src 10
+directory for generic sources
+.RS
+.IP usr.bin 2
+directory for user sources
+.br
+.ns
+.RS
+.RS
+.IP troff 2
+directory for nroff and troff sources
+.br
+.ns
+.RS
+.RS
+.IP term 2
+directory of description files for new printers
+.RE
+.RE
+.RE
+.RE
+.RE
+.IP /usr/sys 10
+directory for system files
+.RS
+.IP BINARY 2
+directory for system object files,
+make(1)
+.br
+.ns
+.IP cassette 2
+directory of files for boot cassette
+.br
+.ns
+.IP conf 2
+directory of configuration files,
+config(8)
+.br
+.ns
+.IP data 2
+directory for drive partition tables
+.br
+.ns
+.IP floppy 2
+directory of files for floppy disk
+.br
+.ns
+.IP h 2
+.br
+directory for system #include files
+.br
+.ns
+.IP mdec 2
+directory of headers for 11/750 boot blocks
+.br
+.ns
+.IP net 2
+directory for general network files
+.br
+.ns
+.IP netimp 2
+directory for IMP network files
+.br
+.ns
+.IP netinet 2
+directory for DARPA internet network files
+.br
+.ns
+.IP netpup 2
+directory for PUP network files
+.br
+.ns
+.IP stand 2
+directory for standalone boot binaries
+.br
+.ns
+.IP sys 2
+directory for machine dependent system files
+.br
+.ns
+.IP vax 2
+directory for VAX specific system files
+.br
+.ns
+.IP vaxif 2
+directory of network interface drivers for the VAX
+.br
+.ns
+.IP vaxmba 2
+directory of drivers for devices on the MASSBUS
+.br
+.ns
+.IP vaxuba 2
+directory of drivers for devices on the UNIBUS
+.RE
+.IP /usr/tmp 10
+symbolic link to /tmp
+.NXE "/usr file system" "hierarchy"
+.SH SEE ALSO
+apropos(1), finger(1), find(1), grep(1), ls(1), whatis(1),
+whereis(1), which(1), ncheck(8)
+.NXE "hier macro package"

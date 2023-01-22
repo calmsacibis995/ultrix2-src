@@ -1,0 +1,325 @@
+.TH uerf 8
+.UC 4
+.SH NAME
+uerf \- ULTRIX error report formatter  
+.SH SYNTAX
+.B /etc/uerf [ option ... ]
+.SH DESCRIPTION
+The uerf command prints a record of system events.  
+These events include error messages relating to the system hardware 
+and the software kernel as
+well as information about system status, startup, and diagnostics.
+.SH OPTIONS
+.TP 1i
+.B \-A \fIadapter ...\fR
+Selects adapter and device controller errors.  
+All adapter error types are selected if none is specified. 
+.RS 1i
+.IP "\fBaie\fR" 7
+Reports errors for BVP-type controller.
+.IP "\fBaio\fR"
+Reports errors for BVP-type controller.
+.IP "\fBbla\fR"
+Reports errors for the BI LESI adapter.
+.IP "\fBbua\fR"
+Reports errors for the BI UNIBUS adapter.
+.IP "\fBnmi\fR"
+Reports errors for the Nautilus memory interconnect.
+.IP "\fBuba\fR"
+Reports errors for the VAX UNIBUS adapter.
+.RE
+.TP 1i
+.B \-c\fI\| classes\fR
+Selects classes of events.  
+.RS 1i
+.IP \fBerr\fR 7
+Reports all hardware- and software-detected error conditions. 
+.IP \fBmaint\fR 7
+Reports any event that occurs during system maintenance, for
+example, running the on-line functional exercisers.
+.IP \fBoper\fR 7
+Reports information on system status, autoconfiguration messages,
+device status or error messages, time stamps, and system startup and
+shutdown messages.
+.RE
+.TP 1i
+.B \-D\fI\| disks\fR
+Selects the mscp disk device type, for example, ra60, or class, for
+example, ra, about which to report errors.  If you do not specify any
+parameters, all disk types are reported.  See
+.MS ra 4 
+for a list of supported mscp disk devices.
+.TP 1i
+.B \-f\fI\| filename 
+Outputs error information from the specified file rather than the
+default errorlog file 
+/usr/adm/syserr/syserr.\fIhostname\fR.
+Hostname is the name of the local system.  Use this option to look at
+old or backup errorlog files not in the default location 
+/usr/adm/syserr. 
+You can also use this option to access the default single-user errorlog
+file 
+/syserr.\fIhostname\fR.
+Specify the full path name for the file.  Do not use the 
+.B \-n 
+option with this option.
+.TP 1i
+.B \-h
+Displays a brief help message.  If you specify any other option
+with the 
+.B \-h
+option, it is ignored. 
+.TP 1i
+.B \-H\fI\ host
+Selects errors for the system indicated.  Use the 
+.B \-H 
+option when you are logging errors from multiple remote systems to a
+single errorlog file on the local host.
+.TP 1i
+.B \-M\fI\ mainframe_errors
+Selects mainframe error types.  If you do not specify any parameters,
+all error types are reported.
+.RS 1i
+.IP \fBcpu\fR 7
+Reports CPU-related errors such as machine checks.
+.IP \fBmem\fR 7
+Reports memory-related errors such as single-bit CRD (corrected read
+data) and double-bit uncorrectable errors.
+.RE
+.TP 1i
+.B \-n
+Displays errors as they occur in real time before logging them
+in the errorlog file.  This option is useful in monitoring errors 
+while a disk or tape exerciser is run.  You cannot use this option 
+with the \fB\-f\fR option.
+.TP 1i
+.B \-o\fI\| output
+Outputs errors in brief, full, or terse format.  The default
+output is brief.
+.RS 1i
+.IP \fBbrief\fR 7
+Reports error information in a short format.
+.br
+.IP \fBfull\fR 7
+Reports all available information for each entry.
+.br
+.IP \fBterse\fR 7
+Reports error information and displays register values, but does not
+translate.
+.RE
+.TP 1i
+.B \-O\fI\| operating_system_events
+Selects operating system events such as panics and exceptions and
+faults.  If you do not specify any parameters, all ULTRIX operating
+system events are reported.
+.RS 1i
+.IP \fBaef\fR 7 
+Reports arithmetic exception faults
+.IP \fBast\fR 7
+Reports asynchronous trap exception faults
+.IP \fBbpt\fR 7
+Reports breakpoint instruction faults
+.IP \fBcmp\fR 7
+Reports compatibility mode faults
+.IP \fBpag\fR 7
+Reports page faults
+.IP \fBpif\fR 7
+Reports privileged instruction faults
+.IP \fBpro\fR 7
+Reports protection faults
+.IP \fBptf\fR 7
+Reports page table faults
+.IP \fBraf\fR 7
+Reports reserved address faults
+.IP \fBrof\fR 7
+Reports reserved operand faults
+.IP \fBscf\fR 7
+Reports system call exception faults
+.IP \fBseg\fR 7
+Reports segmentation faults
+.IP \fBtra\fR 7
+Reports trace exception faults
+.IP \fBxfc\fR 7 
+Reports xfc instruction faults
+.RE
+.TP 1i
+.B \-R \fI\| reverse chronological order
+Outputs selected error information in reverse chronological
+order.
+.TP 1i
+.B \-r\fI\| records 
+Reports errors for the selected record codes.  Valid codes
+are: 
+.RS 1i
+.nf
+Hardware-Detected Errors 
+.sp 6p
+100	machine check 
+101	memory corrected read data/read data substitute (crd/rds) 
+102	disk errors 
+103	tape errors 
+104	device controller errors 
+105	adapter errors
+106	bus errors
+107	stray interrupts 
+108	asynchronous write errors 
+109	exceptions/faults 
+.sp 6p
+Software Detected Errors 
+.sp 6p
+200	panics (bug checks) 
+.sp 6p
+Informational ASCII Messages 
+.sp 6p
+250	informational 
+251	8600/8650 snapshot taken 
+.sp 6p
+Operational Messages
+.sp 6p
+300	start up 
+301	shutdown
+310	time change 
+350	diagnostic information 
+.fi
+.RE
+.TP 1i
+.B \-s\fI\| sequence_numbers
+Reports errors for selected sequence numbers.  When used by
+itself, this option will give all records with specified sequence
+numbers in the file.
+.TP 1i
+.B \-t\fI\| time_range
+Selects errors for the specified time range.  Without the
+.B \-t 
+option, the 
+.I uerf 
+command processes the errorlog file from beginning to end.  A
+start date or time or an end date or time must be specified with the 
+\fB\-t\fR option.  
+For partial entries, default date is current date, default
+start time is 00:00:00, and default end time is 23:59:59.
+The format is:
+.sp 6p
+uerf -t s:dd-mmm-yyyy,hh:mm:ss e:dd-mmm-yyyy,hh:mm:ss
+.RS 1i
+.IP \fBs\fR 7 
+Specifies the start date and time   
+.IP \fBe\fR 7
+Specifies the end date and time
+.IP \fBdd\fR 7
+day 
+.IP \fBmmm\fR 7
+month
+.IP \fByyyy\fR 7
+year
+.IP \fBhh\fR 7
+hour
+.IP \fBmm\fR 7
+minute
+.IP \fBss\fR 7
+second
+.RE
+.TP 1i
+.B \-T\fI\| tapes
+Selects the tmscp tape types, for example, tk50, or class, for example,
+tk, for which to report errors.  If you do not specify any parameters,
+all tape types are reported.  See 
+.MS tms 4
+for a list of supported tmscp tape types. 
+.TP 1i
+.B \-x
+Excludes specified selection options from the report, whether they
+appear before or after the 
+. \-x 
+option.  This option does not affect the 
+.B \-n, 
+.B \-f, 
+or 
+.B \-o 
+options.
+.SH RESTRICTIONS
+The uerf command searches for the data files, uerf.hlp and uerf.err 
+in the /etc
+directory, and checks all directories specified in your shell PATH 
+environment variable.  
+If uerf is invoked with a full pathname, the system first checks 
+that directory for the uerf data files. 
+.PP
+The uerf command outputs the contents of the errorlog file in the
+directory specified in /etc/elcsd.conf.  
+To report on any other errorlog file, such as the single-user 
+errorlog file, you must use uerf with the 
+.B \-f 
+option. 
+.PP
+Do not specify any other option with the 
+.B \-h
+option.
+.PP
+You cannot use the 
+.B \-n 
+option and the 
+.B \-f
+option together. 
+.PP
+Some hardware and system-related errors are logged as ASCII
+informational messages; for example, MASSBUS device errors and UNIBUS
+communication device errors.  To output these errors, use the 
+.B -r 
+option with record type 250.
+.SH FILES
+.ta 3i
+/usr/adm/syserr/syserr.\fIsystem name\fR	multiuser default errorlog file
+.br
+/etc/uerf.err		uerf error message file
+.br
+/etc/uerf.hlp		uerf help file
+.SH EXAMPLES
+The following example produces a report containing all uba and
+nmi errors:
+.EX
+uerf \-A uba,nmi
+.EE
+.PP
+The following example produces a report containing all error
+events excluding logged operating system errors and 
+operator and maintenance class errors:
+.EX
+uerf -O -x -c oper,maint
+.EE
+.PP
+The following produces an error report from the named file:
+.EX
+uerf -f /usr/adm/syslog/olderrorfile
+.EE
+.PP
+The following examples show how to produce error reports for
+specific record codes:
+.EX
+uerf -r 100,102
+
+uerf -r 100-109
+.EE
+.PP 
+The following examples show how to produce error reports using
+the -t option.  The first example below lists all errors between 
+10:47 a.m. on April 13, 1986 and 5:30 p.m. on April 20, 1986.
+The second example below produces an error report for all logged
+errors on the current day and year, which starts at 1:20 p.m. 
+and ends at the current time.
+.EX
+uerf -t s:13-apr-1986,10:47:00 e:20-apr-1986,18:30:00
+
+uerf -t s:13:20
+.EE
+.PP
+The next example produces an error report for all logged errors
+and displays it in reverse chronological order, starting with
+the current date and time.
+.EX
+uerf -R
+.EE
+.SH SEE ALSO
+elcsd.conf(5), elcsd(8), eli(8)
+.br
+System Management Guide
